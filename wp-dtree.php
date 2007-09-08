@@ -79,10 +79,10 @@ require_once("wp-dtree_gen-functions.php");
 require_once("wp-dtree_cache.php"); 
 
 add_action('wp_head', 'silpstream_wp_dtree_add2head');
-add_action('activate_wp-dtree-3.0/wp-dtree.php','silpstream_wp_dtree_set_options', 5);
-add_action('activate_wp-dtree-3.0/wp-dtree.php','silpstream_wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
-add_action('deactivate_wp-dtree-3.0/wp-dtree.php','silpstream_wp_dtree_delete_options', 5);
-add_action('deactivate_wp-dtree-3.0/wp-dtree.php','silpstream_wp_dtree_uninstall_cache', 10); 
+add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_set_options', 5);
+add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
+add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_delete_options', 5);
+add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_uninstall_cache', 10); 
 add_action('admin_menu', 'silpstream_wp_dtree_add_option_page');
 
 add_action('delete_post', 'wp_dtree_update_archives_arr');
@@ -107,8 +107,8 @@ $idtranspose = array('arc' => 0,
 function silpstream_wp_dtree_add2head() {
 	$wpdtreeopt = get_option('wp_dtree_options');
 
-	$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-3.0/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&amp;eff=".$wpdtreeopt['effopt']['efftype']."\" language=\"javascript\"></script>\n";
-	$cd .= "<link rel=\"stylesheet\" href=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-3.0/style.php?fontsize=".$wpdtreeopt['cssopt']['fontsize']."&amp;mfontcolor=".$wpdtreeopt['cssopt']['mfontcolor']."&amp;lfontcolor=".$wpdtreeopt['cssopt']['lfontcolor']."&amp;lfontdecor=".$wpdtreeopt['cssopt']['lfontdecor']."&amp;hfontcolor=".$wpdtreeopt['cssopt']['hfontcolor']."&amp;hfontdecor=".$wpdtreeopt['cssopt']['hfontdecor']."\" type=\"text/css\" media=\"screen\" />\n";
+	$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&amp;eff=".$wpdtreeopt['effopt']['efftype']."\" language=\"javascript\"></script>\n";
+	$cd .= "<link rel=\"stylesheet\" href=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/style.php?fontsize=".$wpdtreeopt['cssopt']['fontsize']."&amp;mfontcolor=".$wpdtreeopt['cssopt']['mfontcolor']."&amp;lfontcolor=".$wpdtreeopt['cssopt']['lfontcolor']."&amp;lfontdecor=".$wpdtreeopt['cssopt']['lfontdecor']."&amp;hfontcolor=".$wpdtreeopt['cssopt']['hfontcolor']."&amp;hfontdecor=".$wpdtreeopt['cssopt']['hfontdecor']."\" type=\"text/css\" media=\"screen\" />\n";
 	echo $cd;
 }
 
