@@ -6,19 +6,17 @@ Requires at least: 2.0.2
 Tested up to: 2.2.3
 Stable tag: trunk
 
-Generates a JS navigation tree for your blog, with support for scriptaculous effects. Version 3.0 implements caching - reducing loads significantly. 
+Turns your sidebar into a very convenient, "dynamic" navigation tree. Supports scriptaculous effects.
 
 == Description ==
 
-This plugin was created by [Christopher Hwang](http://www.silpstream.com/blog/) to generate smooth JavaScript navigation trees for your archives. It's a WP adaption of [Geir Landros's dTree](http://www.destroydrop.com/javascripts/tree/).
+This plugin can generate navigation trees for your posts, pages and/or categories. The archive tree (posts) can be displayed with monthly or yearly nodes. The category tree can be displayed with or without their posts.
 
-It supports navigation through a yearly or a monthly tree, and you can also have trees for your categories and pages. The category tree can be displayed with or without their posts.
+Scriptaculous support is built in for cool presentation effects. It is optional and can be controlled through the admin interface (Presentation -> WP-dTree). If you choose to activate this setting, you'll need to [download WP-Scriptaculous](http://www.silpstream.com/blog/wp-scriptaculous/).
 
-Scriptaculous support is built in for cool presentation effects. It is optional and can be controlled through in the admin interface (Presentation -> WP-dTree). If you choose to activate this setting, you'll need to [download WP-Scriptaculous](http://www.silpstream.com/blog/wp-scriptaculous/).
+wp-dTree was originaly created by [Christopher Hwang](http://www.silpstream.com/blog/). It's a WP adaption of [Geir Landros's dTree](http://www.destroydrop.com/javascripts/tree/). Version 3.0 is a fork (since Mr. Hwang is MIA) by Ulf Benjaminsson, aimed at reducing the excessive database querying when running wp-dTree. 
 
-Version 3.0 is a fork by Ulf Benjaminsson, aimed at reducing the excessive database querying when running wp-dTree. Instead of creating the trees on every visit, 3.0 employs caching and updates the trees only when posts/pages or categories are altered.
-
-The result is a tremendous load reduction from previous versions; one site I tested (~360 posts) went from 411 to 18 queries (!) to display the main page.
+Instead of creating the trees on every visit, 3.0 employs caching and updates the trees only when posts/pages or categories are altered. The result is a tremendous load reduction from previous versions; one site I tested (~360 posts) went from 411 to 18 queries (!) to display the main page.
 
 
 == Installation ==
