@@ -10,15 +10,15 @@ Generates a JS navigation tree for your blog, with support for scriptaculous eff
 
 == Description ==
 
-This plugin was created by Christopher Hwang to generate smooth JavaScript navigation trees for your archives. It uses the JS engine dTree that was created by Geir Landrö at http://www.destroydrop.com/javascripts/tree/.
+This plugin was created by [Christopher Hwang](http://www.silpstream.com/blog/) to generate smooth JavaScript navigation trees for your archives. It's a WP adaption of [Geir Landros's dTree](http://www.destroydrop.com/javascripts/tree/).
 
 It supports navigation through a yearly or a monthly tree, and you can also have trees for your categories and pages. The category tree can be displayed with or without their posts.
 
-Scriptaculous support is built in for cool presentation effects. It is optional and can be controlled through in the admin interface (Presentation -> WP-dTree). If you choose to activate this setting, you'll need to download WP-Scriptaculous from http://www.silpstream.com/blog/.
+Scriptaculous support is built in for cool presentation effects. It is optional and can be controlled through in the admin interface (Presentation -> WP-dTree). If you choose to activate this setting, you'll need to [download WP-Scriptaculous](http://www.silpstream.com/blog/wp-scriptaculous/).
 
 Version 3.0 is a fork by Ulf Benjaminsson, aimed at reducing the excessive database querying when running wp-dTree. Instead of creating the trees on every visit, 3.0 employs caching and updates the trees only when posts/pages or categories are altered.
 
-The result is a tremendous load reduction from previous versions; one site I tested on (~360 posts) went from 411 to 18 queries (!) to display the main page.
+The result is a tremendous load reduction from previous versions; one site I tested (~360 posts) went from 411 to 18 queries (!) to display the main page.
 
 
 == Installation ==
@@ -88,7 +88,7 @@ All trees can be displayed at the same time if you like. Just add the relevant c
 
 = Can I change the images used by wp-dTree? =
 
-The images used are all stored in the 'wp-dtree/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same if not you will break the script.
+The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same, or you'll break the script.
 
 == Screenshots ==
 
@@ -96,8 +96,8 @@ The images used are all stored in the 'wp-dtree/dtree-img/' directory. You can c
 2. The admin configuration screen.
 
 == Other Notes ==
-Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com)
-3.0 fork by Ulf Benjaminsson (ulf at ulfben dot com)
+Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
+3.0 fork by Ulf Benjaminsson (ulf at ulfben dot com).
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
