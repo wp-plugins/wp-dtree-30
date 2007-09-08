@@ -21,7 +21,7 @@ Instead of creating the trees on every visit, 3.0 employs caching and updates th
 
 == Installation ==
 
-1. Extract the files and transfer the 'wp-dtree-3.0' folder to the `/wp-content/plugins/` directory
+1. Extract the files and transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Go to the 'WP-dTree' option menu under 'Presentation' and set your preferences.
 1. Go to the template file that you want the archives to show on and copy paste the relevant code:
