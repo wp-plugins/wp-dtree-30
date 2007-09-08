@@ -1,7 +1,7 @@
 === wp-dTree 3.0 ===
 Contributors: Christopher Hwang, Ulf Benjaminssson
 Donate link: https://www.fsf.org/associate/support_freedom
-Tags: archive, navigation, dynamic, dtree, tree
+Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.0.2
 Tested up to: 2.2.3
 Stable tag: trunk
