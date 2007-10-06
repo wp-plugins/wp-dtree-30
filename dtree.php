@@ -179,8 +179,8 @@ dTree.prototype.addNode = function(pNode) {
 };
 
 // Creates the node icon, url and text
-dTree.prototype.node = function(node, nodeId) {
-	var str = '<div class="dTreeNode">' + this.indent(node, nodeId);
+dTree.prototype.node = function(node, nodeId) {	
+	var str = '<div class="dTreeNode">' + this.indent(node, nodeId);	
 	if (this.config.useIcons) {
 		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
 		if (!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
@@ -204,7 +204,11 @@ dTree.prototype.node = function(node, nodeId) {
 		if (node.title) str += ' title="' + node.title + '"';
 		str += ' class="node">';
 	}
-	str += node.name;
+	//the root node name is illogical - we have titles in the sidebar.
+	if(this.root.id != node.pid)
+	{
+		str += node.name;
+	}
 	if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';
 	str += '</div>';
 	if (node._hc) {

@@ -7,16 +7,16 @@ global $wpdb;
 $wp_dtree_cache = $wpdb->prefix . "dtree_cache";
 
 function silpstream_wp_dtree_install_cache()
-{		
+{	
 	global $wpdb, $wp_dtree_cache;  
-	
+	$wpdb->show_errors();	
 	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache)  
 	{     
 			$sql = "CREATE TABLE " . $wp_dtree_cache . "(   
 			id mediumint(9) DEFAULT '0' NOT NULL,	  
 			archives_arr MEDIUMTEXT,
-			categories_arr TEXT,	
-			pages_arr TEXT,
+			categories_arr MEDIUMTEXT,	
+			pages_arr MEDIUMTEXT,
 			UNIQUE KEY id (id)	  
 			);";
 		
@@ -35,31 +35,46 @@ function silpstream_wp_dtree_install_cache()
 	}
 	else
 	{
-		wp_dtree_update_cache();
-	} 	
+		/*categories_arr and pages_arr were of type "text" in previous versions. 
+		That type is too small for our purpose so we have to re-install the table 
+		if these fields are found (ie; use didn't disable plugin before updating.)*/
+		$tableinfo = $wpdb->get_results("DESCRIBE " .$wp_dtree_cache);		
+		foreach($tableinfo as $row) {		
+			if(strtolower($row->Field) == "text") { 
+				if(silpstream_wp_dtree_uninstall_cache()){
+					silpstream_wp_dtree_install_cache();
+				} else {
+					wp_die( __("wp-dtree-3.0: Unable to DROP TABLE $wp_dtree_cache.<br> Disable the plugin, drop the table manually and then install the plugin again."));
+				}
+			}
+		}		
+		wp_dtree_update_cache();			
+	}
+	
 }
 
 function silpstream_wp_dtree_uninstall_cache()
-{	
+{			
 	global $wpdb, $wp_dtree_cache;   
 	$wpdb->show_errors();	
-	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache)  { return; }
+	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache)  { return false; }
 	else {  $wpdb->query("DROP TABLE " . $wp_dtree_cache); }
+	return true;
 }
 
 function wp_dtree_update_cache()
-{
-	global $wpdb, $wp_dtree_cache; 
-	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_table();} 	
-	wp_dtree_update_categories_arr();
+{	
+	global $wpdb, $wp_dtree_cache; 			
+	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_table();} 		
 	wp_dtree_update_pages_arr();
 	wp_dtree_update_archives_arr();	
+	wp_dtree_update_categories_arr();
 }
 
 function wp_dtree_update_categories_arr()
 {
 	global $wpdb, $wp_dtree_cache;   	
-	$catresults = base64_encode( serialize(silpstream_wp_dtree_get_categories_arr() )) ;      
+	$catresults = base64_encode( serialize(silpstream_wp_dtree_get_categories_arr() ));      
 	$update = "UPDATE " . $wp_dtree_cache . " SET categories_arr='".$catresults."' WHERE id=0";
 	$wpdb->query( $update );
 }

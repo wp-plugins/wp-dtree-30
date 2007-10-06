@@ -1,9 +1,9 @@
-=== wp-dTree 3.0 ===
+=== wp-dTree 3.1 ===
 Contributors: Christopher Hwang, ulfben
 Donate link: https://www.fsf.org/associate/support_freedom
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.0.2
-Tested up to: 2.2.3
+Tested up to: 2.3
 Stable tag: trunk
 
 Turns your sidebar into a very convenient, "dynamic" navigation tree. Supports scriptaculous effects.
@@ -18,13 +18,21 @@ wp-dTree was originaly created by [Christopher Hwang](http://www.silpstream.com/
 
 Instead of creating the trees on every visit, 3.0 employs caching and updates the trees only when posts/pages or categories are altered. The result is a tremendous load reduction from previous versions; one site I tested (~360 posts) went from 411 to 18 queries (!) to display the main page.
 
+**Changes in v3.1:**
+
+1. Updated to comply with WordPress 2.3's new taxonomy tables for categories. (should be backwards compatible)
+1. Widgetized! You no longer need to edit your sidebar manually.
+
 
 == Installation ==
+
+Make sure to disable and remove any previous installation of wp-dtree-30 first!
 
 1. Extract the files and transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Go to the 'WP-dTree' option menu under 'Presentation' and set your preferences.
-1. Go to the template file that you want the archives to show on and copy paste the relevant code:
+1. Go to 'Presentation' -> 'Widgets' and drag-n-drop WP-dTree Archives / Categories / Pages to the relevant section of your sidebar. 
+1. If you think that widgets are lame: go to the template file that you want the archives to show on and copy paste the relevant code:
 
 Displaying archives
 ---------
@@ -80,7 +88,6 @@ Displaying pages:
 		</ul>
 	</li>
 
-All trees can be displayed at the same time if you like. Just add the relevant code in to your page.
 
 == Frequently Asked Questions ==
 
