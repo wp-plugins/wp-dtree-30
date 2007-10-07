@@ -65,7 +65,7 @@ function silpstream_wp_dtree_uninstall_cache()
 function wp_dtree_update_cache()
 {	
 	global $wpdb, $wp_dtree_cache; 			
-	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_table();} 		
+	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_cache();} 		
 	wp_dtree_update_pages_arr();
 	wp_dtree_update_archives_arr();	
 	wp_dtree_update_categories_arr();
@@ -90,7 +90,7 @@ function wp_dtree_update_pages_arr()
 function wp_dtree_update_archives_arr($post_ID = -1)
 {
 	global $wpdb, $wp_dtree_cache;   
-	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_table();} 	
+	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_cache();} 	
 	if($post_ID > 0)
 	{
 		/*since delete_post is hooked _prior_ to deleting the post, we add the ID of the (to be) deleted post to our exclude list.*/		
