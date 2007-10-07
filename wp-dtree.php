@@ -83,15 +83,24 @@
 	require_once("wp-dtree_gen-functions.php");
 	require_once("wp-dtree_cache.php"); 
 	
+	//don't know for sure when these were added to WP, so let's test for them.
+	if(function_exists('register_activation_hook') && function_exists('register_deactivation_hook')) {	
+		register_activation_hook(__FILE__, 'silpstream_wp_dtree_set_options');
+		register_activation_hook(__FILE__, 'silpstream_wp_dtree_install_cache');
+		register_deactivation_hook(__FILE__, 'silpstream_wp_dtree_delete_options');
+		register_deactivation_hook(__FILE__, 'silpstream_wp_dtree_uninstall_cache');
+	} else {			
+		add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_set_options', 5);
+		add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
+		add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_delete_options', 5);
+		add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_uninstall_cache', 10); 
+	}
+		
 	add_action('wp_head', 'silpstream_wp_dtree_add2head');
-	add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_set_options', 5);
-	add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
-	add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_delete_options', 5);
-	add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_uninstall_cache', 10); 
 	add_action('admin_menu', 'silpstream_wp_dtree_add_option_page');
-	add_action('plugins_loaded', 'init_wp_dtree_widget_goodness');	
+	add_action('plugins_loaded', 'init_wp_dtree_widget_goodness');	//init widgets after the plugin has loaded.
 	
-	add_action('delete_post', 'wp_dtree_update_archives_arr');
+	add_action('delete_post', 'wp_dtree_update_archives_arr'); //called specifically so we can add the deleted post to our exlclude list.
 	add_action('delete_category', 'wp_dtree_update_cache');
 	add_action('publish_post', 'wp_dtree_update_cache');
 	add_action('publish_page', 'wp_dtree_update_cache');
