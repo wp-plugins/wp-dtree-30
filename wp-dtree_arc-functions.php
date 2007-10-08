@@ -34,10 +34,14 @@ function silpstream_wp_dtree_get_archives_arr() {
 		}
 	}
 
+	$checkPostType = " AND post_type = 'post' OR post_type = 'page' "; 
+	
 	$arcresults = $wpdb->get_results("SELECT DISTINCT YEAR(post_date) AS `year`, MONTH(post_date) AS `month`, count(ID) as posts"
 							. " FROM ".$wpdb->posts
 							. " WHERE post_date < '".$now."'"
-							. " AND post_status = 'publish'".$postexclusions
+							. " AND post_status = 'publish'"
+							.$postexclusions
+							.$checkPostType
 							. " GROUP BY YEAR(post_date), MONTH(post_date)"
 							. " ORDER BY post_date DESC");
 
@@ -72,7 +76,9 @@ function silpstream_wp_dtree_get_archives_arr() {
 											. " FROM ".$wpdb->posts
 											. " WHERE post_date > '".$startmonth."'"
 											. " AND post_date < '".$endmonth."'"
-											. " AND post_status = 'publish'".$postexclusions
+											. " AND post_status = 'publish'"
+											.$postexclusions
+											.$checkPostType
 											. " ORDER BY post_date DESC");
 
 				if ( $postresults ) {

@@ -51,19 +51,32 @@ function silpstream_wp_dtree_create($results, $treetype) {
 	}
 }
 
+/*
+There are server setups where $_SERVER['SERVER_NAME'] has nothing to do with the URI of the resource a user is looking for. 
+To deal with those special cases I added the explode-fix after the first comparison. What is does is simply strip out
+the entire domain-part of the URL. Since I don't trust it entirely I've left the original checks intact.
+
+The comments serve to illustrate such a special case.
+*/	
 function silpstream_wp_compare_to_uri($inuri) {
 	$ruri = $_SERVER['REQUEST_URI'];        
-	$server_url = "http://".$_SERVER['SERVER_NAME'];	
+	$server_url = "http://".$_SERVER['SERVER_NAME']; // http://phpbb3.gaurangapada.com
 	$inuri = str_replace($server_url, "", $inuri);
 	
-	$inuri = trailingslashit($inuri); //this adds a trailing slash to the query, so for a proper compare
-	$ruri = trailingslashit($ruri); //we've got to add one to ruri to.
-	
+	$inuri = trailingslashit($inuri); // http://nitaai.com/blog/index.php/2007/09/24/nitaaicom-portal-with-no-pageload/ 
+	$ruri = trailingslashit($ruri); // 					  /blog/index.php/2007/09/24/nitaaicom-portal-with-no-pageload/ 
 	if ( $ruri == $inuri ) {
 		return true;
-	} else {
-		return false;
-	}
+	} 
+	
+	// split the URL four times at the character "/". The third part should be "domain.com", and thus the fourth is the "domain less" part of the URI
+	$pathparts = explode("/",$inuri, 4);  	
+	//echo $pathparts[3]; // blog/index.php/2007/09/24/nitaaicom-portal-with-no-pageload/
+	
+	if ( $ruri == "/".$pathparts[3] ) {	
+		return true; 
+	} 	
+	return false;	
 }
 
 function silpstream_truncate_string($str, $len='16') {

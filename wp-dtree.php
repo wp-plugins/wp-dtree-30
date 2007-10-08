@@ -12,7 +12,7 @@
 	Changes in v3.1 (Ulf Benjaminsson) (ulf at ulfben.com)
 	1. Updated to comply with WordPress 2.3's new taxonomy tables for categories. (should be backwards compatible)
 	2. Widgetized! You'll no longer need to edit your sidebar manually
-	3.
+	3. Fixed "open to selection" and "highlight selection". 
 	
 	Changes in v3.0 (Ulf Benjaminsson) (ulf at ulfben.com)
 	1. Added chaching to reduce the database load.

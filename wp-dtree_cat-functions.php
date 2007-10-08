@@ -43,13 +43,15 @@ function silpstream_wp_dtree_get_categories_arr() {
 			}
 		}		
 		
+		$checkPostType = " AND ".$wpdb->posts.".post_type = 'post' OR ".$wpdb->posts.".post_type = 'page' "; 
+		
 		if ((float)$wp_version < 2.3)  {
 			$query = "SELECT ".$wpdb->posts.".ID AS `id`, ".$wpdb->posts.".post_title AS `title`, ".$wpdb->post2cat.".category_id AS `catid`"
 					." FROM ".$wpdb->posts.", ".$wpdb->post2cat
 					." WHERE ".$wpdb->post2cat.".post_id = ".$wpdb->posts.".ID"
 					." AND ".$wpdb->posts.".post_status = 'publish'"
 					.$postexclusions
-					//. " AND ".$wpdb->posts.".post_type != 'page'" //hide pages
+					.$checkPostType
 					." ORDER BY ".$wpdb->posts.".post_date DESC";
 		} else {			
 			$query = "SELECT ".$wpdb->posts.".ID AS 'id', ".$wpdb->posts.".post_title AS 'title', ".$wpdb->terms.".term_id AS 'catid'" 
@@ -58,9 +60,9 @@ function silpstream_wp_dtree_get_categories_arr() {
 					." AND ".$wpdb->term_taxonomy.".taxonomy = 'category' "
 					." AND ".$wpdb->term_relationships.".term_taxonomy_id = ".$wpdb->term_taxonomy.".term_taxonomy_id"
 					." AND ".$wpdb->term_taxonomy.".term_id = ".$wpdb->terms.".term_id"
-					." AND ".$wpdb->posts.".post_status = 'publish'"
-					//. " AND ".$wpdb->posts.".post_type != 'page'" //hide pages
+					." AND ".$wpdb->posts.".post_status = 'publish'"					
 					.$postexclusions
+					.$checkPostType
 					." ORDER BY ".$wpdb->posts.".post_date DESC";	
 		}
 		$postresults  = (array)$wpdb->get_results($query);		

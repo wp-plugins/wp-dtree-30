@@ -51,17 +51,17 @@ if ( !isset($_GET['witheff']) ) {
 if ( 'slide' == $effStyle ) {
 	$effCall_o = "SlideDown";
 	$effCall_c = "SlideUp";
-	$effParam = ", {durantion:1}";
+	$effParam = ", {duration:0.5}";
 }
 elseif ( 'blind' == $effStyle ) {
 	$effCall_o = "BlindDown";
 	$effCall_c = "BlindUp";
-	$effParam = ", {durantion:1}";
+	$effParam = ", {duration:0.5}"; //fixed typo. Perhaps add an option to the options page?
 }
 elseif ( 'appear' == $effStyle ) {
 	$effCall_o = "Appear";
 	$effCall_c = "Fade";
-	$effParam = ", {durantion:1}";
+	$effParam = ", {duration:0.5}";
 }
 elseif ( 'grow' == $effStyle ) {
 	$effCall_o = "Grow";
