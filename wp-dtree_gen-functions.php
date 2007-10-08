@@ -33,29 +33,33 @@ function silpstream_wp_dtree_create($results, $treetype) {
 		echo $treetype . ".config.useSelection=" . $useSelection . ";\n";
 		echo $treetype . ".add(" . $idtranspose[$treetype] . ",-1,'" . $topnode . "');\n";
 
-		$curid = 0;
+		$curid = -1;
 
 		foreach ( $results as $result ) {
 			echo $treetype . ".add(" . $result['id'] . "," . $result['pid'] . ",'" . silpstream_truncate_string(addslashes(strip_tags($result['name'])), $truncate) . "','" . $result['url'] . "','" . addslashes(strip_tags($result['title'])) . "');\n";
-			if ( silpstream_wp_compare_to_uri($result['url']) ) {
-				$curid = $result['id'];
+			if ( silpstream_wp_compare_to_uri($result['url']) && $opentosel ) {
+				$curid = $result['id'];				
 			}
 		}
 		echo "document.write(" . $treetype . ");\n";
-		if ( $curid > 0 && $opentosel ) {
+		if ( $curid >= 0 && $opentosel == 1 ) {
 			echo $treetype . ".openTo(" . $curid . ", true);\n";
 		}
 		echo "//-->\n";
 		echo "</script>\n";
+		print_r("Open to selection: " . $opentosel . " curid: " . $curid);
 		echo "</div>\n";
 	}
 }
 
 function silpstream_wp_compare_to_uri($inuri) {
 	$ruri = $_SERVER['REQUEST_URI'];        
-	$server_url = "http://".$_SERVER['SERVER_NAME'];
+	$server_url = "http://".$_SERVER['SERVER_NAME'];	
 	$inuri = str_replace($server_url, "", $inuri);
-	$inuri = trailingslashit($inuri);
+	
+	$inuri = trailingslashit($inuri); //this adds a trailing slash to the query, so for a proper compare
+	$ruri = trailingslashit($ruri); //we've got to add one to ruri to.
+	
 	if ( $ruri == $inuri ) {
 		return true;
 	} else {

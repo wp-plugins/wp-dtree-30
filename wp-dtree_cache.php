@@ -87,25 +87,28 @@ function wp_dtree_update_pages_arr()
 	$wpdb->query( $update );
 }
 
+/*post_id is set if this function is called for delete_post*/
 function wp_dtree_update_archives_arr($post_ID = -1)
 {
 	global $wpdb, $wp_dtree_cache;   
-	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {silpstream_wp_dtree_install_cache();} 	
-	if($post_ID > 0)
-	{
-		/*since delete_post is hooked _prior_ to deleting the post, we add the ID of the (to be) deleted post to our exclude list.*/		
+	if($wpdb->get_var("show tables like '$wp_dtree_cache'") != $wp_dtree_cache) {
+		silpstream_wp_dtree_install_cache();
+	} 	
+	
+	/*since delete_post is hooked _prior_ to deleting the post we have to hide it from the tree
+		thus we add the ID of the (to be) deleted post to our exclude list.*/		
+	if($post_ID > 0) {		
 		$wpdtreeopt = get_option('wp_dtree_options');
-		$excluded = $wpdtreeopt['genopt']['exclude'];
-		if(empty($excluded)) 
-		{
-			$excluded = $post_ID;
-		}
-		else 
-		{
+		$excluded = $wpdtreeopt['genopt']['exclude']; 
+		if(empty($excluded))  {
+			$excluded = $post_ID; 
+		} else {
 			$excluded = $excluded . "," . $post_ID;
 		}
 		$wpdtreeopt['genopt']['exclude'] = $excluded;
 		update_option('wp_dtree_options', $wpdtreeopt);
+		wp_dtree_update_categories_arr(); //we must update categories as well, or the deleted post will still be visible there.
+		wp_dtree_update_pages_arr(); //for good measure...
 	}	
 	$arcresults = base64_encode( serialize(silpstream_wp_dtree_get_archives_arr() )) ;      
 	$update = "UPDATE " . $wp_dtree_cache . " SET archives_arr='".$arcresults."' WHERE id=0";

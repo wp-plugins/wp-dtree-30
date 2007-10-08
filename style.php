@@ -70,6 +70,7 @@ $sfontdecor = $hfontdecor;
 	color: #<?php echo $hfontcolor; ?>;
 	text-decoration: <?php echo $hfontdecor; ?>;
 }
+/*If you want some cool highlighting on the active node, you can change it here. Default is a simple underline.*/
 #dtreecat a.nodeSel, #dtreearc a.nodeSel, #dtreepge a.nodeSel {
 	text-decoration: underline;
 }
