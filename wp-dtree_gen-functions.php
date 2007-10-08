@@ -47,7 +47,6 @@ function silpstream_wp_dtree_create($results, $treetype) {
 		}
 		echo "//-->\n";
 		echo "</script>\n";
-		print_r("Open to selection: " . $opentosel . " curid: " . $curid);
 		echo "</div>\n";
 	}
 }
