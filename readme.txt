@@ -22,6 +22,7 @@ Instead of creating the trees on every visit, 3.0 employs caching and updates th
 
 1. Updated to comply with WordPress 2.3's new taxonomy tables for categories. (should be backwards compatible)
 1. Widgetized! You no longer need to edit your sidebar manually.
+1. Fixed "Open To Selection"-option.
 
 
 == Installation ==
