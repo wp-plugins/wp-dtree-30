@@ -43,7 +43,7 @@ function silpstream_wp_dtree_get_categories_arr() {
 			}
 		}		
 		
-		$checkPostType = " AND ".$wpdb->posts.".post_type = 'post' OR ".$wpdb->posts.".post_type = 'page' "; 
+		$checkPostType = " AND ".$wpdb->posts.".post_type = 'post'"; //OR ".$wpdb->posts.".post_type = 'page'  
 		
 		if ((float)$wp_version < 2.3)  {
 			$query = "SELECT ".$wpdb->posts.".ID AS `id`, ".$wpdb->posts.".post_title AS `title`, ".$wpdb->post2cat.".category_id AS `catid`"
