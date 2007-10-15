@@ -1,21 +1,37 @@
 <?php
 	/*
-	Plugin Name: WP-dTree 3.0
+	Plugin Name: WP-dTree 3.2
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
-	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, aimed at reducing the excessive database querying when running on larger blogs.
-	Version: 3.1
+	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance, adding features and overall keeping the plugin up-to-date.
+	Version: 3.2
 	Author: Ulf Benjaminsson
 	
-	WP-dTree - Creates a JS navigation tree for your blog archives
-	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)
+	WP-dTree - Creates a JS navigation tree for your blog archives	
+	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
+	Copyright (C) 2006 Christopher Hwang (email: chris at silpstream.com)	
 	
-	Changes in v3.1 (Ulf Benjaminsson) (ulf at ulfben.com)
+	This is a plugin created for Wordpress in order to generate JS navigation trees
+	for your archives. It uses the JS engine dTree that was created by Geir Landrö
+	at http://www.destroydrop.com/javascripts/tree/.
+	
+	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
+	a plugin. He handled all development of wp-dtree up to version 2.2.
+
+	Changes in v3.2 (ulfben - 20071015)
+	1. Support for WP's bundled scriptacolous library - no need to download wp-scriptacolous plugin for cool effects.	
+	2. Entirely new cache structure reducing cache size with ~33% compared to previous implementation.	 
+	3. New option: Show RSS icon for categories
+	4. New option: Show post count for categories
+	5. New option: Effect duration
+	Regressions: "open to selection" is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
+
+	Changes in v3.1 (ulfben - 20071006)
 	1. Updated to comply with WordPress 2.3's new taxonomy tables for categories. (should be backwards compatible)
 	2. Widgetized! You'll no longer need to edit your sidebar manually
-	3. Fixed "open to selection" and "highlight selection". 
-	
-	Changes in v3.0 (Ulf Benjaminsson) (ulf at ulfben.com)
-	1. Added chaching to reduce the database load.
+	3. Fixed "open to selection" and "highlight selection".
+		
+	Changes in v3.0 (ulfben)
+	1. Added caching to reduce the database load.
 	
 	Changes in v2.2
 	1. Added support for generating page trees
@@ -36,45 +52,6 @@
 	2. Category based menu added
 	3. Option menu added to admin panel
 	4. Support for dTree options was built in
-	
-	
-	Notes on version 3.0: 
-	I've hacked together wp-dtree_cache.php to let dtree save the tree every time
-	we publish or delete a post/page or create/remove a category. The cache will also 
-	update whenever you edit the plugin settings. This is a tremendous load reduction from
-	previous versions where wp-dtree would build the tree (query the database for every post you've 
-	ever made), on every visit... 
-	//Ulf
-	
-	This is a plugin created for Wordpress in order to generate JS navigation trees
-	for your archives. It uses the JS engine dTree that was created by Geir Landrö
-	at http://www.destroydrop.com/javascripts/tree/.
-	
-	I wrapped the wordpress APIs around it so that we can use it as a plugin. It
-	now supports display of your archives based on either a yearly or monthly tree,
-	and also enables you to display a tree of your categories. The category tree can
-	be displayed with or without their posts. For v2.2 support for page trees was added.
-	
-	As of v2.0 scriptaculous suppost was also built in. This is optional and can be
-	controlled through the option menu. If you choose to activate this setting, you'll
-	need to download WP-Scriptaculous from http://www.silpstream.com/blog/.
-	
-	Also new in v2.0 is the ability to control the dTree options. These can be found in
-	the option menu along with the ability to change the CSS.
-	
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-	
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-	
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	*/
 	
 	require_once("wp-dtree_arc-functions.php");
@@ -82,38 +59,51 @@
 	require_once("wp-dtree_pge-functions.php");
 	require_once("wp-dtree_gen-functions.php");
 	require_once("wp-dtree_cache.php"); 
-	
-	//don't know for sure when these were added to WP, so let's test for them.
-	if(function_exists('register_activation_hook') && function_exists('register_deactivation_hook')) {	
-		register_activation_hook(__FILE__, 'silpstream_wp_dtree_set_options');
-		register_activation_hook(__FILE__, 'silpstream_wp_dtree_install_cache');
-		register_deactivation_hook(__FILE__, 'silpstream_wp_dtree_delete_options');
-		register_deactivation_hook(__FILE__, 'silpstream_wp_dtree_uninstall_cache');
-	} else {			
-		add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_set_options', 5);
-		add_action('activate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
-		add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_delete_options', 5);
-		add_action('deactivate_wp-dtree-30/wp-dtree.php','silpstream_wp_dtree_uninstall_cache', 10); 
-	}
 		
-	add_action('wp_head', 'silpstream_wp_dtree_add2head');
-	add_action('admin_menu', 'silpstream_wp_dtree_add_option_page');
-	add_action('plugins_loaded', 'init_wp_dtree_widget_goodness');	//init widgets after the plugin has loaded.
-	
-	add_action('delete_post', 'wp_dtree_update_archives_arr'); //called specifically so we can add the deleted post to our exlclude list.
-	add_action('delete_category', 'wp_dtree_update_cache');
-	add_action('publish_post', 'wp_dtree_update_cache');
-	add_action('publish_page', 'wp_dtree_update_cache');
+	if(function_exists('register_activation_hook') && function_exists('register_deactivation_hook')) {	
+		register_activation_hook(__FILE__, 'wp_dtree_set_options');
+		register_activation_hook(__FILE__, 'wp_dtree_install_cache');
+		register_deactivation_hook(__FILE__, 'wp_dtree_delete_options');
+		register_deactivation_hook(__FILE__, 'wp_dtree_uninstall_cache');
+	} else {			
+		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_set_options', 5);
+		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
+		add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_delete_options', 5);
+		add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_uninstall_cache', 10); 
+	}
+	add_action('init', 				'wp_dtree_load_javascripts');		//load scriptacolous if we're using effects.
+	add_action('plugins_loaded', 	'wp_dtree_init_widgets');			//init widgets after the plugin has loaded.	
+	add_action('wp_head', 			'wp_dtree_add2head');
+	add_action('admin_menu', 		'wp_dtree_add_option_page');	
+	add_action('delete_post', 		'wp_dtree_update_archives'); 	//called specifically so we can add the deleted post to our exlclude list.
+	add_action('delete_category', 	'wp_dtree_update_cache');
+	add_action('publish_post', 		'wp_dtree_update_cache');
+	add_action('publish_page', 		'wp_dtree_update_cache');	
+	add_action('update_option_permalink_structure', 'wp_dtree_update_cache'); //to get the right RSS, links and so on.
 	
 	//Declare some GLOBALS
-	$idtranspose = array('arc' => 0,
-						'arcpost' => 5000,
-						'cat' => 10000,
-						'catpost' => 15000,
-						'pge' => 20000,
-						'pgepost' => 25000);
+	$idtranspose = array(
+		'arc' => 0,
+		'arcpost' => 10000,
+		'cat' => 20000,
+		'catpost' => 30000,
+		'pge' => 40000,
+		'pgepost' => 50000
+	);
 	
-	function init_wp_dtree_widget_goodness()
+	
+	function wp_dtree_load_javascripts() {	
+		if ( !function_exists('wp_enqueue_script') || is_admin() ) {
+			return;
+		}
+		$wpdtreeopt = get_option('wp_dtree_options');
+		if($wpdtreeopt['effopt']['effon'])	{
+			wp_enqueue_script('prototype');
+			wp_enqueue_script('scriptaculous-effects');
+		}	
+	}
+	
+	function wp_dtree_init_widgets()
 	{
 		if ( !function_exists('register_sidebar_widget') ) {
 			return;	
@@ -125,8 +115,8 @@
 	    	
 	        echo $before_widget . "<li>"; 
 	        echo $before_title . $wpdtreeopt['arcopt']['topnode'] . $after_title . "<ul>";
-	        if (function_exists('silpstream_wp_dtree_get_archives')){				
-			    silpstream_wp_dtree_get_archives();
+	        if (function_exists('wp_dtree_get_archives')){				
+			    wp_dtree_get_archives();
 			}else{
 				wp_get_archives('type=monthly'); 
 			} 
@@ -139,8 +129,8 @@
 	    	
 	        echo $before_widget; 
 	        echo $before_title . $wpdtreeopt['catopt']['topnode'] . $after_title . "<ul>";
-			if (function_exists('silpstream_wp_dtree_get_categories')){
-				silpstream_wp_dtree_get_categories();
+			if (function_exists('wp_dtree_get_categories')){
+				wp_dtree_get_categories();
 			} else {
 				wp_list_categories('show_count=1');
 			} 
@@ -153,8 +143,8 @@
 	    	
 	        echo $before_widget; 
 	        echo $before_title . $wpdtreeopt['pgeopt']['topnode'] . $after_title . "<ul>";;
-	        if (function_exists('silpstream_wp_dtree_get_pages')) {
-				silpstream_wp_dtree_get_pages();
+	        if (function_exists('wp_dtree_get_pages')) {
+				wp_dtree_get_pages();
 			} else {
 				wp_list_pages();				
 			} 
@@ -166,258 +156,274 @@
 		register_sidebar_widget('WP-dTree Categories', 'widget_wp_dtree_get_categories');
 	}	
 								
-	function silpstream_wp_dtree_add_option_page() {
+	function wp_dtree_add_option_page() {
 		if ( function_exists('add_options_page') ) {
-			 add_submenu_page('themes.php', 'WP-dTree Settings', 'WP-dTree', 8, __FILE__, 'silpstream_wp_dtree_option_page');
+			 add_submenu_page('themes.php', 'WP-dTree Settings', 'WP-dTree', 8, __FILE__, 'wp_dtree_option_page');
 		}
 	}
 	
-	function silpstream_wp_dtree_add2head() {
+	function wp_dtree_add2head() {
 		$wpdtreeopt = get_option('wp_dtree_options');
-	
-		$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&amp;eff=".$wpdtreeopt['effopt']['efftype']."\" language=\"javascript\"></script>\n";
-		$cd .= "<link rel=\"stylesheet\" href=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/style.php?fontsize=".$wpdtreeopt['cssopt']['fontsize']."&amp;mfontcolor=".$wpdtreeopt['cssopt']['mfontcolor']."&amp;lfontcolor=".$wpdtreeopt['cssopt']['lfontcolor']."&amp;lfontdecor=".$wpdtreeopt['cssopt']['lfontdecor']."&amp;hfontcolor=".$wpdtreeopt['cssopt']['hfontcolor']."&amp;hfontdecor=".$wpdtreeopt['cssopt']['hfontdecor']."\" type=\"text/css\" media=\"screen\" />\n";
+		$rssicon = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_orange-10px.png";	//normal
+		$rssicon2 = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_orange-10px-hi.png"; //higlight		
+		$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&eff=".$wpdtreeopt['effopt']['efftype']."&effdur=".$wpdtreeopt['effopt']['duration']."\" language=\"javascript\"></script>\n";
+		$cd .= "<link rel=\"stylesheet\" href=\"" 
+		. get_bloginfo('wpurl') 
+		. "/wp-content/plugins/wp-dtree-30/style.php?"
+		."fontsize=".$wpdtreeopt['cssopt']['fontsize']
+		."&mfontcolor=".$wpdtreeopt['cssopt']['mfontcolor']
+		."&lfontcolor=".$wpdtreeopt['cssopt']['lfontcolor']
+		."&lfontdecor=".$wpdtreeopt['cssopt']['lfontdecor']
+		."&hfontcolor=".$wpdtreeopt['cssopt']['hfontcolor']
+		."&hfontdecor=".$wpdtreeopt['cssopt']['hfontdecor']
+		."&rssgfx=".$rssicon
+		."&rssgfxh=".$rssicon2
+		."\" type=\"text/css\" media=\"screen\" />\n";
 		echo $cd;
 	}
 	
-	function silpstream_wp_dtree_delete_options() {
+	function wp_dtree_delete_options() {
 		delete_option('wp_dtree_options');
 	}
 	
-	function silpstream_wp_dtree_set_options() {
+	function wp_dtree_set_options() {
 		$arcoptions = array(
-												'arctype' => 'monthly',
-												'listpost' => '1',
-												'truncate' => '16',
-												'oclink' => '1',
-												'uselines' => '1',
-												'useicons' => '0',
-												'closelevels' => '0',
-												'folderlinks' => '1',
-												'useselection' => '0',
-												'opentosel' => '0',
-												'topnode' => 'Archives'
-												);
+			'arctype' => 'monthly',
+			'listpost' => '1',
+			'truncate' => '16',
+			'oclink' => '1',
+			'uselines' => '1',
+			'useicons' => '0',
+			'closelevels' => '0',
+			'folderlinks' => '1',
+			'useselection' => '0',
+			'opentosel' => '0',
+			'topnode' => 'Archives'
+		);
 	
 		$catoptions = array(
-												'sortby' => 'ID',
-												'sortorder' => 'ASC',
-												'hideempty' => '0',
-												'exclude' => '',
-												'listpost' => '1',
-												'truncate' => '16',
-												'oclink' => '1',
-												'uselines' => '1',
-												'useicons' => '0',
-												'closelevels' => '0',
-												'folderlinks' => '0',
-												'useselection' => '0',
-												'opentosel' => '0',
-												'topnode' => 'Categories'
-												);
+			'sortby' => 'ID',
+			'sortorder' => 'ASC',
+			'hideempty' => '0',
+			'exclude' => '',
+			'listpost' => '1',
+			'truncate' => '16',
+			'oclink' => '1',
+			'uselines' => '1',
+			'useicons' => '0',
+			'closelevels' => '0',
+			'folderlinks' => '0',
+			'useselection' => '0',
+			'opentosel' => '0',
+			'topnode' => 'Categories',
+			'showrss' => '0',
+			'showcount' => '1'
+		);
 	
 		$pgeoptions = array(
-												'sortby' => 'ID',
-												'sortorder' => 'ASC',
-												'truncate' => '16',
-												'oclink' => '1',
-												'uselines' => '1',
-												'useicons' => '0',
-												'closelevels' => '0',
-												'folderlinks' => '0',
-												'useselection' => '0',
-												'opentosel' => '0',
-												'topnode' => 'Pages'
-												);
+			'sortby' => 'ID',
+			'sortorder' => 'ASC',
+			'truncate' => '16',
+			'oclink' => '1',
+			'uselines' => '1',
+			'useicons' => '0',
+			'closelevels' => '0',
+			'folderlinks' => '0',
+			'useselection' => '0',
+			'opentosel' => '0',
+			'topnode' => 'Pages'
+		);
 	
 		$effoptions = array(
-												'effon' => '0',
-												'efftype' => 'blind'
-												);
+			'effon' => '0',
+			'efftype' => 'blind',
+			'duration' => '0.5'
+		);
 	
 		$cssoptions = array(
-												'fontsize' => '11',
-												'mfontcolor' => '000000',
-												'lfontcolor' => '#06c',
-												'lfontdecor' => 'none',
-												'hfontcolor' => 'CCCCCC',
-												'hfontdecor' => 'underline'
-												);
+			'fontsize' => '11',
+			'mfontcolor' => '000000',
+			'lfontcolor' => '06c',
+			'lfontdecor' => 'none',
+			'hfontcolor' => 'CCCCCC',
+			'hfontdecor' => 'underline'
+		);
 	
 		$genoptions = array(
-												'openlink' => 'open all',
-												'closelink' => 'close all',
-												'exclude' => ''
-												);
+			'openlink' => 'open all',
+			'closelink' => 'close all',
+			'exclude' => ''			
+		);
 	
 		$wpdtreeopt = array(
-												'arcopt' => $arcoptions,
-												'catopt' => $catoptions,
-												'pgeopt' => $pgeoptions,
-												'effopt' => $effoptions,
-												'cssopt' => $cssoptions,
-												'genopt' => $genoptions
-												);
+			'arcopt' => $arcoptions,
+			'catopt' => $catoptions,
+			'pgeopt' => $pgeoptions,
+			'effopt' => $effoptions,
+			'cssopt' => $cssoptions,
+			'genopt' => $genoptions
+		);
 	
 		update_option('wp_dtree_options', $wpdtreeopt);	
 	}
 	
-	function silpstream_wp_dtree_option_page() {
+	function wp_dtree_option_page() {
 		$wpdtreeopt = get_option('wp_dtree_options');
-	
-		if ( isset($_POST['submit']) ) {
-	
-			( !isset($_POST['arctype']) ) ? $arctype = "monthly" : $arctype = $_POST['arctype'] ;
-			( !isset($_POST['alistpost']) ) ? $alistpost = "0" : $alistpost = $_POST['alistpost'] ;
-			( !isset($_POST['atruncate']) ) ? $atruncate = "16" : $atruncate = $_POST['atruncate'] ;
-			( !isset($_POST['aoclink']) ) ? $aoclink = "0" : $aoclink = $_POST['aoclink'] ;
-			( !isset($_POST['auselines']) ) ? $auselines = "0" : $auselines = $_POST['auselines'] ;
-			( !isset($_POST['auseicons']) ) ? $auseicons = "0" : $auseicons = $_POST['auseicons'] ;
-			( !isset($_POST['acloselevels']) ) ? $acloselevels = "0" : $acloselevels = $_POST['acloselevels'] ;
-			( !isset($_POST['afolderlinks']) ) ? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
+		
+		if( isset($_POST['submit']) ) {	
+			( !isset($_POST['arctype']) ) 		? $arctype = "monthly" : $arctype = $_POST['arctype'] ;
+			( !isset($_POST['alistpost']) ) 	? $alistpost = "0" : $alistpost = $_POST['alistpost'] ;
+			( !isset($_POST['atruncate']) ) 	? $atruncate = "16" : $atruncate = $_POST['atruncate'] ;
+			( !isset($_POST['aoclink']) ) 		? $aoclink = "0" : $aoclink = $_POST['aoclink'] ;
+			( !isset($_POST['auselines']) ) 	? $auselines = "0" : $auselines = $_POST['auselines'] ;
+			( !isset($_POST['auseicons']) ) 	? $auseicons = "0" : $auseicons = $_POST['auseicons'] ;
+			( !isset($_POST['acloselevels']) ) 	? $acloselevels = "0" : $acloselevels = $_POST['acloselevels'] ;
+			( !isset($_POST['afolderlinks']) ) 	? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
 			( !isset($_POST['auseselection']) ) ? $auseselection = "0" : $auseselection = $_POST['auseselection'] ;
-			( !isset($_POST['aopentosel']) ) ? $aopentosel = "0" : $aopentosel = $_POST['aopentosel'] ;
-			( !isset($_POST['atopnode']) ) ? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
-	
-			( !isset($_POST['csortby']) ) ? $csortby = "ID" : $csortby = $_POST['csortby'] ;
-			( !isset($_POST['csortorder']) ) ? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
-			( !isset($_POST['chideempty']) ) ? $chideempty = "0" : $chideempty = $_POST['chideempty'] ;
-			( !isset($_POST['cexclude']) ) ? $cexclude = '' : $cexclude = $_POST['cexclude'] ;
-			( !isset($_POST['clistpost']) ) ? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;
-			( !isset($_POST['ctruncate']) ) ? $ctruncate = "16" : $ctruncate = $_POST['ctruncate'] ;
-			( !isset($_POST['coclink']) ) ? $coclink = "0" : $coclink = $_POST['coclink'] ;
-			( !isset($_POST['cuselines']) ) ? $cuselines = "0" : $cuselines = $_POST['cuselines'] ;
-			( !isset($_POST['cuseicons']) ) ? $cuseicons = "0" : $cuseicons = $_POST['cuseicons'] ;
-			( !isset($_POST['ccloselevels']) ) ? $ccloselevels = "0" : $ccloselevels = $_POST['ccloselevels'] ;
-			( !isset($_POST['cfolderlinks']) ) ? $cfolderlinks = "0" : $cfolderlinks = $_POST['cfolderlinks'] ;
+			( !isset($_POST['aopentosel']) )	? $aopentosel = "0" : $aopentosel = $_POST['aopentosel'] ;
+			( !isset($_POST['atopnode']) ) 		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;	
+			( !isset($_POST['csortby']) ) 	 	? $csortby = "ID" : $csortby = $_POST['csortby'] ;
+			( !isset($_POST['csortorder']) ) 	? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
+			( !isset($_POST['chideempty']) ) 	? $chideempty = "0" : $chideempty = $_POST['chideempty'] ;
+			( !isset($_POST['cexclude']) ) 		? $cexclude = '' : $cexclude = $_POST['cexclude'] ;
+			( !isset($_POST['clistpost']) ) 	? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;
+			( !isset($_POST['ctruncate']) ) 	? $ctruncate = "16" : $ctruncate = $_POST['ctruncate'] ;
+			( !isset($_POST['coclink']) ) 		? $coclink = "0" : $coclink = $_POST['coclink'] ;
+			( !isset($_POST['cuselines']) ) 	? $cuselines = "0" : $cuselines = $_POST['cuselines'] ;
+			( !isset($_POST['cuseicons']) ) 	? $cuseicons = "0" : $cuseicons = $_POST['cuseicons'] ;
+			( !isset($_POST['ccloselevels']) ) 	? $ccloselevels = "0" : $ccloselevels = $_POST['ccloselevels'] ;
+			( !isset($_POST['cfolderlinks']) ) 	? $cfolderlinks = "0" : $cfolderlinks = $_POST['cfolderlinks'] ;
 			( !isset($_POST['cuseselection']) ) ? $cuseselection = "0" : $cuseselection = $_POST['cuseselection'] ;
-			( !isset($_POST['copentosel']) ) ? $copentosel = "0" : $copentosel = $_POST['copentosel'] ;
-			( !isset($_POST['ctopnode']) ) ? $ctopnode = "Categories" : $ctopnode = $_POST['ctopnode'] ;
-	
-			( !isset($_POST['psortby']) ) ? $psortby = "ID" : $psortby = $_POST['psortby'] ;
-			( !isset($_POST['psortorder']) ) ? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;
-			( !isset($_POST['ptruncate']) ) ? $ptruncate = "16" : $ptruncate = $_POST['ptruncate'] ;
-			( !isset($_POST['poclink']) ) ? $poclink = "0" : $poclink = $_POST['poclink'] ;
-			( !isset($_POST['puselines']) ) ? $puselines = "0" : $puselines = $_POST['puselines'] ;
-			( !isset($_POST['puseicons']) ) ? $puseicons = "0" : $puseicons = $_POST['puseicons'] ;
-			( !isset($_POST['pcloselevels']) ) ? $pcloselevels = "0" : $pcloselevels = $_POST['pcloselevels'] ;
-			( !isset($_POST['pfolderlinks']) ) ? $pfolderlinks = "0" : $pfolderlinks = $_POST['pfolderlinks'] ;
+			( !isset($_POST['copentosel']) ) 	? $copentosel = "0" : $copentosel = $_POST['copentosel'] ;
+			( !isset($_POST['ctopnode']) ) 		? $ctopnode = "Categories" : $ctopnode = $_POST['ctopnode'] ;			
+			( !isset($_POST['cshowcount']) ) 	? $showcount = "0" : $showcount = $_POST['cshowcount'] ;			
+			( !isset($_POST['showrss']))		? $showrss = "0" : $showrss = $_POST['showrss'];	
+			( !isset($_POST['psortby']) ) 		? $psortby = "ID" : $psortby = $_POST['psortby'] ;
+			( !isset($_POST['psortorder']) ) 	? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;
+			( !isset($_POST['ptruncate']) ) 	? $ptruncate = "16" : $ptruncate = $_POST['ptruncate'] ;
+			( !isset($_POST['poclink']) ) 		? $poclink = "0" : $poclink = $_POST['poclink'] ;
+			( !isset($_POST['puselines']) ) 	? $puselines = "0" : $puselines = $_POST['puselines'] ;
+			( !isset($_POST['puseicons']) ) 	? $puseicons = "0" : $puseicons = $_POST['puseicons'] ;
+			( !isset($_POST['pcloselevels']) ) 	? $pcloselevels = "0" : $pcloselevels = $_POST['pcloselevels'] ;
+			( !isset($_POST['pfolderlinks']) ) 	? $pfolderlinks = "0" : $pfolderlinks = $_POST['pfolderlinks'] ;
 			( !isset($_POST['puseselection']) ) ? $puseselection = "0" : $puseselection = $_POST['puseselection'] ;
-			( !isset($_POST['popentosel']) ) ? $popentosel = "0" : $popentosel = $_POST['popentosel'] ;
-			( !isset($_POST['ptopnode']) ) ? $ptopnode = "Pages" : $ptopnode = $_POST['ptopnode'] ;
-	
-			( !isset($_POST['effon']) ) ? $effon = "0" :  $effon = $_POST['effon'] ;
-			( !isset($_POST['efftype']) ) ? $efftype = "blind" : $efftype = $_POST['efftype'] ;
-	
-			( !isset($_POST['fontsize']) ) ? $fontsize = "11" : $fontsize = $_POST['fontsize'] ;
-			( !isset($_POST['mfontcolor']) ) ? $mfontcolor = "000000" : $mfontcolor = $_POST['mfontcolor'] ;
-			( !isset($_POST['lfontcolor']) ) ? $lfontcolor = "999999" : $lfontcolor = $_POST['lfontcolor'] ;
-			( !isset($_POST['lfontdecor']) ) ? $lfontdecor = "none" : $lfontdecor = $_POST['lfontdecor'] ;
-			( !isset($_POST['hfontcolor']) ) ? $hfontcolor = "CCCCCC" : $hfontcolor = $_POST['hfontcolor'] ;
-			( !isset($_POST['hfontdecor']) ) ? $hfontdecor = "underline" : $hfontdecor = $_POST['hfontdecor'] ;
-	
-			( !isset($_POST['openlink']) ) ? $openlink = "open all" : $openlink = $_POST['openlink'] ;
-			( !isset($_POST['closelink']) ) ? $closelink = "close all" : $closelink = $_POST['closelink'] ;
-			( !isset($_POST['exclude']) ) ? $exclude = '' : $exclude = $_POST['exclude'] ;
+			( !isset($_POST['popentosel']) ) 	? $popentosel = "0" : $popentosel = $_POST['popentosel'] ;
+			( !isset($_POST['ptopnode']) ) 		? $ptopnode = "Pages" : $ptopnode = $_POST['ptopnode'] ;	
+			( !isset($_POST['effon']) ) 		? $effon = "0" :  $effon = $_POST['effon'] ;
+			( !isset($_POST['efftype']) ) 		? $efftype = "blind" : $efftype = $_POST['efftype'] ;
+			( !isset($_POST['duration']) ) 		? $duration = "0.5" : $duration = $_POST['duration'] ;			
+			( !isset($_POST['fontsize']) ) 		? $fontsize = "11" : $fontsize = $_POST['fontsize'] ;
+			( !isset($_POST['mfontcolor']) ) 	? $mfontcolor = "000000" : $mfontcolor = $_POST['mfontcolor'] ;
+			( !isset($_POST['lfontcolor']) ) 	? $lfontcolor = "999999" : $lfontcolor = $_POST['lfontcolor'] ;
+			( !isset($_POST['lfontdecor']) ) 	? $lfontdecor = "none" : $lfontdecor = $_POST['lfontdecor'] ;
+			( !isset($_POST['hfontcolor']) ) 	? $hfontcolor = "CCCCCC" : $hfontcolor = $_POST['hfontcolor'] ;
+			( !isset($_POST['hfontdecor']) ) 	? $hfontdecor = "underline" : $hfontdecor = $_POST['hfontdecor'] ;	
+			( !isset($_POST['openlink']) ) 		? $openlink = "open all" : $openlink = $_POST['openlink'] ;
+			( !isset($_POST['closelink']) ) 	? $closelink = "close all" : $closelink = $_POST['closelink'] ;
+			( !isset($_POST['exclude']) ) 		? $exclude = '' : $exclude = $_POST['exclude'] ;		
+			
 	
 			$arcoptions = array(
-													'arctype' => $arctype,
-													'listpost' => $alistpost,
-													'truncate' => $atruncate,
-													'oclink' => $aoclink,
-													'uselines' => $auselines,
-													'useicons' => $auseicons,
-													'closelevels' => $acloselevels,
-													'folderlinks' => $afolderlinks,
-													'useselection' => $auseselection,
-													'opentosel' => $aopentosel,
-													'topnode' => $atopnode
-													);
+				'arctype' => $arctype,
+				'listpost' => $alistpost,
+				'truncate' => $atruncate,
+				'oclink' => $aoclink,
+				'uselines' => $auselines,
+				'useicons' => $auseicons,
+				'closelevels' => $acloselevels,
+				'folderlinks' => $afolderlinks,
+				'useselection' => $auseselection,
+				'opentosel' => $aopentosel,
+				'topnode' => $atopnode
+			);
 	
 			$catoptions = array(
-													'sortby' => $csortby,
-													'sortorder' => $csortorder,
-													'hideempty' => $chideempty,
-													'exclude' => $cexclude,
-													'listpost' => $clistpost,
-													'truncate' => $ctruncate,
-													'oclink' => $coclink,
-													'uselines' => $cuselines,
-													'useicons' => $cuseicons,
-													'closelevels' => $ccloselevels,
-													'folderlinks' => $cfolderlinks,
-													'useselection' => $cuseselection,
-													'opentosel' => $copentosel,
-													'topnode' => $ctopnode
-													);
+				'sortby' => $csortby,
+				'sortorder' => $csortorder,
+				'hideempty' => $chideempty,
+				'exclude' => $cexclude,
+				'listpost' => $clistpost,
+				'truncate' => $ctruncate,
+				'oclink' => $coclink,
+				'uselines' => $cuselines,
+				'useicons' => $cuseicons,
+				'closelevels' => $ccloselevels,
+				'folderlinks' => $cfolderlinks,
+				'useselection' => $cuseselection,
+				'opentosel' => $copentosel,
+				'topnode' => $ctopnode,
+				'showcount' => $showcount,
+				'showrss' => $showrss
+			);
 	
 			$pgeoptions = array(
-													'sortby' => $psortby,
-													'sortorder' => $psortorder,
-													'truncate' => $ptruncate,
-													'oclink' => $poclink,
-													'uselines' => $puselines,
-													'useicons' => $puseicons,
-													'closelevels' => $pcloselevels,
-													'folderlinks' => $pfolderlinks,
-													'useselection' => $puseselection,
-													'opentosel' => $popentosel,
-													'topnode' => $ptopnode
-													);
+				'sortby' => $psortby,
+				'sortorder' => $psortorder,
+				'truncate' => $ptruncate,
+				'oclink' => $poclink,
+				'uselines' => $puselines,
+				'useicons' => $puseicons,
+				'closelevels' => $pcloselevels,
+				'folderlinks' => $pfolderlinks,
+				'useselection' => $puseselection,
+				'opentosel' => $popentosel,
+				'topnode' => $ptopnode
+			);
 	
 			$effoptions = array(
-													'effon' => $effon,
-													'efftype' => $efftype
-													);
+				'effon' => $effon,
+				'efftype' => $efftype,
+				'duration' => $duration
+			);
 	
 			$cssoptions = array(
-													'fontsize' => $fontsize,
-													'mfontcolor' => $mfontcolor,
-													'lfontcolor' => $lfontcolor,
-													'lfontdecor' => $lfontdecor,
-													'hfontcolor' => $hfontcolor,
-													'hfontdecor' => $hfontdecor
-													);
+				'fontsize' => $fontsize,
+				'mfontcolor' => $mfontcolor,
+				'lfontcolor' => $lfontcolor,
+				'lfontdecor' => $lfontdecor,
+				'hfontcolor' => $hfontcolor,
+				'hfontdecor' => $hfontdecor
+			);
 		
 			$genoptions = array(
-													'openlink' => $openlink,
-													'closelink' => $closelink,
-													'exclude' => $exclude
-													);
+				'openlink' => $openlink,
+				'closelink' => $closelink,
+				'exclude' => $exclude				
+			);
 	
 			$wpdtreeopt = array(
-													'catopt' => $catoptions,
-													'arcopt' => $arcoptions,
-													'pgeopt' => $pgeoptions,
-													'effopt' => $effoptions,
-													'cssopt' => $cssoptions,
-													'genopt' => $genoptions
-													);
-			wp_dtree_update_cache(); //update cache when we edit plugin settings.
+				'catopt' => $catoptions,
+				'arcopt' => $arcoptions,
+				'pgeopt' => $pgeoptions,
+				'effopt' => $effoptions,
+				'cssopt' => $cssoptions,
+				'genopt' => $genoptions
+			);
+						
+			//removes any number signs from the colours, or our GET-query for style.php will break.
+			$wpdtreeopt['cssopt']['fontsize'] 	= str_replace("#", '', $wpdtreeopt['cssopt']['fontsize']); 
+			$wpdtreeopt['cssopt']['mfontcolor'] = str_replace("#", '', $wpdtreeopt['cssopt']['mfontcolor']);
+			$wpdtreeopt['cssopt']['lfontcolor'] = str_replace("#", '', $wpdtreeopt['cssopt']['lfontcolor']);
+			$wpdtreeopt['cssopt']['hfontcolor'] = str_replace("#", '', $wpdtreeopt['cssopt']['hfontcolor']);
+			if(!is_numeric($wpdtreeopt['effopt']['duration']) || ($wpdtreeopt['effopt']['duration'] <= 0)){
+				$wpdtreeopt['effopt']['duration'] = 0.5;
+			}
+			
 			
 			if ( !$effon ) {
 				update_option('wp_dtree_options', $wpdtreeopt);
 				echo "<div id=\"message\" class=\"updated fade\"><p>";
 				echo "<font color=\"red\">WP-dTree settings updated...</font><br />";
 				echo "</p></div>";
-			} elseif ( get_option('wp_scriptaculous_installed') ) {
+			} else {
 				update_option('wp_dtree_options', $wpdtreeopt);
 				echo "<div id=\"message\" class=\"updated fade\"><p>";
 				echo "<font color=\"red\">WP-dTree settings updated...</font><br />";
 				echo "<font color=\"red\">Effects are active...</font><br />";
 				echo "</p></div>";
-			} else {
-				echo "<div id=\"message\" class=\"updated fade\"><p>";
-				echo "<font color=\"red\">WP-Scriptaculous plugin was not detected.</font><br />";
-				echo "<font color=\"red\">Disable the effect and update again or install the plugin.</font><br />";
-				echo "<font color=\"red\">Update failed...</font>";
-				echo "</p></div>";
 			}
+			wp_dtree_update_cache(); //update cache when we edit plugin settings.		
 		}
-		
-		
-	
-		
 	?>
 	
 	<form method="post">
@@ -489,7 +495,7 @@
 				<td></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['exclude']; ?>" name="cexclude" size="10" /></td>
 				<td></td>
-			</tr>
+			</tr>			
 			<tr class="alternate">
 				<td>Sort by</td>
 				<td></td>
@@ -546,8 +552,21 @@
 				<td></td>
 				<td><input type="checkbox" name="chideempty" value="1" <?php if ($wpdtreeopt['catopt']['hideempty']){ echo "checked";} ?> /></td>
 				<td></td>
+			</tr>			
+			<tr>
+				<td>Show postcount</td>
+				<td></td>
+				<td><input type="checkbox" name="cshowcount" value="1" <?php if ($wpdtreeopt['catopt']['showcount']){ echo "checked";} ?> /></td>				
+				<td></td>
 			</tr>
+			<tr class="alternate">
+				<td>Show RSS-icons</td>
+				<td></td>
+				<td><input type="checkbox" name="showrss" value="1" <?php if ($wpdtreeopt['catopt']['showrss']){ echo "checked";} ?> /></td>
+				<td></td>
+			</tr>	
 		</table>
+		
 		<table class="optiontable">
 			<tr>
 				<td>
@@ -571,7 +590,7 @@
 				</td>
 			</tr>
 		</table>
-	</div>
+	</div>	
 	<div class="wrap">
 		<h2>Scriptaculous Effects</h2>
 		<table class="optiontable">
@@ -590,11 +609,14 @@
 						</select>
 						Effect type
 						</p>
+						<p>
+						<input type="text" value="<?php echo $wpdtreeopt['effopt']['duration']; ?>" name="duration" size="10" />
+						Duration (sec)
+						</p>
 					</fieldset>
 				</td>
 				<td>
-					<p>Click the checkbox to enable effects, then select the effect from the drop down menu.</p>
-					<p>You need to have the WP-Scriptaculous plugin installed for this to work. You can down load it from <a href="http://www.silpstream.com/blog/" target="_blank">silpstream</a>.
+					<p>Click the checkbox to enable effects, then select the effect from the drop down menu.</p>					
 				</td>
 			</tr>
 		</table>
@@ -639,7 +661,7 @@
 				</td>
 			</tr>
 		</table>
-	</div>
+	</div>	
 	<div class="wrap">
 		<p align="center"><input type="submit" name="submit" value="Update WP-dTree Settings" /></p>
 	</div>

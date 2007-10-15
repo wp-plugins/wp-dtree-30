@@ -1,3 +1,9 @@
+/*
+WP-dTree 3.2 (ulfben 2007-10-08)
+	Added duration parameter to the GET array.
+	Removed title on root-node.				
+*/
+
 /*--------------------------------------------------|
 | WP-dTree 2.2 | www.silpstream.com/blog/           |
 |---------------------------------------------------|
@@ -21,7 +27,7 @@
 |      Category based menu added                    |
 |      Support for dTree options was built in       |
 |      Option menu added to admin panel             |
-|	v1.0 Work arounds added for wordpress beautified  |
+|	v1.0 Work arounds added for wordpress beautified |
 |      permalinks.                                  |
 |--------------------------------------------------*/
 /*--------------------------------------------------|
@@ -37,36 +43,37 @@
 <?php
 $curdir = "http://" . $HTTP_SERVER_VARS['SERVER_NAME'] . dirname($HTTP_SERVER_VARS['PHP_SELF']);
 
-if ( !isset($_GET['eff']) ) {
-	$effStyle = "blind";
-} else {
-	$effStyle = $_GET['eff'];
+$effStyle = "blind";
+$withEff = 1;
+$duration = 0.5;
+if ( isset($_REQUEST['eff']) ) {
+	$effStyle = $_REQUEST['eff'];
 }
-if ( !isset($_GET['witheff']) ) {
-	$withEff = 1;
-} else {
-	$withEff = $_GET['witheff'];
+if ( isset($_REQUEST['witheff']) ) {
+	$withEff = $_REQUEST['witheff'];
 }
-
+if ( isset($_REQUEST['effdur']) ) {
+	$duration = $_REQUEST['effdur'];
+}
 if ( 'slide' == $effStyle ) {
 	$effCall_o = "SlideDown";
 	$effCall_c = "SlideUp";
-	$effParam = ", {duration:0.5}";
+	$effParam = ", {duration:".$duration."}";
 }
 elseif ( 'blind' == $effStyle ) {
 	$effCall_o = "BlindDown";
 	$effCall_c = "BlindUp";
-	$effParam = ", {duration:0.5}"; //fixed typo. Perhaps add an option to the options page?
+	$effParam = ", {duration:".$duration."}"; 
 }
 elseif ( 'appear' == $effStyle ) {
 	$effCall_o = "Appear";
 	$effCall_c = "Fade";
-	$effParam = ", {duration:0.5}";
+	$effParam = ", {duration:".$duration."}";
 }
 elseif ( 'grow' == $effStyle ) {
 	$effCall_o = "Grow";
 	$effCall_c = "Shrink";
-	$effParam = ", {direction: 'center'}";
+	$effParam = ", {direction: 'center', duration:".$duration."}";
 }
 ?>
 
@@ -157,7 +164,7 @@ dTree.prototype.addNode = function(pNode) {
 	var str = '';
 	var n=0;
 	if (this.config.inOrder) n = pNode._ai;
-	for (n; n<this.aNodes.length; n++) {
+	for (n; n < this.aNodes.length; n++) {
 		if (this.aNodes[n].pid == pNode.id) {
 			var cn = this.aNodes[n];
 			cn._p = pNode;
@@ -203,19 +210,20 @@ dTree.prototype.node = function(node, nodeId) {
 		str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');"'
 		if (node.title) str += ' title="' + node.title + '"';
 		str += ' class="node">';
-	}
+	}	
 	//the root node name is illogical - we have titles in the sidebar.
 	if(this.root.id != node.pid)
 	{
 		str += node.name;
 	}
-	if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';
-	str += '</div>';
+	if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';	
+	str += ' </div>';	
 	if (node._hc) {
 		str += '<div id="d' + this.obj + nodeId + '" class="clip" style="display:' + ((this.root.id == node.pid || node._io) ? 'block' : 'none') + ';">';
-		str += this.addNode(node);
+		str += this.addNode(node);		
 		str += '</div>';
 	}
+	
 	this.aIndent.pop();
 	return str;
 };
