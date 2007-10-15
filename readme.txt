@@ -1,4 +1,4 @@
-=== wp-dTree 3.2 ===
+=== WP-dTree 3.2 ===
 Contributors: ulfben, Christopher Hwang
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
