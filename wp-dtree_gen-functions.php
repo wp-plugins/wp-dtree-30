@@ -103,7 +103,8 @@ function wp_dtree_get_cat_count($id)
 	$wpdtreeopt = get_option('wp_dtree_options');		
 	$count = '';
 	if($wpdtreeopt['catopt']['showcount']) { //IF SHOW COUNTS
-		$catobj = get_category($id-$idtranspose['cat']);
+		$catid = $id-$idtranspose['cat']; //when having the calculation done in the function call, the plugin wont activate in WP2.2 
+		$catobj = get_category($catid);
 		if($catobj->category_count)	{
 			$count = "</a><div id=\"postcount\">"." (".$catobj->category_count.")</div><a>"; //closes the cat-name link, and opens a new tag to match the one outputed in the javatree.
 		}
