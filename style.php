@@ -102,3 +102,4 @@ a.catrss:hover  {
 #dtreecat .clip, #dtreearc .clip, #dtreepge .clip {
 	overflow: hidden;
 }
+#dtreearc img {float: none; margin: 0 0px 0px 0;}
