@@ -2,13 +2,13 @@
 	/*
 	Plugin Name: WP-dTree 3.2
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
-	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance, adding features and overall keeping the plugin up-to-date.
+	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, aimed at reducing the excessive database querying when running on larger blogs.
 	Version: 3.2
 	Author: Ulf Benjaminsson
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
 	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
-	Copyright (C) 2006 Christopher Hwang (email: chris at silpstream.com)	
+	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	
 	
 	This is a plugin created for Wordpress in order to generate JS navigation trees
 	for your archives. It uses the JS engine dTree that was created by Geir Landrö
@@ -31,7 +31,7 @@
 	3. Fixed "open to selection" and "highlight selection".
 		
 	Changes in v3.0 (ulfben)
-	1. Added caching to reduce the database load.
+	1. Added chaching to reduce the database load.
 	
 	Changes in v2.2
 	1. Added support for generating page trees

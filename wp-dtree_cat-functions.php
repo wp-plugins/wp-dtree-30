@@ -95,6 +95,7 @@ function wp_dtree_get_categories_arr() {
 function wp_dtree_get_categories() {	
 	global $wpdb, $wp_dtree_cache;		
 	$catresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'cat' ORDER BY id");	
+	print("\n<!-- cat tree: " . strlen($catresults) . " chars. -->");
 	echo $catresults;
 	//wp_dtree_open_cattree_to_selected_node();
 }

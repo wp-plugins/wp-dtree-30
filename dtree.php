@@ -41,7 +41,8 @@ WP-dTree 3.2 (ulfben 2007-10-08)
 | Updated: 17.04.2003                               |
 |--------------------------------------------------*/
 <?php
-$curdir = "http://" . $HTTP_SERVER_VARS['SERVER_NAME'] . dirname($HTTP_SERVER_VARS['PHP_SELF']);
+$curdir = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']); //fix contributed by Zarquod: http://wordpress.org/support/topic/136547
+////$curdir = "http://" . $HTTP_SERVER_VARS['SERVER_NAME'] . dirname($HTTP_SERVER_VARS['PHP_SELF']); //deprecated.
 
 $effStyle = "blind";
 $withEff = 1;

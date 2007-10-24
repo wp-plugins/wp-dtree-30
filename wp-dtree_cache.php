@@ -83,7 +83,7 @@ function wp_dtree_insert_tree_data($treedata, $treetype) {
 		return;
 	}	
 	
-	$safeRow = $wpdb->escape($treedata); //serialize(
+	$safeRow = $wpdb->escape($treedata); 
 	$sql = 	"INSERT INTO ".$wp_dtree_cache
   			." (treetype, content)
   			VALUES ('".$treetype."','".$safeRow."')";		

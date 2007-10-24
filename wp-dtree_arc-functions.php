@@ -110,6 +110,7 @@ function wp_dtree_get_archives_arr() {
 function wp_dtree_get_archives() {	
 	global $wpdb, $wp_dtree_cache;	
  	$arcresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'arc' ORDER BY id");	
+ 	print("\n<!-- arc tree: " . strlen($arcresults) . " chars. -->");
  	echo $arcresults; 	
 }
 ?>

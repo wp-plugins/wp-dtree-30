@@ -6,6 +6,7 @@ header("Content-type: text/css");
 *		Added RSS-icons (normal and hover)
 *		Added postcount (default fontcolor = link fontcolor)
 *		Uncluttered the initialization a bit. 
+*		Fixed images breaking the tree in certain themes.
 */
 
 /*

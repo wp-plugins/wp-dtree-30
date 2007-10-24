@@ -31,6 +31,7 @@ function wp_dtree_get_pages_arr() {
 function wp_dtree_get_pages() {
 	global $wpdb, $wp_dtree_cache;   		
 	$pgeresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'pge' ORDER BY id");	
+	print("\n<!-- pge tree: " . strlen($pgeresults) . " chars. -->");
 	echo $pgeresults; 		
 }
 ?>
