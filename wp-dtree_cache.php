@@ -1,7 +1,7 @@
 <?php
 global $wpdb;
 $wp_dtree_cache = $wpdb->prefix . "dtree_cache";
-$wp_dtree_db_version = 4;
+$wp_dtree_db_version = 5;
 $wp_dtree_table_missing_msg = "WP-dTree-3.2: cache table (".$wp_dtree_cache.") is either missing or outdated. Disable the plugin and re-install it again.";
 
 function wp_dtree_install_cache() {	

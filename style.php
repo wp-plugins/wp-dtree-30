@@ -17,7 +17,7 @@ header("Content-type: text/css");
 
 /*
 *	dTree 2.05 | www.destroydrop.com/javascript/tree/ 
-*	Copyright (c) 2002-2003 Geir Landrö 
+*	Copyright (c) 2002-2003 Geir Landrï¿½ 
 */
 
 <?php
@@ -55,17 +55,19 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 	$rssicon2 = $_REQUEST['rssgfxh'];
 }
 ?>
-#dtreecat, #dtreearc, #dtreepge, #dtreecatwrapper, #dtreearcwrapper, #dtreepgewrapper {
+#dtreec, #dtreea, #dtreep, #dtreecatwrapper, #dtreearcwrapper, #dtreepgewrapper {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: <?php echo $fontsize; ?>px;
 	color: #<?php echo $mfontcolor; ?>;
 	white-space: nowrap;
 }
-#dtreecat img, #dtreearc img, #dtreepge img {
+#dtreec img, #dtreea img, #dtreep img {
 	border: 0px;
-	vertical-align: middle;
+	vertical-align: middle;		
+	float: none; 
+	margin: 0 0px 0px 0;
 }
-#dtreecat a, #dtreearc a, #dtreepge a, #dtreecatwrapper a, #dtreearcwrapper a, #dtreepgewrapper a {
+#dtreec a, #dtreea a, #dtreep a, #dtreecatwrapper a, #dtreearcwrapper a, #dtreepgewrapper a {
 	display: inline;
 	padding: 0;
 	color: #<?php echo $lfontcolor; ?>;
@@ -73,12 +75,14 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 }
 
 /*RSS icons for categories. Don't ask.*/
-a.catrss  {	
-   padding-right: 25px; background: url('<?php echo $rssicon; ?>') no-repeat center right;  
+a.dtreerss  {	
+   padding-right: 25px; 
+   background: url('<?php echo $rssicon; ?>') no-repeat center right;  
 }
 
-a.catrss:hover  {	
-   background: url('<?php echo $rssicon2; ?>') no-repeat center right;
+a.dtreerss:hover  {	
+    padding-right: 25px; 
+    background: url('<?php echo $rssicon2; ?>') no-repeat center right;
 }
 
 #postcount {
@@ -88,19 +92,18 @@ a.catrss:hover  {
 	text-decoration: none;
 }
 
-#dtreecat a.node, #dtreearc a.node, #dtreepge a.node, #dtreecat a.nodeSel, #dtreearc a.nodeSel, #dtreepge a.nodeSel {
+#dtreec a.node, #dtreea a.node, #dtreep a.node, #dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel {
 	white-space: nowrap;
 	padding: 1px 2px 1px 2px;
 }
-#dtreecat a:hover, #dtreecat a.node:hover, #dtreecat a.nodeSel:hover, #dtreearc a:hover, #dtreearc a.node:hover, #dtreearc a.nodeSel:hover, #dtreepge a:hover, #dtreepge a.node:hover, #dtreepge a.nodeSel:hover {
+#dtreec a:hover, #dtreec a.node:hover, #dtreec a.nodeSel:hover, #dtreea a:hover, #dtreea a.node:hover, #dtreea a.nodeSel:hover, #dtreep a:hover, #dtreep a.node:hover, #dtreep a.nodeSel:hover {
 	color: #<?php echo $hfontcolor; ?>;
 	text-decoration: <?php echo $hfontdecor; ?>;
 }
 /*If you want some cool highlighting on the active node, you can change it here. Default is a simple underline.*/
-#dtreecat a.nodeSel, #dtreearc a.nodeSel, #dtreepge a.nodeSel {
+#dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel {
 	text-decoration: underline;
 }
-#dtreecat .clip, #dtreearc .clip, #dtreepge .clip {
+#dtreec .clip, #dtreea .clip, #dtreep .clip {
 	overflow: hidden;
-}
-#dtreearc img {float: none; margin: 0 0px 0px 0;}
+}

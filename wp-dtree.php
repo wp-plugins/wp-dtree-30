@@ -1,9 +1,9 @@
 <?php
 	/*
-	Plugin Name: WP-dTree 3.2
+	Plugin Name: WP-dTree 3.3
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
-	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, aimed at reducing the excessive database querying when running on larger blogs.
-	Version: 3.2
+	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
+	Version: 3.3
 	Author: Ulf Benjaminsson
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
@@ -11,11 +11,20 @@
 	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	
 	
 	This is a plugin created for Wordpress in order to generate JS navigation trees
-	for your archives. It uses the JS engine dTree that was created by Geir Landrö
+	for your archives. It uses the JS engine dTree that was created by Geir Landrï¿½
 	at http://www.destroydrop.com/javascripts/tree/.
 	
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of wp-dtree up to version 2.2.
+
+	Changes in v3.3 (ulfben - 20071026)
+	Optimized dtree, **~40% less data** is stored and transfered! 
+	New option: Show RSS icon for archives
+	New option: Show post count for archives
+	Fix: Open to requested node
+	Fix: images URL not working on some servers ([props: Zarquod](http://wordpress.org/support/topic/136547))
+	Fix: somewhat more IE compatible...
+	Known issues: RSS icons wont show **in IE** if `post count` is on.
 
 	Changes in v3.2 (ulfben - 20071015)
 	1. Support for WP's bundled scriptacolous library - no need to download wp-scriptacolous plugin for cool effects.	
@@ -163,10 +172,11 @@
 	}
 	
 	function wp_dtree_add2head() {
-		$wpdtreeopt = get_option('wp_dtree_options');
-		$rssicon = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_orange-10px.png";	//normal
-		$rssicon2 = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_orange-10px-hi.png"; //higlight		
-		$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&eff=".$wpdtreeopt['effopt']['efftype']."&effdur=".$wpdtreeopt['effopt']['duration']."\" language=\"javascript\"></script>\n";
+		$wpdtreeopt = get_option('wp_dtree_options');
+		
+		$rssicon = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png";	//normal
+		$rssicon2 = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png"; //higlight				
+		$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&eff=".$wpdtreeopt['effopt']['efftype']."&effdur=".$wpdtreeopt['effopt']['duration']."&trunc=".$wpdtreeopt['genopt']['truncate']."\" language=\"javascript\"></script>\n";
 		$cd .= "<link rel=\"stylesheet\" href=\"" 
 		. get_bloginfo('wpurl') 
 		. "/wp-content/plugins/wp-dtree-30/style.php?"
@@ -190,7 +200,6 @@
 		$arcoptions = array(
 			'arctype' => 'monthly',
 			'listpost' => '1',
-			'truncate' => '16',
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
@@ -198,16 +207,17 @@
 			'folderlinks' => '1',
 			'useselection' => '0',
 			'opentosel' => '0',
-			'topnode' => 'Archives'
+			'topnode' => 'Archives',
+			'showrss' => '0',
+			'showcount' => '1'
 		);
 	
 		$catoptions = array(
 			'sortby' => 'ID',
 			'sortorder' => 'ASC',
 			'hideempty' => '0',
-			'exclude' => '',
-			'listpost' => '1',
-			'truncate' => '16',
+			'exclude' => '1',
+			'listpost' => '1',			
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
@@ -222,8 +232,7 @@
 	
 		$pgeoptions = array(
 			'sortby' => 'ID',
-			'sortorder' => 'ASC',
-			'truncate' => '16',
+			'sortorder' => 'ASC',		
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
@@ -249,7 +258,8 @@
 			'hfontdecor' => 'underline'
 		);
 	
-		$genoptions = array(
+		$genoptions = array(
+			'truncate' => '16',
 			'openlink' => 'open all',
 			'closelink' => 'close all',
 			'exclude' => ''			
@@ -272,8 +282,7 @@
 		
 		if( isset($_POST['submit']) ) {	
 			( !isset($_POST['arctype']) ) 		? $arctype = "monthly" : $arctype = $_POST['arctype'] ;
-			( !isset($_POST['alistpost']) ) 	? $alistpost = "0" : $alistpost = $_POST['alistpost'] ;
-			( !isset($_POST['atruncate']) ) 	? $atruncate = "16" : $atruncate = $_POST['atruncate'] ;
+			( !isset($_POST['alistpost']) ) 	? $alistpost = "0" : $alistpost = $_POST['alistpost'] ;			
 			( !isset($_POST['aoclink']) ) 		? $aoclink = "0" : $aoclink = $_POST['aoclink'] ;
 			( !isset($_POST['auselines']) ) 	? $auselines = "0" : $auselines = $_POST['auselines'] ;
 			( !isset($_POST['auseicons']) ) 	? $auseicons = "0" : $auseicons = $_POST['auseicons'] ;
@@ -281,13 +290,14 @@
 			( !isset($_POST['afolderlinks']) ) 	? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
 			( !isset($_POST['auseselection']) ) ? $auseselection = "0" : $auseselection = $_POST['auseselection'] ;
 			( !isset($_POST['aopentosel']) )	? $aopentosel = "0" : $aopentosel = $_POST['aopentosel'] ;
-			( !isset($_POST['atopnode']) ) 		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;	
+			( !isset($_POST['atopnode']) ) 		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
+			( !isset($_POST['ashowcount']) ) 	? $ashowcount = "0" : $ashowcount = $_POST['ashowcount'] ;			
+			( !isset($_POST['ashowrss']))		? $ashowrss = "0" : $ashowrss = $_POST['ashowrss'];		
 			( !isset($_POST['csortby']) ) 	 	? $csortby = "ID" : $csortby = $_POST['csortby'] ;
 			( !isset($_POST['csortorder']) ) 	? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
 			( !isset($_POST['chideempty']) ) 	? $chideempty = "0" : $chideempty = $_POST['chideempty'] ;
-			( !isset($_POST['cexclude']) ) 		? $cexclude = '' : $cexclude = $_POST['cexclude'] ;
-			( !isset($_POST['clistpost']) ) 	? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;
-			( !isset($_POST['ctruncate']) ) 	? $ctruncate = "16" : $ctruncate = $_POST['ctruncate'] ;
+			( !isset($_POST['cexclude']) ) 		? $cexclude = '1' : $cexclude = $_POST['cexclude'] ;
+			( !isset($_POST['clistpost']) ) 	? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;			
 			( !isset($_POST['coclink']) ) 		? $coclink = "0" : $coclink = $_POST['coclink'] ;
 			( !isset($_POST['cuselines']) ) 	? $cuselines = "0" : $cuselines = $_POST['cuselines'] ;
 			( !isset($_POST['cuseicons']) ) 	? $cuseicons = "0" : $cuseicons = $_POST['cuseicons'] ;
@@ -299,8 +309,7 @@
 			( !isset($_POST['cshowcount']) ) 	? $showcount = "0" : $showcount = $_POST['cshowcount'] ;			
 			( !isset($_POST['showrss']))		? $showrss = "0" : $showrss = $_POST['showrss'];	
 			( !isset($_POST['psortby']) ) 		? $psortby = "ID" : $psortby = $_POST['psortby'] ;
-			( !isset($_POST['psortorder']) ) 	? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;
-			( !isset($_POST['ptruncate']) ) 	? $ptruncate = "16" : $ptruncate = $_POST['ptruncate'] ;
+			( !isset($_POST['psortorder']) ) 	? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;			
 			( !isset($_POST['poclink']) ) 		? $poclink = "0" : $poclink = $_POST['poclink'] ;
 			( !isset($_POST['puselines']) ) 	? $puselines = "0" : $puselines = $_POST['puselines'] ;
 			( !isset($_POST['puseicons']) ) 	? $puseicons = "0" : $puseicons = $_POST['puseicons'] ;
@@ -320,13 +329,13 @@
 			( !isset($_POST['hfontdecor']) ) 	? $hfontdecor = "underline" : $hfontdecor = $_POST['hfontdecor'] ;	
 			( !isset($_POST['openlink']) ) 		? $openlink = "open all" : $openlink = $_POST['openlink'] ;
 			( !isset($_POST['closelink']) ) 	? $closelink = "close all" : $closelink = $_POST['closelink'] ;
-			( !isset($_POST['exclude']) ) 		? $exclude = '' : $exclude = $_POST['exclude'] ;		
+			( !isset($_POST['exclude']) ) 		? $exclude = '' : $exclude = $_POST['exclude'] ;
+			( !isset($_POST['truncate']) ) 		? $ptruncate = "16" : $truncate = $_POST['truncate'] ;		
 			
 	
 			$arcoptions = array(
 				'arctype' => $arctype,
-				'listpost' => $alistpost,
-				'truncate' => $atruncate,
+				'listpost' => $alistpost,				
 				'oclink' => $aoclink,
 				'uselines' => $auselines,
 				'useicons' => $auseicons,
@@ -334,7 +343,9 @@
 				'folderlinks' => $afolderlinks,
 				'useselection' => $auseselection,
 				'opentosel' => $aopentosel,
-				'topnode' => $atopnode
+				'topnode' => $atopnode,
+				'showcount' => $ashowcount,
+				'showrss' => $ashowrss
 			);
 	
 			$catoptions = array(
@@ -342,8 +353,7 @@
 				'sortorder' => $csortorder,
 				'hideempty' => $chideempty,
 				'exclude' => $cexclude,
-				'listpost' => $clistpost,
-				'truncate' => $ctruncate,
+				'listpost' => $clistpost,				
 				'oclink' => $coclink,
 				'uselines' => $cuselines,
 				'useicons' => $cuseicons,
@@ -358,8 +368,7 @@
 	
 			$pgeoptions = array(
 				'sortby' => $psortby,
-				'sortorder' => $psortorder,
-				'truncate' => $ptruncate,
+				'sortorder' => $psortorder,				
 				'oclink' => $poclink,
 				'uselines' => $puselines,
 				'useicons' => $puseicons,
@@ -385,7 +394,8 @@
 				'hfontdecor' => $hfontdecor
 			);
 		
-			$genoptions = array(
+			$genoptions = array(
+				'truncate' => $truncate,
 				'openlink' => $openlink,
 				'closelink' => $closelink,
 				'exclude' => $exclude				
@@ -426,9 +436,9 @@
 		}
 	?>
 	
-	<form method="post">
-	<div class="wrap">
-		<h2>WP-dTree Settings</h2>
+	<form method="post">	
+	<div class="wrap">	
+		<h2>WP-dTree Settings</h2>		
 		<table class="optiontable">
 			<tr>
 				<td></td>
@@ -441,62 +451,56 @@
 				<td><input type="text" value="<?php echo $wpdtreeopt['arcopt']['topnode']; ?>" name="atopnode" size="10" /></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['topnode']; ?>" name="ctopnode" size="10" /></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['topnode']; ?>" name="ptopnode" size="10" /></td>
-			</tr>
+			</tr>		
 			<tr>
-				<td>Characters to display</td>
-				<td><input type="text" value="<?php echo $wpdtreeopt['arcopt']['truncate']; ?>" name="atruncate" size="5" /></td>
-				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['truncate']; ?>" name="ctruncate" size="5" /></td>
-				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['truncate']; ?>" name="ptruncate" size="5" /></td>
-			</tr>
-			<tr class="alternate">
 				<td>Display Open/Close links</td>
 				<td><input type="checkbox" name="aoclink" value="1" <?php if ($wpdtreeopt['arcopt']['oclink']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="coclink" value="1" <?php if ($wpdtreeopt['catopt']['oclink']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="poclink" value="1" <?php if ($wpdtreeopt['pgeopt']['oclink']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>Draw lines</td>
 				<td><input type="checkbox" name="auselines" value="1" <?php if ($wpdtreeopt['arcopt']['uselines']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="cuselines" value="1" <?php if ($wpdtreeopt['catopt']['uselines']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="puselines" value="1" <?php if ($wpdtreeopt['pgeopt']['uselines']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Display icons</td>
 				<td><input type="checkbox" name="auseicons" value="1" <?php if ($wpdtreeopt['arcopt']['useicons']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="cuseicons" value="1" <?php if ($wpdtreeopt['catopt']['useicons']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="puseicons" value="1" <?php if ($wpdtreeopt['pgeopt']['useicons']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>Close same levels</td>
 				<td><input type="checkbox" name="acloselevels" value="1" <?php if ($wpdtreeopt['arcopt']['closelevels']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="ccloselevels" value="1" <?php if ($wpdtreeopt['catopt']['closelevels']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="pcloselevels" value="1" <?php if ($wpdtreeopt['pgeopt']['closelevels']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Folders are links</td>
 				<td><input type="checkbox" name="afolderlinks" value="1" <?php if ($wpdtreeopt['arcopt']['folderlinks']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="cfolderlinks" value="1" <?php if ($wpdtreeopt['catopt']['folderlinks']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="pfolderlinks" value="1" <?php if ($wpdtreeopt['pgeopt']['folderlinks']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>Open to selection</td>
 				<td><input type="checkbox" name="aopentosel" value="1" <?php if ($wpdtreeopt['arcopt']['opentosel']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="copentosel" value="1" <?php if ($wpdtreeopt['catopt']['opentosel']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="popentosel" value="1" <?php if ($wpdtreeopt['pgeopt']['opentosel']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Highlight selection</td>
 				<td><input type="checkbox" name="auseselection" value="1" <?php if ($wpdtreeopt['arcopt']['useselection']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="cuseselection" value="1" <?php if ($wpdtreeopt['catopt']['useselection']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="puseselection" value="1" <?php if ($wpdtreeopt['pgeopt']['useselection']){ echo "checked";} ?> /></td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>Exclude Category</td>
 				<td></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['exclude']; ?>" name="cexclude" size="10" /></td>
 				<td></td>
 			</tr>			
-			<tr class="alternate">
+			<tr>
 				<td>Sort by</td>
 				<td></td>
 				<td>
@@ -514,7 +518,7 @@
 					</select>
 				</td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>Sort order</td>
 				<td></td>
 				<td>
@@ -530,7 +534,7 @@
 					</select>
 				</td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Tree type</td>
 				<td>
 					<select name="arctype">
@@ -541,54 +545,68 @@
 				<td></td>
 				<td></td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>List posts</td>
 				<td><input type="checkbox" name="alistpost" value="1" <?php if ($wpdtreeopt['arcopt']['listpost']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="clistpost" value="1" <?php if ($wpdtreeopt['catopt']['listpost']){ echo "checked";} ?> /></td>
 				<td></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Hide empty categories</td>
 				<td></td>
 				<td><input type="checkbox" name="chideempty" value="1" <?php if ($wpdtreeopt['catopt']['hideempty']){ echo "checked";} ?> /></td>
 				<td></td>
 			</tr>			
-			<tr>
+			<tr class="alternate">
 				<td>Show postcount</td>
-				<td></td>
+				<td><input type="checkbox" name="ashowcount" value="1" <?php if ($wpdtreeopt['arcopt']['showcount']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="cshowcount" value="1" <?php if ($wpdtreeopt['catopt']['showcount']){ echo "checked";} ?> /></td>				
 				<td></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Show RSS-icons</td>
-				<td></td>
+				<td><input type="checkbox" name="ashowrss" value="1" <?php if ($wpdtreeopt['arcopt']['showrss']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="showrss" value="1" <?php if ($wpdtreeopt['catopt']['showrss']){ echo "checked";} ?> /></td>
 				<td></td>
-			</tr>	
+			</tr>			
 		</table>
 		
 		<table class="optiontable">
+			<tr>				
+				<td>
+					
+					<input type="text" value="<?php echo $wpdtreeopt['genopt']['openlink']; ?>" name="openlink" size="10" />
+					<label>Open all link</label>
+					<br />
+					<input type="text" value="<?php echo $wpdtreeopt['genopt']['closelink']; ?>" name="closelink" size="10" />
+					<label>Close all link</label>
+					</p>
+				</td>
+				<td>
+					Set the name of what you want the open/close all links to be.
+				</td>				
+			</tr>
+			<tr>				
+				<td>				
+					<input type="text" value="<?php echo $wpdtreeopt['genopt']['exclude']; ?>" name="exclude" size="10" />
+					<label>Exclude posts/pages</label>
+				</td>
+				<td>
+					You can exclude specific posts or pages from the tree. <br>The format for this is 'ID1,ID2,ID3', where the ID is based on the ID you see when you manage your posts/pages.
+				</td>			
+			</tr>
+			<tr>				
+				<td>									
+					<input type="text" value="<?php echo $wpdtreeopt['genopt']['truncate']; ?>" name="truncate" size="5" />
+					<label>Characters to display</label>					
+				</td>				
+				<td>
+					Determines the width of your tree
+				</td>
+			</tr>
+			</tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
 			<tr>
-				<td>
-					<fieldset class="options">
-						<p>
-						<input type="text" value="<?php echo $wpdtreeopt['genopt']['openlink']; ?>" name="openlink" size="10" />
-						Open all link
-						<br />
-						<input type="text" value="<?php echo $wpdtreeopt['genopt']['closelink']; ?>" name="closelink" size="10" />
-						Close all link
-						</p>
-						<p>
-						<input type="text" value="<?php echo $wpdtreeopt['genopt']['exclude']; ?>" name="exclude" size="10" />
-						Exclude posts/pages
-						</p>
-					</fieldset>
-				</td>
-				<td>
-					<p>Set the name of what you want the open/close all links to be.</p>
-					<p>You can exclude specific posts or pages from the tree. The format for this is 'ID1,ID2,ID3', where the ID is based on the ID you see when you manage your posts/pages.</p>
-				</td>
-			</tr>
 		</table>
 	</div>	
 	<div class="wrap">
@@ -618,7 +636,10 @@
 				<td>
 					<p>Click the checkbox to enable effects, then select the effect from the drop down menu.</p>					
 				</td>
-			</tr>
+			</tr>
+			</tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
+			<tr>
 		</table>
 	</div>
 	<div class="wrap">
@@ -659,11 +680,11 @@
 				<td>
 					<p>This area sets the CSS properties for the links that are displayed in your tree.</p>
 				</td>
-			</tr>
+			</tr>
+			</tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
+			<tr>
 		</table>
-	</div>	
-	<div class="wrap">
-		<p align="center"><input type="submit" name="submit" value="Update WP-dTree Settings" /></p>
 	</div>
 	</form>
 	<div class="wrap">

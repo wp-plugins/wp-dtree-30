@@ -1,8 +1,8 @@
-=== WP-dTree 3.2 ===
+=== WP-dTree 3.3 ===
 Contributors: ulfben, Christopher Hwang
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
-Requires at least: 2.0.2
+Requires at least: 2.2
 Tested up to: 2.3
 Stable tag: trunk
 
@@ -10,13 +10,24 @@ Turns your sidebar into a very convenient, dynamic navigation tree. Supports scr
 
 == Description ==
 
-This plugin can generate navigation trees for your posts, pages and categories. The archive tree can be displayed with monthly or yearly nodes. The category tree can be displayed with or without their posts, post count and RSS-links. WP-dTree uses Scriptaculous for awesome display effects. You can set effect type and duration through the admin interface (Presentation -> WP-dTree). 
+This plugin can generate navigation trees for your posts, pages and categories. The archive tree can be displayed with monthly or yearly nodes, post counts and feeds. The category tree can be displayed with or without their posts, post count and RSS-links. WP-dTree uses Scriptaculous for awesome display effects. You can set effect type and duration through the admin interface (Presentation -> WP-dTree). 
 
 WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). The fork is primarly aimed at [improving the performance](http://wordpress.org/extend/plugins/wp-dtree-30/faq/) of WP-dTree, but packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, RSS for categories, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
 
-**Changes in v3.2**
+**Changes in v3.3** (2007-10-26)
+
+1. Optimized dtree, up to **40% less data** is stored and transfered! 
+1. New option: Show RSS icon for archives
+1. New option: Show post count for archives
+1. Fix: Open to requested node
+1. Fix: images URL not working on some servers ([props: Zarquod](http://wordpress.org/support/topic/136547))
+1. Fix: somewhat more IE compatible...
+
+*Known issues:* RSS icons wont show **in IE** if `post count` is on.
+
+**Changes in v3.2** (2007-10-15)
 
 1. Support for WP's bundled scriptacolous library! (turn effects on in the WP-dTree options page)
 1. New cache structure reduces cache size with ~33% compared to previous implementations.	 
@@ -26,7 +37,7 @@ If you enjoy WP-dTree and would like to suggest a specific feature, or just moti
 
 *Regressions:* `open to selection` is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
 
-**Changes in v3.1:**
+**Changes in v3.1:** (2007-10-06)
 
 1. Updated to comply with WordPress 2.3's new taxonomy tables for categories.
 1. Widgetized! You no longer need to edit your sidebar manually.
@@ -106,7 +117,7 @@ Displaying pages:
 = How does the 3.x fork improve the performance of WP-dTree? =
 Instead of generating all the trees *on every visit*, 3.x employs caching - building the trees *only when you add or alter content on your blog*. The result is a tremendous load reduction from previous versions; the demo site (~360 posts, Kubrik theme) went from 411 to 18 queries (!) to display the main page.
 
-The added benefit of the cache is a *significant* reduction in how much processing is needed for each visit. As of 3.2, all WP-dTree does is to print a string.
+The added benefit of the cache is a *significant* reduction in how much processing is needed for each visit. Unless you activate `Open to requested node`, all WP-dTree does is to print a static string.
 
 = Can I change the images used by WP-dTree? =
 
@@ -119,6 +130,7 @@ The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change
 
 == Other Notes ==
 Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben dot com).
+
 Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
 
 This program is free software; you can redistribute it and/or modify

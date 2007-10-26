@@ -1,5 +1,4 @@
-<?php
-$_curid = -1; //the currently open node
+<?php
 
 function wp_dtree_build_tree($results, $treetype) {
 	global $idtranspose, $_curid;
@@ -19,31 +18,26 @@ function wp_dtree_build_tree($results, $treetype) {
 	$closelink = $wpdtreeopt['genopt']['closelink'];	
 
 	$tree = '';
-	if ( $results ) {		
+	if ( $results ) {
+		$t = $treetype{0}; //get the first char of the treetype.		
 		$tree .= "\n<div id=\"dtree" . $treetype . "wrapper\">\n";
 		if ( $oclink ) {
-			$tree .= "<a href=\"javascript: " . $treetype . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $treetype . ".closeAll();\">" . $closelink . "</a><br />\n";
-			$tree .= "<br />\n";
+			$tree .= "<a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a>\n";			
+			$tree .= "<br /><br />"; //gives us some spacing from the oclinks. Not a good solution, varies across browsers and so on...
 		}
 		$tree .= "<script type=\"text/javascript\">\n";
 		$tree .= "<!--\n";
-		$tree .= $treetype . " = new dTree('" . $treetype . "');\n";
-		$tree .= $treetype . ".config.useLines=" . $useLines . ";\n";
-		$tree .= $treetype . ".config.useIcons=" . $useIcons . ";\n";
-		$tree .= $treetype . ".config.closeSameLevel=" . $cSameLevel . ";\n";
-		$tree .= $treetype . ".config.folderLinks=" . $folderLinks . ";\n";
-		$tree .= $treetype . ".config.useSelection=" . $useSelection . ";\n";
-		$tree .= $treetype . ".add(" . $idtranspose[$treetype] . ",-1,'" . $topnode . "');\n";		
+		$tree .= "var " . $t . " = new dTree('" . $t . "', '".trailingslashit(get_bloginfo('url'))."');\n";
+		$tree .= $t . ".config.useLines=" . $useLines . ";\n";
+		$tree .= $t . ".config.useIcons=" . $useIcons . ";\n";
+		$tree .= $t . ".config.closeSameLevel=" . $cSameLevel . ";\n";
+		$tree .= $t . ".config.folderLinks=" . $folderLinks . ";\n";
+		$tree .= $t . ".config.useSelection=" . $useSelection . ";\n";
+		$tree .= $t . ".a(" . $idtranspose[$treetype] . ",-1,'" . $topnode . "');\n";		
 		foreach ($results as $nodedata) {										
 			$tree .= wp_dtree_build_node($treetype, $nodedata, $truncate);
 		}		
-		$tree .= "document.write(" . $treetype . ");\n";
-		if ( $_curid >= 0 && $opentosel == 1 ) {
-			$tree .= $treetype . ".openTo(" . $_curid . ", true);\n";
-		}
-		$tree .= "//-->\n";		
-		$tree .= "</script>\n";		
-		$tree .= "</div>\n";		
+		$tree .= "document.write(" . $t . ");\n";	
 		return $tree;	
 	}	
 }
@@ -53,21 +47,29 @@ function wp_dtree_build_node($treetype, $nodedata, $truncate)
 {
 	$node = '';		
 	if (!is_array($nodedata)) {
-		return __("\n// WP-dTree WARNING: print_node failed.\n\n");		 		
+		return __("\n// WP-dTree WARNING: build_node failed.\n\n");		 		
 	} 
 	$wpdtreeopt = get_option('wp_dtree_options');
-	$opttype = $treetype."opt";
-	$opentosel = $wpdtreeopt[$opttype]['opentosel'];
-	global $_curid;	
-	$rssicon = wp_dtree_get_cat_rss($nodedata);
-	$shorttitle = wp_dtree_truncate_string(addslashes(strip_tags($nodedata['name'])), $truncate);				
-	$node .= 	 $treetype.".add("
+	$opttype = $treetype."opt";
+	$t = $treetype{0};
+	//$opentosel = $wpdtreeopt[$opttype]['opentosel'];	
+	
+	($wpdtreeopt[$opttype]['showcount'] && wp_dtree_get_count($nodedata, $treetype)	)	? $count = ",'".wp_dtree_get_count($nodedata, $treetype)."'" 	: $count = "";
+	($wpdtreeopt[$opttype]['showrss'] 	&& wp_dtree_get_rss($nodedata, $treetype)	) 	? $rsspath = ",'".wp_dtree_get_rss($nodedata, $treetype)."'"	: $rsspath = "";	
+	if($rsspath != "" && $count == ""){
+		$count = ",''"; //add an empty parameter before the rsspath, or we'll get strange counts indeed... :)
+	}
+	
+	global $_curid;				
+	$path = str_replace(trailingslashit(get_bloginfo('url')), "", $nodedata['url']); 
+	$node .= 	 $t.".a("
 				.$nodedata['id'].","
 				.$nodedata['pid'].","
-				."'".$shorttitle . wp_dtree_get_cat_count($nodedata['id']) . $rssicon."',"
-				."'".$nodedata['url']."',"
-				."'".addslashes(strip_tags($nodedata['title']))
-				."');\n";	
+				."'".addslashes(strip_tags($nodedata['title']))."',"
+				."'".$path."'" 
+				.$count 
+				.$rsspath							
+				.");\n";	
 	/* Useless, since our entire tree is now statically stored. This must be handled  at the time that the tree is printed.*/
 	  /*if ( wp_dtree_compare_to_uri($nodedata['url']) && $opentosel == 1 ) {		
 		$_curid = $nodedata['id'];	
@@ -75,72 +77,31 @@ function wp_dtree_build_node($treetype, $nodedata, $truncate)
 	return $node;		
 }
 
-/*decides what feed we want, wether the link needs a picture and so on and so forth.
-id is the transposed ID we've stored, not a WP-valid ID. Valid feed tyes: rss, rss2, rdf, atom*/
-function wp_dtree_get_cat_rss($result)
-{
+function wp_dtree_get_rss($result, $treetype) {	
 	global $idtranspose;	
-	$rsslink = '';
-	$wpdtreeopt = get_option('wp_dtree_options');	
-	if($wpdtreeopt['catopt']['showrss'])
-	{	
-		if($result['id'] > $idtranspose['cat'] && $result['id'] < $idtranspose['catpost'] ){						
-			$feedtype = "rss2";			 		
-			if (get_option('permalink_structure') == '' ) {
-				$rsslink = "<a class=\"catrss\" style=\"padding-right:15px\" href=\"".get_option('home')."?feed=".$feedtype."&cat=".($result['id']-$idtranspose['cat'])."\"></a>";	 		
-			} else {				
-				$rsslink = "<a class=\"catrss\" style=\"padding-right:15px\" href=\"".trailingslashit($result['url'])."feed\"></a>";	//Depends on URL holding a trailing /		
-			}		
-		}
+	$rsslink = '';
+	$feedtype = "rss2";		
+	if($result['id'] > $idtranspose[$treetype] && $result['id'] < $idtranspose[$treetype.'post'] ) {					 		
+		if (get_option('permalink_structure') == '' ) {
+			$rsslink = "?feed=".$feedtype."&".$treetype."=".($result['id']-$idtranspose[$treetype]);	 		
+		} else {				
+			$path = str_replace(trailingslashit(get_bloginfo('url')), "", $result['url']);			
+			$rsslink = trailingslashit($path)."feed";			
+		}		
 	}
 	return $rsslink;
 }
 
-
-function wp_dtree_get_cat_count($id)
-{
-	global $idtranspose;
-	$wpdtreeopt = get_option('wp_dtree_options');		
-	$count = '';
-	if($wpdtreeopt['catopt']['showcount']) { //IF SHOW COUNTS
-		$catobj = get_category($id-$idtranspose['cat']);
-		if($catobj->category_count)	{
-			$count = "</a><div id=\"postcount\">"." (".$catobj->category_count.")</div><a>"; //closes the cat-name link, and opens a new tag to match the one outputed in the javatree.
-		}
-	}
-	return $count;
-}
-
-/*
-There are server setups where $_SERVER['SERVER_NAME'] has nothing to do with the URI of the resource a user is looking for. 
-To deal with those special cases I added the explode-fix after the first comparison. What is does is simply strip out
-the entire domain-part of the URL. Since I don't trust it entirely I've left the original checks intact.
-
-The comments serve to illustrate such a special case.
-*/	
-function wp_dtree_compare_to_uri($inuri) {
-	$ruri = $_SERVER['REQUEST_URI'];        
-	$server_url = "http://".$_SERVER['SERVER_NAME']; // http://phpbb3.gaurangapada.com
-	$inuri = str_replace($server_url, "", $inuri);	
-	$inuri = trailingslashit($inuri); // http://nitaai.com/blog/index.php/2007/09/24/nitaaicom-portal-with-no-pageload/ 
-	$ruri = trailingslashit($ruri); // 					  /blog/index.php/2007/09/24/nitaaicom-portal-with-no-pageload/ 	
-	if ( $ruri == $inuri ) {
-		return true; //original test. 
-	} 	
-	// split the URL four times at the character "/". The third part should be "domain.com", and thus the fourth is the "domain less" part of the URI
-	$pathparts = explode("/",$inuri, 4);  	
-	//echo $pathparts[3]; // blog/index.php/2007/09/24/nitaaicom-portal-with-no-pageload/	
-	if ( isset($pathparts[3]) && $pathparts[3] != '' && $ruri == "/".$pathparts[3] ) {			
-		return true; 
-	} 	
-	return false;	
-}
-
-function wp_dtree_truncate_string($str, $len='16') {
-	if ( strlen($str) > $len ) {
-		$str = substr($str, 0, $len)."...";
-	}
-	return $str;
+function wp_dtree_get_count($nodedata, $treetype){	
+	global $idtranspose, $wpdb;			
+	$count = "";
+	if($treetype == 'cat'){
+		$catobj = get_category($nodedata['id']-$idtranspose['cat']);
+		$count .= $catobj->category_count;
+	} else if($treetype == 'arc'){
+		$count .= $nodedata['post_count'];	
+	}
+	return $count; 
 }
 
 function wp_dtree_add_month($datestring, $nummonths='1') {

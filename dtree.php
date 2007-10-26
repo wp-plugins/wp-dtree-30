@@ -1,4 +1,10 @@
 /*
+WP-dTree 3.3 (ulfben 2007-10-26)
+	Fixed $curdir being undefined on some servers. (contributed by Zarquod)
+	Added base URL to the tree so we won't have to pass it in for every node.
+	Added a truncate-title function so we wont have to pass redundant data.
+	Removed the text and graphic for the root-node. 
+
 WP-dTree 3.2 (ulfben 2007-10-08)
 	Added duration parameter to the GET array.
 	Removed title on root-node.				
@@ -33,7 +39,7 @@ WP-dTree 3.2 (ulfben 2007-10-08)
 /*--------------------------------------------------|
 | dTree 2.05 | www.destroydrop.com/javascript/tree/ |
 |---------------------------------------------------|
-| Copyright (c) 2002-2003 Geir Landrö               |
+| Copyright (c) 2002-2003 Geir Landrï¿½               |
 |                                                   |
 | This script can be used freely as long as all     |
 | copyright messages are intact.                    |
@@ -42,11 +48,10 @@ WP-dTree 3.2 (ulfben 2007-10-08)
 |--------------------------------------------------*/
 <?php
 $curdir = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']); //fix contributed by Zarquod: http://wordpress.org/support/topic/136547
-////$curdir = "http://" . $HTTP_SERVER_VARS['SERVER_NAME'] . dirname($HTTP_SERVER_VARS['PHP_SELF']); //deprecated.
-
 $effStyle = "blind";
 $withEff = 1;
 $duration = 0.5;
+$trunc = 16; 
 if ( isset($_REQUEST['eff']) ) {
 	$effStyle = $_REQUEST['eff'];
 }
@@ -55,6 +60,9 @@ if ( isset($_REQUEST['witheff']) ) {
 }
 if ( isset($_REQUEST['effdur']) ) {
 	$duration = $_REQUEST['effdur'];
+}
+if ( isset($_REQUEST['trunc']) ) {
+	$trunc = $_REQUEST['trunc'];
 }
 if ( 'slide' == $effStyle ) {
 	$effCall_o = "SlideDown";
@@ -79,12 +87,15 @@ elseif ( 'grow' == $effStyle ) {
 ?>
 
 // Node object
-function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
+function Node(id, pid, name, url, title, count, rsspath) { 
 	this.id = id;
 	this.pid = pid;
 	this.name = name;
 	this.url = url;
 	this.title = title;
+	this.count = count; //for postcounts
+	this.rsspath = rsspath; //for feed link.
+	var target, icon, iconOpen, open; //these were originally passed as parameters, but were never used in wp-dtree.	
 	this.target = target;
 	this.icon = icon;
 	this.iconOpen = iconOpen;
@@ -97,7 +108,7 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 };
 
 // Tree object
-function dTree(objName) {
+function dTree(objName, baseUrl) {
 	this.config = {
 		target			: null,
 		folderLinks		: false,
@@ -110,7 +121,7 @@ function dTree(objName) {
 		inOrder			: false
 	}
 	this.icon = {
-		root		: '<?php echo $curdir; ?>/dtree-img/base.gif',
+		root		: '<?php echo $curdir; ?>/dtree-img/empty.gif',
 		folder		: '<?php echo $curdir; ?>/dtree-img/folder.gif',
 		folderOpen	: '<?php echo $curdir; ?>/dtree-img/folderopen.gif',
 		node		: '<?php echo $curdir; ?>/dtree-img/page.gif',
@@ -123,8 +134,9 @@ function dTree(objName) {
 		minus		: '<?php echo $curdir; ?>/dtree-img/minus.gif',
 		minusBottom	: '<?php echo $curdir; ?>/dtree-img/minusbottom.gif',
 		nlPlus		: '<?php echo $curdir; ?>/dtree-img/nolines_plus.gif',
-		nlMinus		: '<?php echo $curdir; ?>/dtree-img/nolines_minus.gif'
+		nlMinus		: '<?php echo $curdir; ?>/dtree-img/nolines_minus.gif'	
 	};
+	this._url = baseUrl; 
 	this.obj = objName;
 	this.aNodes = [];
 	this.aIndent = [];
@@ -135,9 +147,26 @@ function dTree(objName) {
 };
 
 // Adds a new node to the node array
-dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen, open) {
-	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, target, icon, iconOpen, open);
+dTree.prototype.a = function(id, pid, title, path, count, rsspath) {
+	if(typeof(count) != "undefined" && count != ""){
+		count = "<div id='postcount'>(" + count + ")</div>";
+	}
+	if(typeof(rsspath) != "undefined" && rsspath != ""){
+		rsspath = "<a class='dtreerss' style='padding-right:15px' href='" + this._url + rsspath + "'> </a>";	
+	}	
+	name = this.truncate(title, <?php echo $trunc; ?>);
+	url = this._url + path;
+	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, count, rsspath); 
 };
+ 
+dTree.prototype.truncate = function(str, length) {
+    var length = length || 16;
+    var truncation = '...';
+    if(str.length > length)   {
+    	return str.slice(0, length - truncation.length) + truncation;
+    }
+    return str;
+ };
 
 // Open/close all nodes
 dTree.prototype.openAll = function() {
@@ -187,44 +216,45 @@ dTree.prototype.addNode = function(pNode) {
 };
 
 // Creates the node icon, url and text
-dTree.prototype.node = function(node, nodeId) {	
+dTree.prototype.node = function(node, nodeId) {	
 	var str = '<div class="dTreeNode">' + this.indent(node, nodeId);	
 	if (this.config.useIcons) {
 		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
 		if (!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
-		if (this.root.id == node.pid) {
-			node.icon = this.icon.root;
-			node.iconOpen = this.icon.root;
+		if (this.root.id != node.pid) {		
+			str += '<img id="i' + this.obj + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
 		}
-		str += '<img id="i' + this.obj + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
 	}
-	if (node.url) {
-		str += '<a id="s' + this.obj + nodeId + '" class="' + ((this.config.useSelection) ? ((node._is ? 'nodeSel' : 'node')) : 'node') + '" href="' + node.url + '"';
-		if (node.title) str += ' title="' + node.title + '"';
-		if (node.target) str += ' target="' + node.target + '"';
-		if (this.config.useStatusText) str += ' onmouseover="window.status=\'' + node.name + '\';return true;" onmouseout="window.status=\'\';return true;" ';
-		if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc))
-			str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
-		str += '>';
+	if(this.root.id != node.pid){
+		if (node.url) {
+			str += '<a id="s' + this.obj + nodeId + '" class="' + ((this.config.useSelection) ? ((node._is ? 'nodeSel' : 'node')) : 'node') + '" href="' + node.url + '"';
+			if (node.title) str += ' title="' + node.title + '"';
+			if (node.target) str += ' target="' + node.target + '"';
+			if (this.config.useStatusText) str += ' onmouseover="window.status=\'' + node.name + '\';return true;" onmouseout="window.status=\'\';return true;" ';
+			if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc))
+				str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
+			str += '>';
+		}
+		else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id) {
+			str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');"'
+			if (node.title) str += ' title="' + node.title + '"';
+			str += ' class="node">';
+		}
+		str += node.name;	
+		if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';	
 	}
-	else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id) {
-		str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');"'
-		if (node.title) str += ' title="' + node.title + '"';
-		str += ' class="node">';
-	}	
-	//the root node name is illogical - we have titles in the sidebar.
-	if(this.root.id != node.pid)
-	{
-		str += node.name;
+	if(node.count){
+		str += node.count;
 	}
-	if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';	
+	if(node.rsspath){
+		str	+= node.rsspath;
+	}
 	str += ' </div>';	
 	if (node._hc) {
 		str += '<div id="d' + this.obj + nodeId + '" class="clip" style="display:' + ((this.root.id == node.pid || node._io) ? 'block' : 'none') + ';">';
-		str += this.addNode(node);		
+		str += this.addNode(node);	
 		str += '</div>';
-	}
-	
+	}	
 	this.aIndent.pop();
 	return str;
 };
