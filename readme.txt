@@ -10,9 +10,9 @@ Turns your sidebar into a very convenient, dynamic navigation tree. Supports scr
 
 == Description ==
 
-This plugin can generate navigation trees for your posts, pages and categories. The archive tree can be displayed with monthly or yearly nodes, post counts and feeds. The category tree can be displayed with or without their posts, post count and RSS-links. WP-dTree uses Scriptaculous for awesome display effects. You can set effect type and duration through the admin interface (Presentation -> WP-dTree). 
+This plugin can generate navigation trees for your posts, pages and categories. WP-dTree uses Scriptaculous for awesome display effects. You can set effect type and duration through the admin interface (Presentation -> WP-dTree). 
 
-WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). The fork is primarly aimed at [improving the performance](http://wordpress.org/extend/plugins/wp-dtree-30/faq/) of WP-dTree, but packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, RSS for categories, post counts and more.
+WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). The fork is primarly aimed at [improving the performance](http://wordpress.org/extend/plugins/wp-dtree-30/faq/) of WP-dTree, but packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, feed icons, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
 
