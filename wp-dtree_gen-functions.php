@@ -1,4 +1,4 @@
-<?php
+<?php
 
 function wp_dtree_build_tree($results, $treetype) {
 	global $idtranspose, $_curid;
@@ -18,12 +18,12 @@ function wp_dtree_build_tree($results, $treetype) {
 	$closelink = $wpdtreeopt['genopt']['closelink'];	
 
 	$tree = '';
-	if ( $results ) {
+	if ( $results ) {
 		$t = $treetype{0}; //get the first char of the treetype.		
 		$tree .= "\n<div id=\"dtree" . $treetype . "wrapper\">\n";
 		if ( $oclink ) {
 			$tree .= "<a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a>\n";			
-			$tree .= "<br /><br />"; //gives us some spacing from the oclinks. Not a good solution, varies across browsers and so on...
+			$tree .= "<br /><br />"; //gives us some spacing from the oclinks. Not a good solution, varies across browsers and so on...
 		}
 		$tree .= "<script type=\"text/javascript\">\n";
 		$tree .= "<!--\n";
@@ -50,24 +50,24 @@ function wp_dtree_build_node($treetype, $nodedata, $truncate)
 		return __("\n// WP-dTree WARNING: build_node failed.\n\n");		 		
 	} 
 	$wpdtreeopt = get_option('wp_dtree_options');
-	$opttype = $treetype."opt";
+	$opttype = $treetype."opt";
 	$t = $treetype{0};
-	//$opentosel = $wpdtreeopt[$opttype]['opentosel'];	
-	
-	($wpdtreeopt[$opttype]['showcount'] && wp_dtree_get_count($nodedata, $treetype)	)	? $count = ",'".wp_dtree_get_count($nodedata, $treetype)."'" 	: $count = "";
-	($wpdtreeopt[$opttype]['showrss'] 	&& wp_dtree_get_rss($nodedata, $treetype)	) 	? $rsspath = ",'".wp_dtree_get_rss($nodedata, $treetype)."'"	: $rsspath = "";	
-	if($rsspath != "" && $count == ""){
-		$count = ",''"; //add an empty parameter before the rsspath, or we'll get strange counts indeed... :)
-	}
-	
-	global $_curid;				
-	$path = str_replace(trailingslashit(get_bloginfo('url')), "", $nodedata['url']); 
+	//$opentosel = $wpdtreeopt[$opttype]['opentosel'];	
+	
+	($wpdtreeopt[$opttype]['showcount'] && wp_dtree_get_count($nodedata, $treetype)	)	? $count = ",'".wp_dtree_get_count($nodedata, $treetype)."'" 	: $count = "";
+	($wpdtreeopt[$opttype]['showrss'] 	&& wp_dtree_get_rss($nodedata, $treetype)	) 	? $rsspath = ",'".wp_dtree_get_rss($nodedata, $treetype)."'"	: $rsspath = "";	
+	if($rsspath != "" && $count == ""){
+		$count = ",''"; //add an empty parameter before the rsspath, or we'll get strange counts indeed... :)
+	}
+	
+	global $_curid;				
+	$path = str_replace(trailingslashit(get_bloginfo('url')), "", $nodedata['url']); 
 	$node .= 	 $t.".a("
 				.$nodedata['id'].","
 				.$nodedata['pid'].","
-				."'".addslashes(strip_tags($nodedata['title']))."',"
-				."'".$path."'" 
-				.$count 
+				."'".addslashes(strip_tags($nodedata['title']))."',"
+				."'".$path."'" 
+				.$count 
 				.$rsspath							
 				.");\n";	
 	/* Useless, since our entire tree is now statically stored. This must be handled  at the time that the tree is printed.*/
@@ -77,30 +77,31 @@ function wp_dtree_build_node($treetype, $nodedata, $truncate)
 	return $node;		
 }
 
-function wp_dtree_get_rss($result, $treetype) {	
+function wp_dtree_get_rss($result, $treetype) {	
 	global $idtranspose;	
-	$rsslink = '';
+	$rsslink = '';
 	$feedtype = "rss2";		
 	if($result['id'] > $idtranspose[$treetype] && $result['id'] < $idtranspose[$treetype.'post'] ) {					 		
 		if (get_option('permalink_structure') == '' ) {
 			$rsslink = "?feed=".$feedtype."&".$treetype."=".($result['id']-$idtranspose[$treetype]);	 		
-		} else {				
-			$path = str_replace(trailingslashit(get_bloginfo('url')), "", $result['url']);			
+		} else {				
+			$path = str_replace(trailingslashit(get_bloginfo('url')), "", $result['url']);			
 			$rsslink = trailingslashit($path)."feed";			
 		}		
 	}
 	return $rsslink;
 }
 
-function wp_dtree_get_count($nodedata, $treetype){	
-	global $idtranspose, $wpdb;			
-	$count = "";
-	if($treetype == 'cat'){
-		$catobj = get_category($nodedata['id']-$idtranspose['cat']);
-		$count .= $catobj->category_count;
-	} else if($treetype == 'arc'){
-		$count .= $nodedata['post_count'];	
-	}
+function wp_dtree_get_count($nodedata, $treetype){	
+	global $idtranspose, $wpdb;			
+	$count = "";
+	if($treetype == 'cat'){
+		$catid = $id-$idtranspose['cat'];
+		$catobj = get_category($catid);		
+		$count .= $catobj->category_count;
+	} else if($treetype == 'arc'){
+		$count .= $nodedata['post_count'];	
+	}
 	return $count; 
 }
 
