@@ -17,6 +17,10 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of wp-dtree up to version 2.2.
 
+	Changes in v3.3.1 (ulfben - 20071101)
+	Removed redundant <li>-tags from widget printouts. (props: Alexey Zamulla) 
+	Properly encoded amperands (&) in javascript URLs.
+	
 	Changes in v3.3 (ulfben - 20071026)
 	Optimized dtree, **~40% less data** is stored and transfered! 
 	New option: Show RSS icon for archives
@@ -122,14 +126,14 @@
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  	
 	    	
-	        echo $before_widget . "<li>"; 
+	        echo $before_widget; 
 	        echo $before_title . $wpdtreeopt['arcopt']['topnode'] . $after_title . "<ul>";
 	        if (function_exists('wp_dtree_get_archives')){				
 			    wp_dtree_get_archives();
 			}else{
 				wp_get_archives('type=monthly'); 
 			} 
-	        echo $after_widget . "</ul></li>";	
+	        echo "</ul>" . $after_widget;	
 		}
 		
 		function widget_wp_dtree_get_categories($args) {
@@ -143,7 +147,7 @@
 			} else {
 				wp_list_categories('show_count=1');
 			} 
-	        echo $after_widget . "</ul></li>";	
+	        echo "</ul>" . $after_widget;	
 		}
 		
 		function widget_wp_dtree_get_pages($args) {
@@ -151,19 +155,19 @@
 	    	$wpdtreeopt = get_option('wp_dtree_options');  	
 	    	
 	        echo $before_widget; 
-	        echo $before_title . $wpdtreeopt['pgeopt']['topnode'] . $after_title . "<ul>";;
+	        echo $before_title . $wpdtreeopt['pgeopt']['topnode'] . $after_title . "<ul>";
 	        if (function_exists('wp_dtree_get_pages')) {
 				wp_dtree_get_pages();
 			} else {
 				wp_list_pages();				
 			} 
-	        echo $after_widget . "</ul></li>";	
+	        echo "</ul>" . $after_widget;	
 		}
 		
 		register_sidebar_widget('WP-dTree Pages', 'widget_wp_dtree_get_pages');
 		register_sidebar_widget('WP-dTree Archives', 'widget_wp_dtree_get_archives');
 		register_sidebar_widget('WP-dTree Categories', 'widget_wp_dtree_get_categories');
-	}	
+	}		
 								
 	function wp_dtree_add_option_page() {
 		if ( function_exists('add_options_page') ) {
@@ -172,22 +176,22 @@
 	}
 	
 	function wp_dtree_add2head() {
-		$wpdtreeopt = get_option('wp_dtree_options');
+		$wpdtreeopt = get_option('wp_dtree_options');
 		
-		$rssicon = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png";	//normal
+		$rssicon = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png";	//normal
 		$rssicon2 = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png"; //higlight				
-		$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&eff=".$wpdtreeopt['effopt']['efftype']."&effdur=".$wpdtreeopt['effopt']['duration']."&trunc=".$wpdtreeopt['genopt']['truncate']."\" language=\"javascript\"></script>\n";
+		$cd = "<script type=\"text/JavaScript\" src=\"" . get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree.php?witheff=".$wpdtreeopt['effopt']['effon']."&amp;eff=".$wpdtreeopt['effopt']['efftype']."&amp;effdur=".$wpdtreeopt['effopt']['duration']."&amp;trunc=".$wpdtreeopt['genopt']['truncate']."\" language=\"javascript\"></script>\n";
 		$cd .= "<link rel=\"stylesheet\" href=\"" 
 		. get_bloginfo('wpurl') 
 		. "/wp-content/plugins/wp-dtree-30/style.php?"
 		."fontsize=".$wpdtreeopt['cssopt']['fontsize']
-		."&mfontcolor=".$wpdtreeopt['cssopt']['mfontcolor']
-		."&lfontcolor=".$wpdtreeopt['cssopt']['lfontcolor']
-		."&lfontdecor=".$wpdtreeopt['cssopt']['lfontdecor']
-		."&hfontcolor=".$wpdtreeopt['cssopt']['hfontcolor']
-		."&hfontdecor=".$wpdtreeopt['cssopt']['hfontdecor']
-		."&rssgfx=".$rssicon
-		."&rssgfxh=".$rssicon2
+		."&amp;mfontcolor=".$wpdtreeopt['cssopt']['mfontcolor']
+		."&amp;lfontcolor=".$wpdtreeopt['cssopt']['lfontcolor']
+		."&amp;lfontdecor=".$wpdtreeopt['cssopt']['lfontdecor']
+		."&amp;hfontcolor=".$wpdtreeopt['cssopt']['hfontcolor']
+		."&amp;hfontdecor=".$wpdtreeopt['cssopt']['hfontdecor']
+		."&amp;rssgfx=".$rssicon
+		."&amp;rssgfxh=".$rssicon2
 		."\" type=\"text/css\" media=\"screen\" />\n";
 		echo $cd;
 	}
@@ -207,8 +211,8 @@
 			'folderlinks' => '1',
 			'useselection' => '0',
 			'opentosel' => '0',
-			'topnode' => 'Archives',
-			'showrss' => '0',
+			'topnode' => 'Archives',
+			'showrss' => '0',
 			'showcount' => '1'
 		);
 	
@@ -258,7 +262,7 @@
 			'hfontdecor' => 'underline'
 		);
 	
-		$genoptions = array(
+		$genoptions = array(
 			'truncate' => '16',
 			'openlink' => 'open all',
 			'closelink' => 'close all',
@@ -290,8 +294,8 @@
 			( !isset($_POST['afolderlinks']) ) 	? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
 			( !isset($_POST['auseselection']) ) ? $auseselection = "0" : $auseselection = $_POST['auseselection'] ;
 			( !isset($_POST['aopentosel']) )	? $aopentosel = "0" : $aopentosel = $_POST['aopentosel'] ;
-			( !isset($_POST['atopnode']) ) 		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
-			( !isset($_POST['ashowcount']) ) 	? $ashowcount = "0" : $ashowcount = $_POST['ashowcount'] ;			
+			( !isset($_POST['atopnode']) ) 		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
+			( !isset($_POST['ashowcount']) ) 	? $ashowcount = "0" : $ashowcount = $_POST['ashowcount'] ;			
 			( !isset($_POST['ashowrss']))		? $ashowrss = "0" : $ashowrss = $_POST['ashowrss'];		
 			( !isset($_POST['csortby']) ) 	 	? $csortby = "ID" : $csortby = $_POST['csortby'] ;
 			( !isset($_POST['csortorder']) ) 	? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
@@ -329,7 +333,7 @@
 			( !isset($_POST['hfontdecor']) ) 	? $hfontdecor = "underline" : $hfontdecor = $_POST['hfontdecor'] ;	
 			( !isset($_POST['openlink']) ) 		? $openlink = "open all" : $openlink = $_POST['openlink'] ;
 			( !isset($_POST['closelink']) ) 	? $closelink = "close all" : $closelink = $_POST['closelink'] ;
-			( !isset($_POST['exclude']) ) 		? $exclude = '' : $exclude = $_POST['exclude'] ;
+			( !isset($_POST['exclude']) ) 		? $exclude = '' : $exclude = $_POST['exclude'] ;
 			( !isset($_POST['truncate']) ) 		? $ptruncate = "16" : $truncate = $_POST['truncate'] ;		
 			
 	
@@ -343,8 +347,8 @@
 				'folderlinks' => $afolderlinks,
 				'useselection' => $auseselection,
 				'opentosel' => $aopentosel,
-				'topnode' => $atopnode,
-				'showcount' => $ashowcount,
+				'topnode' => $atopnode,
+				'showcount' => $ashowcount,
 				'showrss' => $ashowrss
 			);
 	
@@ -394,7 +398,7 @@
 				'hfontdecor' => $hfontdecor
 			);
 		
-			$genoptions = array(
+			$genoptions = array(
 				'truncate' => $truncate,
 				'openlink' => $openlink,
 				'closelink' => $closelink,
@@ -581,31 +585,31 @@
 					<input type="text" value="<?php echo $wpdtreeopt['genopt']['closelink']; ?>" name="closelink" size="10" />
 					<label>Close all link</label>
 					</p>
-				</td>
-				<td>
-					Set the name of what you want the open/close all links to be.
-				</td>				
-			</tr>
-			<tr>				
+				</td>
+				<td>
+					Set the name of what you want the open/close all links to be.
+				</td>				
+			</tr>
+			<tr>				
 				<td>				
 					<input type="text" value="<?php echo $wpdtreeopt['genopt']['exclude']; ?>" name="exclude" size="10" />
-					<label>Exclude posts/pages</label>
-				</td>
-				<td>
-					You can exclude specific posts or pages from the tree. <br>The format for this is 'ID1,ID2,ID3', where the ID is based on the ID you see when you manage your posts/pages.
-				</td>			
-			</tr>
-			<tr>				
-				<td>									
-					<input type="text" value="<?php echo $wpdtreeopt['genopt']['truncate']; ?>" name="truncate" size="5" />
-					<label>Characters to display</label>					
-				</td>				
-				<td>
-					Determines the width of your tree
+					<label>Exclude posts/pages</label>
 				</td>
-			</tr>
-			</tr>
-			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
+				<td>
+					You can exclude specific posts or pages from the tree. <br>The format for this is 'ID1,ID2,ID3', where the ID is based on the ID you see when you manage your posts/pages.
+				</td>			
+			</tr>
+			<tr>				
+				<td>									
+					<input type="text" value="<?php echo $wpdtreeopt['genopt']['truncate']; ?>" name="truncate" size="5" />
+					<label>Characters to display</label>					
+				</td>				
+				<td>
+					Determines the width of your tree
+				</td>
+			</tr>
+			</tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
 			<tr>
 		</table>
 	</div>	
@@ -636,9 +640,9 @@
 				<td>
 					<p>Click the checkbox to enable effects, then select the effect from the drop down menu.</p>					
 				</td>
-			</tr>
-			</tr>
-			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
+			</tr>
+			</tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
 			<tr>
 		</table>
 	</div>
@@ -680,9 +684,9 @@
 				<td>
 					<p>This area sets the CSS properties for the links that are displayed in your tree.</p>
 				</td>
-			</tr>
-			</tr>
-			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
+			</tr>
+			</tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
 			<tr>
 		</table>
 	</div>
