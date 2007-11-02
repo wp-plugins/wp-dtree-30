@@ -1,4 +1,4 @@
-=== WP-dTree 3.3 ===
+=== WP-dTree 3.3.1 ===
 Contributors: ulfben, Christopher Hwang
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
@@ -15,6 +15,13 @@ This plugin can generate navigation trees for your posts, pages and categories. 
 WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). The fork is primarly aimed at [improving the performance](http://wordpress.org/extend/plugins/wp-dtree-30/faq/) of WP-dTree, but packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, feed icons, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
+
+
+**Changes in v3.3.1** (ulfben - 20071102)
+
+1. Removed redundant <li>-tags from widgets. (props: Alexey Zamulla) 
+1. Added CHARACTER SET and COLLATION to the cache tables. ([props: michuw](http://wordpress.org/support/topic/141554))
+1. Properly encoded ampersands (&) in javascript URLs.
 
 **Changes in v3.3** (2007-10-26)
 

@@ -1,23 +1,33 @@
 <?php
 global $wpdb;
 $wp_dtree_cache = $wpdb->prefix . "dtree_cache";
-$wp_dtree_db_version = 5;
+$wp_dtree_db_version = 6;
 $wp_dtree_table_missing_msg = "WP-dTree-3.2: cache table (".$wp_dtree_cache.") is either missing or outdated. Disable the plugin and re-install it again.";
 
 function wp_dtree_install_cache() {	
 	global $wpdb, $wp_dtree_cache, $wp_dtree_db_version;  
 	$wpdb->show_errors();		
 	if(!wp_dtree_table_exists()) {	
+		$charset_collate = '';
+		if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
+			if ( ! empty($wpdb->charset) ){
+				$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+			}
+			if ( ! empty($wpdb->collate) ){
+				$charset_collate .= " COLLATE $wpdb->collate";
+			}
+		}			
 		$sql = "CREATE TABLE " . $wp_dtree_cache . " (
 		id MEDIUMINT(9) NOT NULL AUTO_INCREMENT, 
 		treetype CHAR(3), 
 		content MEDIUMTEXT,		
 		UNIQUE KEY  id (id)		
-		);";
+		) $charset_collate;";		
 		require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
 		dbDelta($sql);		
 		update_option("wp_dtree_db_version", $wp_dtree_db_version);
 		wp_dtree_update_cache();
+		
 	} else {
 		if(!wp_dtree_table_is_current()) {					 
 			wp_dtree_uninstall_cache();
