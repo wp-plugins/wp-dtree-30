@@ -19,7 +19,7 @@ If you enjoy WP-dTree and would like to suggest a specific feature, or just moti
 
 **Changes in v3.3.1** (ulfben - 20071102)
 
-1. Removed redundant <li>-tags from widgets. (props: Alexey Zamulla) 
+1. Removed redundant `<li>`-tags from widgets. (props: Alexey Zamulla) 
 1. Added CHARACTER SET and COLLATION to the cache tables. ([props: michuw](http://wordpress.org/support/topic/141554))
 1. Properly encoded ampersands (&) in javascript URLs.
 
