@@ -10,17 +10,18 @@ Turns your sidebar into a very convenient, dynamic navigation tree. Supports scr
 
 == Description ==
 
-This plugin can generate navigation trees for your posts, pages and categories. WP-dTree uses Scriptaculous for awesome display effects. You can set effect type and duration through the admin interface (Presentation -> WP-dTree). 
+This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages and categories. It uses Scriptaculous for awesome display effects (enable in admin panel).
 
-WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). The fork is primarly aimed at [improving the performance](http://wordpress.org/extend/plugins/wp-dtree-30/faq/) of WP-dTree, but packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, feed icons, post counts and more.
+WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). 
+
+The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but it packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, feed icons, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
-
 
 **Changes in v3.3.1** (ulfben - 20071102)
 
 1. Removed redundant `li`-tags from widgets. (props: Alexey Zamulla) 
-1. Added CHARACTER SET and COLLATION to the cache tables. ([props: michuw](http://wordpress.org/support/topic/141554))
+1. Support for non-ascii characters. ([props: michuw](http://wordpress.org/support/topic/141554))
 1. Properly encoded ampersands (&) in javascript URLs.
 
 **Changes in v3.3** (2007-10-26)
@@ -121,10 +122,23 @@ Displaying pages:
 
 == Frequently Asked Questions ==
 
-= How does the 3.x fork improve the performance of WP-dTree? =
-Instead of generating all the trees *on every visit*, 3.x employs caching - building the trees *only when you add or alter content on your blog*. The result is a tremendous load reduction from previous versions; the demo site (~360 posts, Kubrik theme) went from 411 to 18 queries (!) to display the main page.
+= How does the 3.x fork improve performance of WP-dTree? =
+Instead of generating all the trees *on every visit*, 3.x employs caching - building the trees *only when you add or alter content on your blog*. The result is a tremendous load reduction from previous versions; the devsite (~360 posts, Kubrik theme) went from 411 to 18 queries (!) to display the main page.
 
-The added benefit of the cache is a *significant* reduction in how much processing is needed for each visit. Unless you activate `Open to requested node`, all WP-dTree does is to print a static string.
+Of course, caching also yelds a *significant* reduction in how much processing is needed for each visit. Unless you activate `Open to requested node`, all WP-dTree does is to print a static string.
+
+Version 3.3 brought optimizations to [the dtree javascript](http://www.destroydrop.com/javascripts/tree/) itself too, further reducing the amount of data to store and transmit to create the trees.
+
+= I need feature XYZ! Can you make it for me? =
+Yes probably, but I will ask you for a favor in return:
+
+Really small jobs might cost you a post card.<br />
+Medium sized jobs might cost you [a used book or two](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).<br />
+Larger requests might involve dollars changing owner. <br />
+
+Send me your request (ulf at ulfben dot com) and I'll let you know. 
+
+*Please note that this is **free** code - you are allowed (and indeed - encouraged) to modify it yourself.*
 
 = Can I change the images used by WP-dTree? =
 
@@ -153,5 +167,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-
