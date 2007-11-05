@@ -18,7 +18,7 @@ The fork is focused on [performance improvements](http://wordpress.org/extend/pl
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
 
-**Changes in v3.3.1** (ulfben - 2007-11-02)
+**Changes in v3.3.1** (2007-11-02)
 
 1. Removed redundant `li`-tags from widgets. (props: Alexey Zamulla) 
 1. Support for non-ascii characters. ([props: michuw](http://wordpress.org/support/topic/141554))
@@ -57,7 +57,7 @@ If you enjoy WP-dTree and would like to suggest a specific feature, or just moti
 
 == Installation ==
 
-Make sure to disable and remove any previous installation of WP-dTree first! As of v3.2, the code for showing the trees have changed. Make sure to update your sidebar accordingly if you are not using widgets to display your archive.
+Make sure to disable and remove any previous installation of WP-dTree **and wp-scriptaculous** first! As of v3.2, the code for showing the trees have changed. Make sure to update your sidebar accordingly if you are not using widgets to display your archive.
 
 1. Extract the files and transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
