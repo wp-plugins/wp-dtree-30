@@ -1,4 +1,4 @@
-=== WP-dTree 3.3.1 ===
+=== WP-dTree 3.3.2 ===
 Contributors: ulfben, Christopher Hwang
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
@@ -17,6 +17,10 @@ WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com
 The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but it packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, feed icons, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
+
+**Changes in v3.3.2** (2007-11-26)
+
+1. Fixed bug with excluding multiple categories.
 
 **Changes in v3.3.1** (2007-11-02)
 
@@ -128,17 +132,6 @@ Instead of generating all the trees *on every visit*, 3.x employs caching - buil
 Of course, caching also yelds a *significant* reduction in how much processing is needed for each visit. Unless you activate `Open to requested node`, all WP-dTree does is to print a static string.
 
 Version 3.3 brought optimizations to [the dtree javascript](http://www.destroydrop.com/javascripts/tree/) itself too, further reducing the amount of data to store and transmit to create the trees.
-
-= I need feature XYZ! Can you make it for me? =
-Yes probably, but I will ask you for a favor in return:
-
-Really small jobs might cost you a post card.<br />
-Medium sized jobs might cost you [a used book or two](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).<br />
-Larger requests might involve dollars changing owner. <br />
-
-Send me your request (ulf at ulfben dot com) and I'll let you know. 
-
-*Please note that this is **free** code - you are allowed (and indeed - encouraged) to modify it yourself.*
 
 = Can I change the images used by WP-dTree? =
 

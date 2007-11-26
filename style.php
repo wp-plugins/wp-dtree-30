@@ -63,8 +63,8 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 }
 #dtreec img, #dtreea img, #dtreep img {
 	border: 0px;
-	vertical-align: middle;		
-	float: none; 
+	vertical-align: middle;		
+	float: none; 
 	margin: 0 0px 0px 0;
 }
 #dtreec a, #dtreea a, #dtreep a, #dtreecatwrapper a, #dtreearcwrapper a, #dtreepgewrapper a {
@@ -76,12 +76,12 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 
 /*RSS icons for categories. Don't ask.*/
 a.dtreerss  {	
-   padding-right: 25px; 
+   padding-right: 25px; 
    background: url('<?php echo $rssicon; ?>') no-repeat center right;  
 }
 
 a.dtreerss:hover  {	
-    padding-right: 25px; 
+    padding-right: 25px; 
     background: url('<?php echo $rssicon2; ?>') no-repeat center right;
 }
 
@@ -106,4 +106,4 @@ a.dtreerss:hover  {
 }
 #dtreec .clip, #dtreea .clip, #dtreep .clip {
 	overflow: hidden;
-}
+}
