@@ -2,7 +2,7 @@
 Contributors: ulfben
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
-Requires at least: 2.2
+Requires at least: 2.3
 Tested up to: 2.3.1
 Stable tag: trunk
 
