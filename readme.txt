@@ -4,7 +4,7 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.3
 Tested up to: 2.6
-Stable tag: trunk
+Stable tag: 3.4
 
 Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
 
