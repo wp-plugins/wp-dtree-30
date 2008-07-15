@@ -1,8 +1,8 @@
 <?php
 
 function wp_dtree_build_tree($results, $treetype) {
-	global $idtranspose, $_curid;
-
+	global $_curid;
+	$idtranspose = wp_dtree_get_id_transpose();
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$opttype = $treetype."opt";
 	$truncate = $wpdtreeopt[$opttype]['truncate'];
@@ -16,20 +16,18 @@ function wp_dtree_build_tree($results, $treetype) {
 	$opentosel = $wpdtreeopt[$opttype]['opentosel'];
 	$openlink = $wpdtreeopt['genopt']['openlink'];
 	$closelink = $wpdtreeopt['genopt']['closelink'];	
-
+	
 	$tree = '';		
 	
 	$t = $treetype{0}; //get the first char of the treetype.		
-	$tree .= "\n<div id=\"dtree" . $treetype . "wrapper\">\n";
+	$tree .= "\n<span id=\"dtree" . $treetype . "wrapper\">\n";
 	if ( $oclink ) {
-		$tree .= "<a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a>\n";			
-		$tree .= "<br /><br />"; //gives us some spacing from the oclinks. Not a good solution, varies across browsers and so on...
+		$tree .= "<p id=\"oclink\"><a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a></p>\n";			
 	}
 	$tree .= "<script type=\"text/javascript\">\n";
-	$tree .= "<!--\n"; //closed in the "gettreetype" functions, in case we need to add to the JS.
-	
+	$tree .= "<!--\n"; //closed in the "gettreetype" functions, in case we need to add to the JS.	
 	if ( $results ) {
-		$tree .= "var " . $t . " = new dTree('" . $t . "', '".trailingslashit(get_bloginfo('url'))."');\n";
+		$tree .= "var " . $t . " = new wp_dTree('" . $t . "', '".trailingslashit(get_bloginfo('url'))."');\n";
 		$tree .= $t . ".config.useLines=" . $useLines . ";\n";
 		$tree .= $t . ".config.useIcons=" . $useIcons . ";\n";
 		$tree .= $t . ".config.closeSameLevel=" . $cSameLevel . ";\n";
@@ -45,15 +43,14 @@ function wp_dtree_build_tree($results, $treetype) {
 }
 
 /*sets _curid to the currently selected node if any (to use if open to selection is on)*/
-function wp_dtree_build_node($treetype, $nodedata, $truncate)
-{
+function wp_dtree_build_node($treetype, $nodedata, $truncate){
 	$node = '';		
 	if (!is_array($nodedata)) {
 		return __("\n// WP-dTree WARNING: build_node failed.\n\n");		 		
 	} 
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$opttype = $treetype."opt";
-	$t = $treetype{0};		
+	$t = $treetype{0};
 	
 	($wpdtreeopt[$opttype]['showcount'] && wp_dtree_get_count($nodedata, $treetype)	)	? $count = ",'".wp_dtree_get_count($nodedata, $treetype)."'" 	: $count = "";
 	($wpdtreeopt[$opttype]['showrss'] 	&& wp_dtree_get_rss($nodedata, $treetype)	) 	? $rsspath = ",'".wp_dtree_get_rss($nodedata, $treetype)."'"	: $rsspath = "";	
@@ -75,7 +72,7 @@ function wp_dtree_build_node($treetype, $nodedata, $truncate)
 }
 
 function wp_dtree_get_rss($result, $treetype) {	
-	global $idtranspose;	
+	$idtranspose = wp_dtree_get_id_transpose();	
 	$rsslink = '';
 	$feedtype = "rss2";		
 	if($result['id'] > $idtranspose[$treetype] && $result['id'] < $idtranspose[$treetype.'post'] ) {					 		
@@ -90,7 +87,8 @@ function wp_dtree_get_rss($result, $treetype) {
 }
 
 function wp_dtree_get_count($nodedata, $treetype){	
-	global $idtranspose, $wpdb;			
+	global $wpdb;		
+	$idtranspose = wp_dtree_get_id_transpose();	
 	$count = "";
 	if($treetype == 'cat'){
 		$catid = $nodedata['id']-$idtranspose['cat']; //DONT put this calculation in the parameter list. http://wordpress.org/support/topic/148638?replies=3

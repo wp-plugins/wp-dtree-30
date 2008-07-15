@@ -1,7 +1,8 @@
 <?php
 
 function wp_dtree_get_archives_arr() {
-	global $month, $wpdb, $idtranspose;
+	global $month, $wpdb;
+	$idtranspose = wp_dtree_get_id_transpose();
 	$now = current_time('mysql');
 	$results = array();
 	$wpdtreeopt = get_option('wp_dtree_options');
@@ -46,18 +47,18 @@ function wp_dtree_get_archives_arr() {
 		foreach ( $arcresults as $arcresult ) {
 			if ( $arctype == 'yearly' ) {
 				if ( $arcresult->year != $curyear ) {
-					$postcount = 0;
-					foreach($arcresults as $temp){
-						if($temp->year == $arcresult->year){
-							$postcount +=  $temp->posts;
-						}
-					}
-					
+					$postcount = 0;
+					foreach($arcresults as $temp){
+						if($temp->year == $arcresult->year){
+							$postcount +=  $temp->posts;
+						}
+					}
+					
 					$results[$idcount] = array( 
 						'id' => $idcount + $idtranspose['arc'], 
 						'pid' => 0 + $idtranspose['arc'],						 
 						'url' => get_year_link($arcresult->year), 
-						'title' => $arcresult->year,
+						'title' => $arcresult->year,
 						'post_count' => $postcount
 					);					
 					$mpidcount = $idcount;
@@ -76,7 +77,7 @@ function wp_dtree_get_archives_arr() {
 				'id' => $idcount + $idtranspose['arc'], 
 				'pid' => $mpidcount + $idtranspose['arc'],				 
 				'url' => get_month_link($arcresult->year, $arcresult->month), 
-				'title' => $name_title,
+				'title' => $name_title,
 				'post_count' => $arcresult->posts
 			);
 			$pidcount = $idcount;
@@ -115,37 +116,38 @@ function wp_dtree_get_archives_arr() {
 }
 	
 function wp_dtree_get_archives() {	
-	global $wpdb, $wp_dtree_cache;	
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name();	
 	$wpdtreeopt = get_option('wp_dtree_options');	
 	$arcresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'arc' ORDER BY id");		 	
-	if($arcresults){
-		print("\n<!-- arc tree: " . strlen($arcresults) . " chars. -->");
-	 	echo $arcresults;	
-	 	if($wpdtreeopt['arcopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
-			echo wp_dtree_open_arc_to($arcresults);
-	 	}	
-		echo "//-->\n";
-		echo "</script>\n";
-		echo "</div>\n";	
-	}	
-}
-
-function wp_dtree_open_arc_to($arcstring) {
-	$ruri = $_SERVER['REQUEST_URI']; 
-	$path = str_replace(get_bloginfo('url'), "", $ruri);	
-	$path = ltrim($path, '/');
-	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)) {
-		return ""; 
-	}
-	$strings = explode(";", $arcstring); //lots of arc.a('','','',''); statements
-	foreach ($strings as $string){
-		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
-			$params = explode(",", $string); //split it at parameter seperators 
-			$number = str_replace('a.a(', "", $params[0]); //remove the leading arc.a( to find the number.		
-			return 'a.openTo(' . $number . ', true);';			
-		}
-	}
-	return '';	
-}
+	print("\n<!-- WP-dTree 3.4, arc tree: " . strlen($arcresults) . " chars. -->");
+	if(!strlen($arcresults)){return;}		
+ 	echo $arcresults;	
+ 	if($wpdtreeopt['arcopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
+		echo wp_dtree_open_arc_to($arcresults);
+ 	}	
+	echo "//-->\n";
+	echo "</script>\n";
+	echo "</span>\n";	
+	
+}
+
+function wp_dtree_open_arc_to($arcstring) {
+	$ruri = $_SERVER['REQUEST_URI']; 
+	$path = str_replace(get_bloginfo('url'), "", $ruri);	
+	$path = ltrim($path, '/');
+	$ruri = ltrim($ruri, '/');	
+	if($path == "/" || empty($path) || empty($ruri)) {
+		return ""; 
+	}
+	$strings = explode(";", $arcstring); //lots of arc.a('','','',''); statements
+	foreach ($strings as $string){
+		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
+			$params = explode(",", $string); //split it at parameter seperators 
+			$number = str_replace('a.a(', "", $params[0]); //remove the leading arc.a( to find the number.		
+			return 'a.openTo(' . $number . ', true);';			
+		}
+	}
+	return '';	
+}
 ?>

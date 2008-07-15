@@ -1,7 +1,6 @@
 <?php
 function wp_dtree_get_pages_arr() {
-	global $idtranspose;
-
+	$idtranspose = wp_dtree_get_id_transpose();
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$sortby = $wpdtreeopt['pgeopt']['sortby'];
 	$sortorder = $wpdtreeopt['pgeopt']['sortorder'];
@@ -29,37 +28,37 @@ function wp_dtree_get_pages_arr() {
 }
 
 function wp_dtree_get_pages() {
-	global $wpdb, $wp_dtree_cache; 
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name(); 
 	$wpdtreeopt = get_option('wp_dtree_options');  		
 	$pgeresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'pge' ORDER BY id");	
-	if($pgeresults){
-		print("\n<!-- pge tree: " . strlen($pgeresults) . " chars. -->");
-		echo $pgeresults;	
-		if($wpdtreeopt['pgeopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){	
-			echo wp_dtree_open_pages_to($pgeresults);	
-		} 		
-		echo "//-->\n";	
-		echo "</script>\n";	
-		echo "</div>\n";
-	}			
-}
-
-function wp_dtree_open_pages_to($pgestring) {
-	$ruri = $_SERVER['REQUEST_URI']; 
-	$path = str_replace(get_bloginfo('url'), "", $ruri);	
-	$path = ltrim($path, '/');
-	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)) {
-		return ""; 
-	}
-	$strings = explode(";", $pgestring); //lots of cat.a('','','',''); statements
-	foreach ($strings as $string){
-		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
-			$params = explode(",", $string); //split it at parameter seperators 
-			$number = str_replace('p.a(', "", $params[0]); //remove the leading arc.a( to find the number.		
-			return 'p.openTo(' . $number . ', true);';			
-		}
-	}
-	return '';	
+	print("\n<!-- WP-dTree 3.4, pge tree: " . strlen($pgeresults) . " chars. -->");
+	if(!strlen($pgeresults)){return;}	
+	echo $pgeresults;	
+	if($wpdtreeopt['pgeopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){	
+		echo wp_dtree_open_pages_to($pgeresults);	
+	} 		
+	echo "//-->\n";	
+	echo "</script>\n";	
+	echo "</span>\n";				
+}
+
+function wp_dtree_open_pages_to($pgestring) {
+	$ruri = $_SERVER['REQUEST_URI']; 
+	$path = str_replace(get_bloginfo('url'), "", $ruri);	
+	$path = ltrim($path, '/');
+	$ruri = ltrim($ruri, '/');	
+	if($path == "/" || empty($path) || empty($ruri)) {
+		return ""; 
+	}
+	$strings = explode(";", $pgestring); //lots of cat.a('','','',''); statements
+	foreach ($strings as $string){
+		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
+			$params = explode(",", $string); //split it at parameter seperators 
+			$number = str_replace('p.a(', "", $params[0]); //remove the leading arc.a( to find the number.		
+			return 'p.openTo(' . $number . ', true);';			
+		}
+	}
+	return '';	
 }
 ?>

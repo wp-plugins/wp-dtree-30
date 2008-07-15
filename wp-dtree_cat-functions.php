@@ -1,6 +1,7 @@
 <?php
 function wp_dtree_get_categories_arr() {
-	global $wpdb, $idtranspose, $wp_version;
+	global $wpdb, $wp_version;
+	$idtranspose = wp_dtree_get_id_transpose(); 
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$sort_column = $wpdtreeopt['catopt']['sortby']; //ID or name
 	$sort_order = $wpdtreeopt['catopt']['sortorder']; //ASC or DESC
@@ -9,8 +10,8 @@ function wp_dtree_get_categories_arr() {
 	$listchildpost = $wpdtreeopt['catopt']['listpost']; //show posts under category
 	$postexclude = $wpdtreeopt['genopt']['exclude']; //excluded post's ID.
 
-	if ( !isset($idcount) ) { $idcount = 1; }	
-	( !empty($excludedcats) ) ? $catexclusions = $excludedcats : $catexclusions = '';	
+	if ( !isset($idcount) ) { $idcount = 1; }	
+	( !empty($excludedcats) ) ? $catexclusions = $excludedcats : $catexclusions = '';	
 	
 	$catresults = get_categories(
 		array(
@@ -39,9 +40,9 @@ function wp_dtree_get_categories_arr() {
 			$idcount++;
 		}		
 	}
-	
-	if(!$listchildpost || !count($catresults)){ //it's either empty or we don't need to list posts. Either way - skip the rest.		
-		return wp_dtree_build_tree($results, 'cat');
+	
+	if(!$listchildpost || !count($catresults)){ //it's either empty or we don't need to list posts. Either way - skip the rest.		
+		return wp_dtree_build_tree($results, 'cat');
 	}	
 	
 	$postexclusions = '';	
@@ -50,15 +51,15 @@ function wp_dtree_get_categories_arr() {
 		foreach ( $exposts as $expost ) {
 			$postexclusions .= ' AND '.$wpdb->posts.'.ID != ' . intval($expost) . ' ';
 		}
-	}	
-	
-	$catexclusions = '';
-	$excats = preg_split('/[\s,]+/', $excludedcats);
-	if(count($excats)){
-		foreach($excats as $excat){
-			$catexclusions .= " AND ".$wpdb->terms.".term_id != ".intval($excat) . ' ';
-		}
-	}
+	}	
+	
+	$catexclusions = '';
+	$excats = preg_split('/[\s,]+/', $excludedcats);
+	if(count($excats)){
+		foreach($excats as $excat){
+			$catexclusions .= " AND ".$wpdb->terms.".term_id != ".intval($excat) . ' ';
+		}
+	}
 			
 	$checkPostType = " AND ".$wpdb->posts.".post_type = 'post'"; //OR ".$wpdb->posts.".post_type = 'page'  
 	
@@ -76,15 +77,15 @@ function wp_dtree_get_categories_arr() {
 				." WHERE ".$wpdb->term_relationships.".object_id = ".$wpdb->posts.".ID"
 				." AND ".$wpdb->term_taxonomy.".taxonomy = 'category' "
 				." AND ".$wpdb->term_relationships.".term_taxonomy_id = ".$wpdb->term_taxonomy.".term_taxonomy_id"
-				." AND ".$wpdb->term_taxonomy.".term_id = ".$wpdb->terms.".term_id"					
-				." AND ".$wpdb->posts.".post_status = 'publish'"
+				." AND ".$wpdb->term_taxonomy.".term_id = ".$wpdb->terms.".term_id"					
+				." AND ".$wpdb->posts.".post_status = 'publish'"
 				.$catexclusions										
 				.$postexclusions
 				.$checkPostType
 				." ORDER BY ".$wpdb->posts.".post_date DESC";	
 	}
-	$postresults = (array)$wpdb->get_results($query);	
-
+	$postresults = (array)$wpdb->get_results($query);	
+
 	foreach ( $postresults as $postresult ) {
 		$results[$idcount] = array( 'id' => $postresult->id + $idtranspose['catpost'], 'pid' => $postresult->catid + $idtranspose['cat'], 'name' => $postresult->title, 'url' => get_permalink($postresult->id), 'title' => $postresult->title);
 		$idcount++;
@@ -94,36 +95,38 @@ function wp_dtree_get_categories_arr() {
 }
 
 function wp_dtree_get_categories() {	
-	global $wpdb, $wp_dtree_cache;		
-	$wpdtreeopt = get_option('wp_dtree_options');
-	$catresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'cat' ORDER BY id");	
-	print("\n<!-- cat tree: " . strlen($catresults) . " chars. -->");	
-	echo $catresults;	
-	if($wpdtreeopt['catopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
-		echo wp_dtree_open_cat_to($catresults);
-	} 	
-	echo "//-->\n";		
-	echo "</script>\n";		
-	echo "</div>\n";	
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name();		
+	$wpdtreeopt = get_option('wp_dtree_options');
+	$catresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'cat' ORDER BY id");	
+	print("\n<!-- WP-dTree 3.4, cat tree: " . strlen($catresults) . " chars. -->");	
+	if(!strlen($catresults)){return;}
+	echo $catresults;	
+	if($wpdtreeopt['catopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
+		echo wp_dtree_open_cat_to($catresults);
+	} 	
+	echo "//-->\n";		
+	echo "</script>\n";		
+	echo "</span>\n";	
 }
 
-function wp_dtree_open_cat_to($catstring) {
-	$ruri = $_SERVER['REQUEST_URI']; 
-	$path = str_replace(get_bloginfo('url'), "", $ruri);	
-	$path = ltrim($path, '/');
-	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)) {
-		return ""; 
-	}
-	$strings = explode(";", $catstring); //lots of cat.a('','','',''); statements
-	foreach ($strings as $string){
-		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
-			$params = explode(",", $string); //split it at parameter seperators 
-			$number = str_replace('c.a(', "", $params[0]); //remove the leading cat.a( to find the number.		
-			return 'c.openTo('.$number.', true);';			
-		}
-	}
-	return '';	
+function wp_dtree_open_cat_to($catstring) {
+	$ruri = $_SERVER['REQUEST_URI']; 
+	$path = str_replace(get_bloginfo('url'), "", $ruri);	
+	$path = ltrim($path, '/');
+	$ruri = ltrim($ruri, '/');	
+	if($path == "/" || empty($path) || empty($ruri)) {
+		return ""; 
+	}
+	$strings = explode(";", $catstring); //lots of cat.a('','','',''); statements
+	foreach ($strings as $string){
+		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
+			$params = explode(",", $string); //split it at parameter seperators 
+			$number = str_replace('c.a(', "", $params[0]); //remove the leading cat.a( to find the number.		
+			return 'c.openTo('.$number.', true);';			
+		}
+	}
+	return '';	
 }
 
 ?>

@@ -1,9 +1,9 @@
-=== WP-dTree 3.3.2 ===
+=== WP-dTree 3.4 ===
 Contributors: ulfben
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.3
-Tested up to: 2.3.1
+Tested up to: 2.6
 Stable tag: trunk
 
 Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
@@ -12,11 +12,19 @@ Turns your sidebar into a very convenient, dynamic navigation tree. Supports scr
 
 This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages and categories. It uses Scriptaculous for awesome display effects (enable in admin panel).
 
-WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). 
+WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, [Ulf Benjaminsson](http://www.ulfben.com) forked the plugin (as of version 3.x). 
 
 The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but it packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, feed icons, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
+
+**Changes in v3.4** (2008-07-12)
+
+1. Added support for link trees. (needs testing!)
+1. Fixed breakage in WP 2.5, 2.6
+1. Fixed invalid XHTML output. ([props: jberghem](http://wordpress.org/support/topic/150888))
+1. Fixed a CSS-issue. ([props: wenzlerm](http://wordpress.org/support/topic/186314))
+1. Renamed the dTree script to avoid collisions with plugins using an unmodified version.
 
 **Changes in v3.3.2** (2007-11-26)
 

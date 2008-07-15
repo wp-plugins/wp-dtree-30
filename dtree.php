@@ -1,17 +1,17 @@
 /*
-WP-dTree 3.3 (ulfben 2007-10-26)
+WP-wp_dTree 3.3 (ulfben 2007-10-26)
 	Fixed $curdir being undefined on some servers. (contributed by Zarquod)
 	Added base URL to the tree so we won't have to pass it in for every node.
 	Added a truncate-title function so we wont have to pass redundant data.
 	Removed the text and graphic for the root-node. 
 
-WP-dTree 3.2 (ulfben 2007-10-08)
+WP-wp_dTree 3.2 (ulfben 2007-10-08)
 	Added duration parameter to the GET array.
 	Removed title on root-node.				
 */
 
 /*--------------------------------------------------|
-| WP-dTree 2.2 | www.silpstream.com/blog/           |
+| WP-wp_dTree 2.2 | www.silpstream.com/blog/           |
 |---------------------------------------------------|
 | Copyright (c) 2006 Christopher Hwang              |
 | Release Date: July 2006                           |
@@ -31,13 +31,13 @@ WP-dTree 3.2 (ulfben 2007-10-08)
 |      Highlight current position in blog           |
 | v2.0 Support for scriptaculous effects added      |
 |      Category based menu added                    |
-|      Support for dTree options was built in       |
+|      Support for wp_dTree options was built in       |
 |      Option menu added to admin panel             |
 |	v1.0 Work arounds added for wordpress beautified |
 |      permalinks.                                  |
 |--------------------------------------------------*/
 /*--------------------------------------------------|
-| dTree 2.05 | www.destroydrop.com/javascript/tree/ |
+| wp_dTree 2.05 | www.destroydrop.com/javascript/tree/ |
 |---------------------------------------------------|
 | Copyright (c) 2002-2003 Geir Landr�               |
 |                                                   |
@@ -47,10 +47,15 @@ WP-dTree 3.2 (ulfben 2007-10-08)
 | Updated: 17.04.2003                               |
 |--------------------------------------------------*/
 <?php
+global $curdir;
 $curdir = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']); //fix contributed by Zarquod: http://wordpress.org/support/topic/136547
+global $effStyle;
 $effStyle = "blind";
+global $withEff;
 $withEff = 1;
+global $duration;
 $duration = 0.5;
+global $trunc;
 $trunc = 16; 
 if ( isset($_REQUEST['eff']) ) {
 	$effStyle = $_REQUEST['eff'];
@@ -60,9 +65,9 @@ if ( isset($_REQUEST['witheff']) ) {
 }
 if ( isset($_REQUEST['effdur']) ) {
 	$duration = $_REQUEST['effdur'];
-}
-if ( isset($_REQUEST['trunc']) ) {
-	$trunc = $_REQUEST['trunc'];
+}
+if ( isset($_REQUEST['trunc']) ) {
+	$trunc = $_REQUEST['trunc'];
 }
 if ( 'slide' == $effStyle ) {
 	$effCall_o = "SlideDown";
@@ -86,8 +91,8 @@ elseif ( 'grow' == $effStyle ) {
 }
 ?>
 
-// Node object
-function Node(id, pid, name, url, title, count, rsspath) { 
+// wp_dtree_Node object
+function wp_dtree_Node(id, pid, name, url, title, count, rsspath) { 
 	this.id = id;
 	this.pid = pid;
 	this.name = name;
@@ -108,7 +113,7 @@ function Node(id, pid, name, url, title, count, rsspath) {
 };
 
 // Tree object
-function dTree(objName, baseUrl) {
+function wp_dTree(objName, baseUrl) {
 	this.config = {
 		target			: null,
 		folderLinks		: false,
@@ -138,22 +143,31 @@ function dTree(objName, baseUrl) {
 	};
 	this._url = baseUrl; 
 	this.obj = objName;
-	this.aNodes = [];
+	this.awp_dtree_Nodes = [];
 	this.aIndent = [];
-	this.root = new Node(-1);
-	this.selectedNode = null;
+	this.root = new wp_dtree_Node(-1);
+	this.selectedwp_dtree_Node = null;
 	this.selectedFound = false;
 	this.completed = false;
 };
 
 // Adds a new node to the node array
-dTree.prototype.a = function(id, pid, title, path, count, rsspath) {
+wp_dTree.prototype.a = function(id, pid, title, path, count, rsspath) {
 	if(typeof(count) != "undefined" && count != ""){
 		count = "<div id='postcount'>(" + count + ")</div>";
 	}
 	if(typeof(rsspath) != "undefined" && rsspath != ""){
 		rsspath = "<a class='dtreerss' style='padding-right:15px' href='" + this._url + rsspath + "'> </a>";	
 	}	
+<<<<<<< .mine
+	name = this.truncate(title, <?php echo $trunc; ?>);	
+	path += "";	//remove this and the next line breaks down for some reason.
+	var url = path; //default value.
+  	if(!path.indexOf('http://') == 0){		//if the path doesn't start with "http://" (eg. home path)
+	  	url = this._url + path;
+	}
+	this.awp_dtree_Nodes[this.awp_dtree_Nodes.length] = new wp_dtree_Node(id, pid, name, url, title, count, rsspath); 
+=======
 	name = this.truncate(title, <?php echo $trunc; ?>);	
 	path += "";	//remove this and the next line breaks down for some reason.
 	var url = path; //default value.
@@ -161,9 +175,10 @@ dTree.prototype.a = function(id, pid, title, path, count, rsspath) {
 	  	url = this._url + path;
 	}
 	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, count, rsspath); 
+>>>>>>> .r54828
 };
- 
-dTree.prototype.truncate = function(str, length) {
+ 
+wp_dTree.prototype.truncate = function(str, length) {
     var length = length || 16;
     var truncation = '...';
     if(str.length > length)   {
@@ -173,43 +188,43 @@ dTree.prototype.truncate = function(str, length) {
  };
 
 // Open/close all nodes
-dTree.prototype.openAll = function() {
+wp_dTree.prototype.openAll = function() {
 	this.oAll(true);
 };
-dTree.prototype.closeAll = function() {
+wp_dTree.prototype.closeAll = function() {
 	this.oAll(false);
 };
 
 // Outputs the tree to the page
-dTree.prototype.toString = function() {
+wp_dTree.prototype.toString = function() {
 	var str = '<div id="dtree' + this.obj + '">\n';
 	if (document.getElementById) {
-		if (this.config.useCookies) this.selectedNode = this.getSelected();
-		str += this.addNode(this.root);
+		if (this.config.useCookies) this.selectedwp_dtree_Node = this.getSelected();
+		str += this.addwp_dtree_Node(this.root);
 	} else str += 'Browser not supported.';
 	str += '</div>';
-	if (!this.selectedFound) this.selectedNode = null;
+	if (!this.selectedFound) this.selectedwp_dtree_Node = null;
 	this.completed = true;
 	return str;
 };
 
 // Creates the tree structure
-dTree.prototype.addNode = function(pNode) {
+wp_dTree.prototype.addwp_dtree_Node = function(pwp_dtree_Node) {
 	var str = '';
 	var n=0;
-	if (this.config.inOrder) n = pNode._ai;
-	for (n; n < this.aNodes.length; n++) {
-		if (this.aNodes[n].pid == pNode.id) {
-			var cn = this.aNodes[n];
-			cn._p = pNode;
+	if (this.config.inOrder) n = pwp_dtree_Node._ai;
+	for (n; n < this.awp_dtree_Nodes.length; n++) {
+		if (this.awp_dtree_Nodes[n].pid == pwp_dtree_Node.id) {
+			var cn = this.awp_dtree_Nodes[n];
+			cn._p = pwp_dtree_Node;
 			cn._ai = n;
 			this.setCS(cn);
 			if (!cn.target && this.config.target) cn.target = this.config.target;
 			if (cn._hc && !cn._io && this.config.useCookies) cn._io = this.isOpen(cn.id);
 			if (!this.config.folderLinks && cn._hc) cn.url = null;
-			if (this.config.useSelection && cn.id == this.selectedNode && !this.selectedFound) {
+			if (this.config.useSelection && cn.id == this.selectedwp_dtree_Node && !this.selectedFound) {
 					cn._is = true;
-					this.selectedNode = n;
+					this.selectedwp_dtree_Node = n;
 					this.selectedFound = true;
 			}
 			str += this.node(cn, n);
@@ -220,8 +235,8 @@ dTree.prototype.addNode = function(pNode) {
 };
 
 // Creates the node icon, url and text
-dTree.prototype.node = function(node, nodeId) {	
-	var str = '<div class="dTreeNode">' + this.indent(node, nodeId);	
+wp_dTree.prototype.node = function(node, nodeId) {	
+	var str = '<div class="wp_dTreewp_dtree_Node">' + this.indent(node, nodeId);	
 	if (this.config.useIcons) {
 		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
 		if (!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
@@ -256,7 +271,7 @@ dTree.prototype.node = function(node, nodeId) {
 	str += ' </div>';	
 	if (node._hc) {
 		str += '<div id="d' + this.obj + nodeId + '" class="clip" style="display:' + ((this.root.id == node.pid || node._io) ? 'block' : 'none') + ';">';
-		str += this.addNode(node);	
+		str += this.addwp_dtree_Node(node);	
 		str += '</div>';
 	}	
 	this.aIndent.pop();
@@ -264,7 +279,7 @@ dTree.prototype.node = function(node, nodeId) {
 };
 
 // Adds the empty and line icons
-dTree.prototype.indent = function(node, nodeId) {
+wp_dTree.prototype.indent = function(node, nodeId) {
 	var str = '';
 	if (this.root.id != node.pid) {
 		for (var n=0; n<this.aIndent.length; n++)
@@ -281,41 +296,41 @@ dTree.prototype.indent = function(node, nodeId) {
 };
 
 // Checks if a node has any children and if it is the last sibling
-dTree.prototype.setCS = function(node) {
+wp_dTree.prototype.setCS = function(node) {
 	var lastId;
-	for (var n=0; n<this.aNodes.length; n++) {
-		if (this.aNodes[n].pid == node.id) node._hc = true;
-		if (this.aNodes[n].pid == node.pid) lastId = this.aNodes[n].id;
+	for (var n=0; n<this.awp_dtree_Nodes.length; n++) {
+		if (this.awp_dtree_Nodes[n].pid == node.id) node._hc = true;
+		if (this.awp_dtree_Nodes[n].pid == node.pid) lastId = this.awp_dtree_Nodes[n].id;
 	}
 	if (lastId==node.id) node._ls = true;
 };
 
 // Returns the selected node
-dTree.prototype.getSelected = function() {
+wp_dTree.prototype.getSelected = function() {
 	var sn = this.getCookie('cs' + this.obj);
 	return (sn) ? sn : null;
 };
 
 // Highlights the selected node
-dTree.prototype.s = function(id) {
+wp_dTree.prototype.s = function(id) {
 	if (!this.config.useSelection) return;
-	var cn = this.aNodes[id];
+	var cn = this.awp_dtree_Nodes[id];
 	if (cn._hc && !this.config.folderLinks) return;
-	if (this.selectedNode != id) {
-		if (this.selectedNode || this.selectedNode==0) {
-			eOld = document.getElementById("s" + this.obj + this.selectedNode);
+	if (this.selectedwp_dtree_Node != id) {
+		if (this.selectedwp_dtree_Node || this.selectedwp_dtree_Node==0) {
+			eOld = document.getElementById("s" + this.obj + this.selectedwp_dtree_Node);
 			eOld.className = "node";
 		}
 		eNew = document.getElementById("s" + this.obj + id);
 		eNew.className = "nodeSel";
-		this.selectedNode = id;
+		this.selectedwp_dtree_Node = id;
 		if (this.config.useCookies) this.setCookie('cs' + this.obj, cn.id);
 	}
 };
 
 // Toggle Open or close
-dTree.prototype.o = function(id) {
-	var cn = this.aNodes[id];
+wp_dTree.prototype.o = function(id) {
+	var cn = this.awp_dtree_Nodes[id];
 	this.nodeStatus(!cn._io, id, cn._ls);
 	cn._io = !cn._io;
 	if (this.config.closeSameLevel) this.closeLevel(cn);
@@ -323,28 +338,28 @@ dTree.prototype.o = function(id) {
 };
 
 // Open or close all nodes
-dTree.prototype.oAll = function(status) {
-	for (var n=0; n<this.aNodes.length; n++) {
-		if (this.aNodes[n]._hc && this.aNodes[n].pid != this.root.id) {
+wp_dTree.prototype.oAll = function(status) {
+	for (var n=0; n<this.awp_dtree_Nodes.length; n++) {
+		if (this.awp_dtree_Nodes[n]._hc && this.awp_dtree_Nodes[n].pid != this.root.id) {
 			// silpstream: hack to work with scriptaculous
-			if (this.aNodes[n]._io != status) this.nodeStatus(status, n, this.aNodes[n]._ls)
-			this.aNodes[n]._io = status;
+			if (this.awp_dtree_Nodes[n]._io != status) this.nodeStatus(status, n, this.awp_dtree_Nodes[n]._ls)
+			this.awp_dtree_Nodes[n]._io = status;
 		}
 	}
 	if (this.config.useCookies) this.updateCookie();
 };
 
 // Opens the tree to a specific node
-dTree.prototype.openTo = function(nId, bSelect, bFirst) {
+wp_dTree.prototype.openTo = function(nId, bSelect, bFirst) {
 	if (!bFirst) {
-		for (var n=0; n<this.aNodes.length; n++) {
-			if (this.aNodes[n].id == nId) {
+		for (var n=0; n<this.awp_dtree_Nodes.length; n++) {
+			if (this.awp_dtree_Nodes[n].id == nId) {
 				nId=n;
 				break;
 			}
 		}
 	}
-	var cn=this.aNodes[nId];
+	var cn=this.awp_dtree_Nodes[nId];
 	if (cn.pid==this.root.id || !cn._p) return;
 	cn._io = true;
 	cn._is = bSelect;
@@ -355,34 +370,34 @@ dTree.prototype.openTo = function(nId, bSelect, bFirst) {
 };
 
 // Closes all nodes on the same level as certain node
-dTree.prototype.closeLevel = function(node) {
-	for (var n=0; n<this.aNodes.length; n++) {
-		if (this.aNodes[n].pid == node.pid && this.aNodes[n].id != node.id && this.aNodes[n]._hc) {
-			this.nodeStatus(false, n, this.aNodes[n]._ls);
-			this.aNodes[n]._io = false;
-			this.closeAllChildren(this.aNodes[n]);
+wp_dTree.prototype.closeLevel = function(node) {
+	for (var n=0; n<this.awp_dtree_Nodes.length; n++) {
+		if (this.awp_dtree_Nodes[n].pid == node.pid && this.awp_dtree_Nodes[n].id != node.id && this.awp_dtree_Nodes[n]._hc) {
+			this.nodeStatus(false, n, this.awp_dtree_Nodes[n]._ls);
+			this.awp_dtree_Nodes[n]._io = false;
+			this.closeAllChildren(this.awp_dtree_Nodes[n]);
 		}
 	}
 }
 
 // Closes all children of a node
-dTree.prototype.closeAllChildren = function(node) {
-	for (var n=0; n<this.aNodes.length; n++) {
-		if (this.aNodes[n].pid == node.id && this.aNodes[n]._hc) {
-			if (this.aNodes[n]._io) this.nodeStatus(false, n, this.aNodes[n]._ls);
-			this.aNodes[n]._io = false;
-			this.closeAllChildren(this.aNodes[n]);
+wp_dTree.prototype.closeAllChildren = function(node) {
+	for (var n=0; n<this.awp_dtree_Nodes.length; n++) {
+		if (this.awp_dtree_Nodes[n].pid == node.id && this.awp_dtree_Nodes[n]._hc) {
+			if (this.awp_dtree_Nodes[n]._io) this.nodeStatus(false, n, this.awp_dtree_Nodes[n]._ls);
+			this.awp_dtree_Nodes[n]._io = false;
+			this.closeAllChildren(this.awp_dtree_Nodes[n]);
 		}
 	}
 }
 
 // Change the status of a node(open or closed)
-dTree.prototype.nodeStatus = function(status, id, bottom) {
+wp_dTree.prototype.nodeStatus = function(status, id, bottom) {
 	eDiv	= document.getElementById('d' + this.obj + id);
 	eJoin	= document.getElementById('j' + this.obj + id);
 	if (this.config.useIcons) {
 		eIcon	= document.getElementById('i' + this.obj + id);
-		eIcon.src = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
+		eIcon.src = (status) ? this.awp_dtree_Nodes[id].iconOpen : this.awp_dtree_Nodes[id].icon;
 	}
 	eJoin.src = (this.config.useLines)?
 	((status)?((bottom)?this.icon.minusBottom:this.icon.minus):((bottom)?this.icon.plusBottom:this.icon.plus)):
@@ -397,7 +412,7 @@ dTree.prototype.nodeStatus = function(status, id, bottom) {
 
 
 // [Cookie] Clears a cookie
-dTree.prototype.clearCookie = function() {
+wp_dTree.prototype.clearCookie = function() {
 	var now = new Date();
 	var yesterday = new Date(now.getTime() - 1000 * 60 * 60 * 24);
 	this.setCookie('co'+this.obj, 'cookieValue', yesterday);
@@ -405,7 +420,7 @@ dTree.prototype.clearCookie = function() {
 };
 
 // [Cookie] Sets value in a cookie
-dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, domain, secure) {
+wp_dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, domain, secure) {
 	document.cookie =
 		escape(cookieName) + '=' + escape(cookieValue)
 		+ (expires ? '; expires=' + expires.toGMTString() : '')
@@ -415,7 +430,7 @@ dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, dom
 };
 
 // [Cookie] Gets a value from a cookie
-dTree.prototype.getCookie = function(cookieName) {
+wp_dTree.prototype.getCookie = function(cookieName) {
 	var cookieValue = '';
 	var posName = document.cookie.indexOf(escape(cookieName) + '=');
 	if (posName != -1) {
@@ -428,19 +443,19 @@ dTree.prototype.getCookie = function(cookieName) {
 };
 
 // [Cookie] Returns ids of open nodes as a string
-dTree.prototype.updateCookie = function() {
+wp_dTree.prototype.updateCookie = function() {
 	var str = '';
-	for (var n=0; n<this.aNodes.length; n++) {
-		if (this.aNodes[n]._io && this.aNodes[n].pid != this.root.id) {
+	for (var n=0; n<this.awp_dtree_Nodes.length; n++) {
+		if (this.awp_dtree_Nodes[n]._io && this.awp_dtree_Nodes[n].pid != this.root.id) {
 			if (str) str += '.';
-			str += this.aNodes[n].id;
+			str += this.awp_dtree_Nodes[n].id;
 		}
 	}
 	this.setCookie('co' + this.obj, str);
 };
 
 // [Cookie] Checks if a node id is in a cookie
-dTree.prototype.isOpen = function(id) {
+wp_dTree.prototype.isOpen = function(id) {
 	var aOpen = this.getCookie('co' + this.obj).split('.');
 	for (var n=0; n<aOpen.length; n++)
 		if (aOpen[n] == id) return true;

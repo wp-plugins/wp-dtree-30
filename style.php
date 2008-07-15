@@ -21,13 +21,21 @@ header("Content-type: text/css");
 */
 
 <?php
+global $fontsize;
 $fontsize = "11";
+global $mfontcolor;
 $mfontcolor = "000000";
+global $lfontcolor;
 $lfontcolor = "999999";
+global $lfontdecor;
 $lfontdecor = "none";
+global $hfontcolor;
 $hfontcolor = "CCCCCC";
+global $hfontdecor;
 $hfontdecor = "underline";
+global $rssicon;
 $rssicon = "";
+global $rssicon2;
 $rssicon2 = "";
 if ( isset($_REQUEST['fontsize']) ) {
 	$fontsize = $_REQUEST['fontsize'];
@@ -55,19 +63,19 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 	$rssicon2 = $_REQUEST['rssgfxh'];
 }
 ?>
-#dtreec, #dtreea, #dtreep, #dtreecatwrapper, #dtreearcwrapper, #dtreepgewrapper {
+#dtreec, #dtreea, #dtreep, #dtreel, #dtreecatwrapper, #dtreearcwrapper, #dtreepgewrapper, #dtreelnkwrapper {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: <?php echo $fontsize; ?>px;
 	color: #<?php echo $mfontcolor; ?>;
 	white-space: nowrap;
 }
-#dtreec img, #dtreea img, #dtreep img {
+#dtreec img, #dtreea img, #dtreep img, #dtreel img {
 	border: 0px;
 	vertical-align: middle;		
 	float: none; 
 	margin: 0 0px 0px 0;
 }
-#dtreec a, #dtreea a, #dtreep a, #dtreecatwrapper a, #dtreearcwrapper a, #dtreepgewrapper a {
+#dtreec a, #dtreea a, #dtreep a, #dtreel a, #dtreecatwrapper a, #dtreearcwrapper a, #dtreepgewrapper a, #dtreelnkwrapper a {
 	display: inline;
 	padding: 0;
 	color: #<?php echo $lfontcolor; ?>;
@@ -92,18 +100,19 @@ a.dtreerss:hover  {
 	text-decoration: none;
 }
 
-#dtreec a.node, #dtreea a.node, #dtreep a.node, #dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel {
+#dtreec a.node, #dtreea a.node, #dtreep a.node, #dtreel a.node, #dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel, #dtreel a.nodeSel {
 	white-space: nowrap;
 	padding: 1px 2px 1px 2px;
 }
-#dtreec a:hover, #dtreec a.node:hover, #dtreec a.nodeSel:hover, #dtreea a:hover, #dtreea a.node:hover, #dtreea a.nodeSel:hover, #dtreep a:hover, #dtreep a.node:hover, #dtreep a.nodeSel:hover {
+#dtreec a:hover, #dtreec a.node:hover, #dtreec a.nodeSel:hover, #dtreea a:hover, #dtreea a.node:hover, #dtreea a.nodeSel:hover, #dtreep a:hover, #dtreep a.node:hover, #dtreep a.nodeSel:hover, #dtreel a:hover, #dtreel a.node:hover, #dtreel a.nodeSel:hover {
 	color: #<?php echo $hfontcolor; ?>;
 	text-decoration: <?php echo $hfontdecor; ?>;
 }
 /*If you want some cool highlighting on the active node, you can change it here. Default is a simple underline.*/
-#dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel {
+#dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel, #dtreel a.nodeSel {
 	text-decoration: underline;
 }
-#dtreec .clip, #dtreea .clip, #dtreep .clip {
+#dtreec .clip, #dtreea .clip, #dtreep .clip, #dtreel .clip {
 	overflow: hidden;
+	width: 100%;
 }
