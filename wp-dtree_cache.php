@@ -1,12 +1,20 @@
 <?php
-global $wpdb;
-$wp_dtree_cache = $wpdb->prefix . "dtree_cache";
-$wp_dtree_db_version = 6;
-$wp_dtree_table_missing_msg = "WP-dTree-3.2: cache table (".$wp_dtree_cache.") is either missing or outdated. Disable the plugin and re-install it again.";
+//In WP 2.6, I suddenly got problems with global variables "dissapearing", so these getters are... Q&D.
+function wp_dtree_get_table_name(){
+	global $wpdb; return $wpdb->prefix . "dtree_cache";
+}
+function wp_dtree_get_table_version(){
+	return 7;
+}
+function wp_dtree_get_error_msg(){
+	return "WP-dTree-3.4: cache table (".wp_dtree_get_table_name().") is either missing or outdated. Disable the plugin and re-install it again.";
+}
 
 function wp_dtree_install_cache() {	
-	global $wpdb, $wp_dtree_cache, $wp_dtree_db_version;  
-	$wpdb->show_errors();		
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name();
+	$wp_dtree_db_version = wp_dtree_get_table_version();  
+	$wpdb->show_errors();	
 	if(!wp_dtree_table_exists()) {	
 		$charset_collate = '';
 		if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
@@ -23,8 +31,9 @@ function wp_dtree_install_cache() {
 		content MEDIUMTEXT,		
 		UNIQUE KEY  id (id)		
 		) $charset_collate;";		
+		
 		require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
-		dbDelta($sql);		
+		dbDelta($wpdb->prepare($sql));		
 		update_option("wp_dtree_db_version", $wp_dtree_db_version);
 		wp_dtree_update_cache();
 		
@@ -38,7 +47,8 @@ function wp_dtree_install_cache() {
 }
 
 function wp_dtree_uninstall_cache() {			
-	global $wpdb, $wp_dtree_cache;   
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name();
 	$wpdb->show_errors();	
 	if(!wp_dtree_table_exists()) { 
 		return false; 
@@ -49,6 +59,7 @@ function wp_dtree_uninstall_cache() {
 
 function wp_dtree_update_cache() {
 	wp_dtree_clean_exclusion_list(); //removes ID's from posts that has been deleted in the past.	
+	wp_dtree_update_links();
 	wp_dtree_update_pages();
 	wp_dtree_update_archives();	
 	wp_dtree_update_categories();
@@ -74,6 +85,10 @@ function wp_dtree_update_archives($post_ID = -1) {
 	wp_dtree_insert_tree_data(wp_dtree_get_archives_arr(), 'arc');
 }								
 
+function wp_dtree_update_links(){
+	wp_dtree_insert_tree_data(wp_dtree_get_links_arr(), 'lnk');
+}
+
 function wp_dtree_update_categories(){	      
 	wp_dtree_insert_tree_data(wp_dtree_get_categories_arr(), 'cat');
 }
@@ -83,7 +98,8 @@ function wp_dtree_update_pages() {
 }
 
 function wp_dtree_insert_tree_data($treedata, $treetype) {
-	global $wpdb, $wp_dtree_cache;	
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name();	
 	if(!wp_dtree_table_exists() || !wp_dtree_table_is_current()) {		
 		wp_dtree_install_cache();		
 	}		
@@ -102,9 +118,9 @@ function wp_dtree_insert_tree_data($treedata, $treetype) {
 
 /*inserts each node on it's own node which is easier on MySQL, but also pretty much negates the use
 of caching; we're back to the one-query-per-node situation we had before.*/
-function wp_dtree_safe_insert($treedata, $treetype)
-{
-	global $wpdb, $wp_dtree_cache;		
+function wp_dtree_safe_insert($treedata, $treetype){
+	global $wpdb; 
+	$wp_dtree_cache = wp_dtree_get_table_name();	
 	$safeRow = "";	
 	foreach($treedata as $treerow){
 		$safeRow = $wpdb->escape(serialize($treerow));// base64_encode
@@ -114,7 +130,6 @@ function wp_dtree_safe_insert($treedata, $treetype)
 		$wpdb->query($sql);		
 	}		
 }
-
 
 //remove those ID's that doesn't exist in the database anymore. (eg; has been deleted)
 function wp_dtree_clean_exclusion_list() {
@@ -143,12 +158,12 @@ function wp_dtree_clean_exclusion_list() {
 }
 
 function wp_dtree_table_is_current(){
-	global $wp_dtree_db_version;	
-	return get_option('wp_dtree_db_version') == $wp_dtree_db_version;
+	return get_option('wp_dtree_db_version') == wp_dtree_get_table_version();
 }
 
 function wp_dtree_table_exists() {
-	global $wpdb, $wp_dtree_cache;
+	global $wpdb;
+	$wp_dtree_cache = wp_dtree_get_table_name();
 	return $wpdb->get_var("show tables like '".$wp_dtree_cache."'") == $wp_dtree_cache;
 }
 
