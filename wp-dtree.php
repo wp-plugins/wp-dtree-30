@@ -1,6 +1,6 @@
 <?php
 	/*
-	Plugin Name: WP-dTree 3.4
+	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
 	Version: 3.4
