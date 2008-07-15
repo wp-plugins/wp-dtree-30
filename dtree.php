@@ -159,7 +159,6 @@ wp_dTree.prototype.a = function(id, pid, title, path, count, rsspath) {
 	if(typeof(rsspath) != "undefined" && rsspath != ""){
 		rsspath = "<a class='dtreerss' style='padding-right:15px' href='" + this._url + rsspath + "'> </a>";	
 	}	
-<<<<<<< .mine
 	name = this.truncate(title, <?php echo $trunc; ?>);	
 	path += "";	//remove this and the next line breaks down for some reason.
 	var url = path; //default value.
@@ -167,15 +166,6 @@ wp_dTree.prototype.a = function(id, pid, title, path, count, rsspath) {
 	  	url = this._url + path;
 	}
 	this.awp_dtree_Nodes[this.awp_dtree_Nodes.length] = new wp_dtree_Node(id, pid, name, url, title, count, rsspath); 
-=======
-	name = this.truncate(title, <?php echo $trunc; ?>);	
-	path += "";	//remove this and the next line breaks down for some reason.
-	var url = path; //default value.
-  	if(!path.indexOf('http://') == 0){		//if the path doesn't start with "http://" (eg. home path)
-	  	url = this._url + path;
-	}
-	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, count, rsspath); 
->>>>>>> .r54828
 };
  
 wp_dTree.prototype.truncate = function(str, length) {
