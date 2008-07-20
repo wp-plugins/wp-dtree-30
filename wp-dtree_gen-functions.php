@@ -22,7 +22,7 @@ function wp_dtree_build_tree($results, $treetype) {
 	$t = $treetype{0}; //get the first char of the treetype.		
 	$tree .= "\n<span id=\"dtree" . $treetype . "wrapper\">\n";
 	if ( $oclink ) {
-		$tree .= "<p id=\"oclink\"><a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a></p>\n";			
+		$tree .= "<span class=\"oclink\"><a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a></span>\n";			
 	}
 	$tree .= "<script type=\"text/javascript\">\n";
 	$tree .= "<!--\n"; //closed in the "gettreetype" functions, in case we need to add to the JS.	

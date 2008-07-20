@@ -65,6 +65,7 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 ?>
 #dtreec, #dtreea, #dtreep, #dtreel, #dtreecatwrapper, #dtreearcwrapper, #dtreepgewrapper, #dtreelnkwrapper {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	margin: 3px 0px 0px 0px; /*spacing from the open/close all links*/
 	font-size: <?php echo $fontsize; ?>px;
 	color: #<?php echo $mfontcolor; ?>;
 	white-space: nowrap;
