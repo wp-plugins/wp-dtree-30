@@ -19,6 +19,7 @@ The fork is focused on [performance improvements](http://wordpress.org/extend/pl
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
 
 **Changes in v3.4.1** (2008-07-20)
+
 Validates: both CSS and XHTML 1.0 Transitional ([thanks: ar-jar](http://wordpress.org/support/topic/189643))
 
 **Changes in v3.4** (2008-07-12)
