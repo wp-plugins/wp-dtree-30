@@ -4,13 +4,13 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.3
 Tested up to: 2.6
-Stable tag: 3.4
+Stable tag: 3.4.1
 
 Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
 
 == Description ==
 
-This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages and categories. It uses Scriptaculous for awesome display effects (enable in admin panel).
+This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages, links and categories. It uses Scriptaculous for awesome display effects (enable in admin panel).
 
 WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin (as of version 3.x). 
 
