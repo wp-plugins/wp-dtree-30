@@ -4,7 +4,7 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.3
 Tested up to: 2.6
-Stable tag: 3.4.1
+Stable tag: 3.4.2
 
 Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
 
@@ -17,6 +17,10 @@ WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com
 The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but it packs a lot of new features and modernizations to boot; WP 2.6 compability, widgets, out-of-the-box Scriptaculous support, link trees, displaying feed icons, post counts and more.
 
 If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
+
+**Changes in v3.4.2** (2008-10-19)
+
+Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/189643))
 
 **Changes in v3.4.1** (2008-07-20)
 
