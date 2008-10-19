@@ -18,7 +18,7 @@
 	a plugin. He handled all development of wp-dtree up to version 2.2.
 
 	Changes in v3.4.2 (2008-10-19)
-	Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/189643))
+	Bug: incorrect WP version detection. (thanks: StMD)
 	
 	Changes in v3.4.1 (ulfben 2008-07-20)
 	Validates: both CSS and XHTML 1.0 Transitional (many thanks: ar-jar)
