@@ -63,7 +63,7 @@ function wp_dtree_get_categories_arr() {
 			
 	$checkPostType = " AND ".$wpdb->posts.".post_type = 'post'"; //OR ".$wpdb->posts.".post_type = 'page'  
 	
-	if ((float)$wp_version < 2.3)  { //TODO: make this query aware of post excludes, or drop support for older WP entirely.
+	if ($wp_version < '2.3')  { //TODO: make this query aware of post excludes, or drop support for older WP entirely.
 		$query = "SELECT ".$wpdb->posts.".ID AS `id`, ".$wpdb->posts.".post_title AS `title`, ".$wpdb->post2cat.".category_id AS `catid`"
 				." FROM ".$wpdb->posts.", ".$wpdb->post2cat
 				." WHERE ".$wpdb->post2cat.".post_id = ".$wpdb->posts.".ID"
