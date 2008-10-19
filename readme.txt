@@ -20,7 +20,7 @@ If you enjoy WP-dTree and would like to suggest a specific feature, or just moti
 
 **Changes in v3.4.2** (2008-10-19)
 
-Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/189643))
+Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/211402))
 
 **Changes in v3.4.1** (2008-07-20)
 
