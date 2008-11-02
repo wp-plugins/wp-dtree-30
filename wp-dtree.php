@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
-	Version: 3.5
+	Version: 3.4.3
 	Author: <a href="http://www.ulfben.com/">Ulf Benjaminsson</a>
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
@@ -17,7 +17,7 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
-	Changes in v3.5 (2008-11-02)
+	Changes in v3.4.3 (2008-11-02)
 	I18N
 	Sorting posts archive tree
 	Sorting posts in category tree
@@ -113,7 +113,7 @@
 			$plugin_data = get_plugin_data(__FILE__);
 			return "".$plugin_data['Version'];
 		}
-		return "3.5";
+		return "3.4.3";
 	}
 	
 	require_once("wp-dtree_lnk-functions.php");
