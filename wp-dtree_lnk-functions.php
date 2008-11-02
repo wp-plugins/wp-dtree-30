@@ -1,5 +1,5 @@
 <?php
-function wp_dtree_get_links_arr() {
+function wp_dtree_get_links_arr(){
 	global $wpdb, $wp_version;
 	$idtranspose = wp_dtree_get_id_transpose(); 
 	$wpdtreeopt = get_option('wp_dtree_options');
@@ -7,8 +7,8 @@ function wp_dtree_get_links_arr() {
 	$sort_order = $wpdtreeopt['lnkopt']['sortorder']; //ASC or DESC
 	$cats_orderby = (!isset($wpdtreeopt['lnkopt']['catsorder']) ? 'name' : $wpdtreeopt['lnkopt']['catsorder']);
 	
-	if ( !isset($idcount) ) { $idcount = 1; }	
-	( !empty($excludedlnks) ) ? $lnkexclusions = $excludedlnks : $lnkexclusions = '';	
+	if( !isset($idcount) ){ $idcount = 1; }	
+	( !empty($excludedlnks) ) ? $lnkexclusions = $excludedlnks : $lnkexclusions = '';		
 	
 	$cats = get_terms('link_category', array(
 		'name__like' => '', 
@@ -38,13 +38,14 @@ function wp_dtree_get_links_arr() {
 			'include' => '',
 			'exclude' => '')
 		);						
-		foreach( $lnkresults as $lnkresult ) {		
-			if ( !$hide_empty || $lnkresult->lnkegory_count ) {			
+		foreach( $lnkresults as $lnkresult ){		
+			if( !$hide_empty || $lnkresult->lnkegory_count ){			
 				$results[$idcount] = array( 
 					'id' => $lnkresult->link_id + $idtranspose['lnkpost'], 
 					'pid' => $cat->term_id + $idtranspose['lnk'],					 
 					'url' => $lnkresult->link_url, 
-					'title' => $lnkresult->link_name					
+					'title' => $lnkresult->link_name,
+					'target' => $lnkresult->link_target				
 				);
 				$idcount++;
 			}				
@@ -53,12 +54,12 @@ function wp_dtree_get_links_arr() {
 	return wp_dtree_build_tree($results, 'lnk');
 }
 
-function wp_dtree_get_links() {	
+function wp_dtree_get_links(){	
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();		
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$lnkresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'lnk' ORDER BY id");	
-	print("\n<!-- WP-dTree 3.4, lnk tree: " . strlen($lnkresults) . " chars. -->");	
+	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", lnk tree: " . strlen($lnkresults) . " chars. -->");	
 	if(!strlen($lnkresults)){return;}
 	echo $lnkresults;	
 	echo "//-->\n";		

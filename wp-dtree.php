@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
-	Version: 3.4.2
+	Version: 3.5
 	Author: <a href="http://www.ulfben.com/">Ulf Benjaminsson</a>
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
@@ -15,8 +15,18 @@
 	at http://www.destroydrop.com/javascripts/tree/.
 	
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
-	a plugin. He handled all development of wp-dtree up to version 2.2.
+	a plugin. He handled all development of WP-dTree up to version 2.2.
 
+	Changes in v3.5 (2008-11-02)
+	I18N
+	Sorting posts archive tree
+	Sorting posts in category tree
+	Counting posts in sub categories
+	List empty category bugs
+	Quotes "" in post names messes with alt-text
+	Link tree keeps target attribute.
+	TODO: test for WP 2.7
+	
 	Changes in v3.4.2 (2008-10-19)
 	Bug: incorrect WP version detection. (thanks: StMD)
 	
@@ -45,7 +55,7 @@
 	Fix: Open to requested node
 	Fix: images URL not working on some servers ([props: Zarquod](http://wordpress.org/support/topic/136547))
 	Fix: somewhat more IE compatible...
-	Known issues: RSS icons wont show **in IE** if `post count` is on.
+	Known issues: RSS icons wont show **in IE** if`post count` is on.
 
 	Changes in v3.2 (ulfben - 20071015)
 	1. Support for WP's bundled scriptacolous library - no need to download wp-scriptacolous plugin for cool effects.	
@@ -53,7 +63,7 @@
 	3. New option: Show RSS icon for categories
 	4. New option: Show post count for categories
 	5. New option: Effect duration
-	Regressions: "open to selection" is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
+	Regressions: "open to selection" is broken again. It'll be back in the next version, but ifit's vital for you, stay with 3.1
 
 	Changes in v3.1 (ulfben - 20071006)
 	1. Updated to comply with WordPress 2.3's new taxonomy tables for categories. (should be backwards compatible)
@@ -98,6 +108,14 @@
 		return $idtranspose;
 	}
 	
+	function wp_dtree_get_version(){
+		if(function_exists('get_plugin_data')){
+			$plugin_data = get_plugin_data(__FILE__);
+			return "".$plugin_data['Version'];
+		}
+		return "3.5";
+	}
+	
 	require_once("wp-dtree_lnk-functions.php");
 	require_once("wp-dtree_arc-functions.php");
 	require_once("wp-dtree_cat-functions.php");
@@ -105,54 +123,65 @@
 	require_once("wp-dtree_gen-functions.php");
 	require_once("wp-dtree_cache.php"); 
 		
-	if(function_exists('register_activation_hook') && function_exists('register_deactivation_hook')) {	
-		register_activation_hook(__FILE__, 'wp_dtree_set_options');
-		register_activation_hook(__FILE__, 'wp_dtree_install_cache');
-		//register_deactivation_hook(__FILE__, 'wp_dtree_delete_options'); //uncomment if you dont want wpdtree settings to stay in your tables.
-		register_deactivation_hook(__FILE__, 'wp_dtree_uninstall_cache');
-	} else {			
-		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_set_options', 5);
-		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_install_cache', 10); //install the cache as soon as all options are set.
-		//add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_delete_options', 5);
-		add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_uninstall_cache', 10); 
+	if(function_exists('register_activation_hook') && function_exists('register_deactivation_hook')){	
+		register_activation_hook(__FILE__, 'wp_dtree_install');	
+		register_deactivation_hook(__FILE__, 'wp_dtree_uninstall');
+	} else{			
+		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_install', 5);		
+		add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_uninstall', 10); 
 	}
-	add_action('init', 				'wp_dtree_load_javascripts');		//load scriptacolous if we're using effects.
+	add_action('init', 				'wp_dtree_load_javascripts');		//load scriptacolous ifwe're using effects.
 	add_action('plugins_loaded', 	'wp_dtree_init_widgets');			//init widgets after the plugin has loaded.	
 	add_action('wp_head', 			'wp_dtree_add2head');
 	add_action('admin_menu', 		'wp_dtree_add_option_page');	
 	add_action('delete_post', 		'wp_dtree_update_cache'); 	//called specifically so we can add the deleted post to our exlclude list.
 	add_action('publish_post', 		'wp_dtree_update_cache');
 	add_action('edit_post', 		'wp_dtree_update_cache');	
-	add_action('delete_category', 	'wp_dtree_update_cache');	
+	add_action('edited_category', 'wp_dtree_update_cache'); //should use 'created_$taxonomy' / 'edited_$taxonomy' since WP 2.3, but can find no docs on them. :(
+	add_action('delete_category', 	'wp_dtree_update_cache');
 	add_action('publish_page', 		'wp_dtree_update_cache');	
 	add_action('update_option_permalink_structure', 'wp_dtree_update_cache'); //to get the right RSS, links and so on.
 	add_action('add_link', 			'wp_dtree_update_links');
 	add_action('delete_link', 		'wp_dtree_update_links');
 	add_action('edit_link', 		'wp_dtree_update_links');
-	 	 
-	function wp_dtree_load_javascripts() {	
-		if ( !function_exists('wp_enqueue_script') || is_admin() ) {
+	
+	function wp_dtree_first_run_notice(){
+		echo "<div id='wp-dtree-warning' class='updated fade'><p><strong>WP-dTree: remember to <a href='widgets.php'>activate the widgets!</strong></p></div>";
+	}
+	//add_action('admin_notices', 'wp_dtree_first_run_notice');
+	
+	function wp_dtree_install(){		
+		wp_dtree_set_options();
+		wp_dtree_install_cache();			
+	}
+	
+	function wp_dtree_uninstall(){
+		//wp_dtree_delete_options(); //uncomment if you want to clean your tables out
+		wp_dtree_uninstall_cache();
+	}
+		
+	function wp_dtree_load_javascripts(){	
+		if(!function_exists('wp_enqueue_script') || is_admin()){
 			return;
 		}
 		$wpdtreeopt = get_option('wp_dtree_options');
-		if($wpdtreeopt['effopt']['effon'])	{
+		if($wpdtreeopt['effopt']['effon']){
 			wp_enqueue_script('prototype');
 			wp_enqueue_script('scriptaculous-effects');
 		}	
 	}
 	
-	function wp_dtree_init_widgets()
-	{
-		if ( !function_exists('register_sidebar_widget') ) {
+	function wp_dtree_init_widgets(){
+		if(!function_exists('register_sidebar_widget')){
 			return;	
 		}
 		
-		function widget_wp_dtree_get_links($args) {
+		function widget_wp_dtree_get_links($args){
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  	    	
 	        echo $before_widget; 
-	        echo $before_title . $wpdtreeopt['lnkopt']['topnode']. $after_title . "<p>";
-	        if (function_exists('wp_dtree_get_links')){				
+	        echo $before_title . __($wpdtreeopt['lnkopt']['topnode']). $after_title . "<p>";
+	        if(function_exists('wp_dtree_get_links')){				
 			    wp_dtree_get_links();
 			}else{
 				wp_list_bookmarks(); 
@@ -160,13 +189,12 @@
 	        echo "</p>" . $after_widget;	
 		}
 		
-		function widget_wp_dtree_get_archives($args) {
+		function widget_wp_dtree_get_archives($args){
 	    	extract($args);
-	    	$wpdtreeopt = get_option('wp_dtree_options');  	
-	    	
+	    	$wpdtreeopt = get_option('wp_dtree_options');  		    	
 	        echo $before_widget; 
-	        echo $before_title . $wpdtreeopt['arcopt']['topnode'] . $after_title . "<p>";
-	        if (function_exists('wp_dtree_get_archives')){				
+	        echo $before_title . __($wpdtreeopt['arcopt']['topnode']) . $after_title . "<p>";
+	        if(function_exists('wp_dtree_get_archives')){				
 			    wp_dtree_get_archives();
 			}else{
 				wp_get_archives('type=monthly'); 
@@ -174,45 +202,62 @@
 	        echo "</p>" . $after_widget;	
 		}
 		
-		function widget_wp_dtree_get_categories($args) {
+		function widget_wp_dtree_get_categories($args){
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  		    	
 	        echo $before_widget; 
-	        echo $before_title . $wpdtreeopt['catopt']['topnode'] . $after_title . "<p>";
-			if (function_exists('wp_dtree_get_categories')){
+	        echo $before_title . __($wpdtreeopt['catopt']['topnode']) . $after_title . "<p>";
+			if(function_exists('wp_dtree_get_categories')){
 				wp_dtree_get_categories();
-			} else {
+			} else{
 				wp_list_categories('show_count=1');
 			} 
 	        echo "</p>" . $after_widget;	
 		}
 		
-		function widget_wp_dtree_get_pages($args) {
+		function widget_wp_dtree_get_pages($args){
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  	    	
 	        echo $before_widget; 
-	        echo $before_title . $wpdtreeopt['pgeopt']['topnode'] . $after_title . "<p>";
-	        if (function_exists('wp_dtree_get_pages')) {
+	        echo $before_title . __($wpdtreeopt['pgeopt']['topnode']) . $after_title . "<p>";
+	        if(function_exists('wp_dtree_get_pages')){
 				wp_dtree_get_pages();
-			} else {
+			} else{
 				wp_list_pages();				
 			} 
 	        echo "</p>" . $after_widget;	
-		}
-		
+		}		
 		register_sidebar_widget('WP-dTree Links', 'widget_wp_dtree_get_links');
 		register_sidebar_widget('WP-dTree Pages', 'widget_wp_dtree_get_pages');
 		register_sidebar_widget('WP-dTree Archives', 'widget_wp_dtree_get_archives');
 		register_sidebar_widget('WP-dTree Categories', 'widget_wp_dtree_get_categories');
 	}		
+	
+	function wp_dtree_add_admin_footer(){
+		$plugin_data = get_plugin_data(__FILE__);
+		printf('%1$s plugin | Version %2$s | by %3$s<br />', $plugin_data['Title'], $plugin_data['Version'], $plugin_data['Author']);
+	}
+	
+	function wp_dtree_add_plugin_actions($links, $file){
+		static $this_plugin;
+		if(!$this_plugin){
+			$this_plugin = plugin_basename(__FILE__);
+		}	
+		if($file == $this_plugin){			
+			$settings_link = $settings_link = '<a href="themes.php?page=wp-dtree-30/wp-dtree.php">' . __('Settings') . '</a>';
+			array_unshift( $links, $settings_link );	
+		}
+		return $links;		
+	}
 								
-	function wp_dtree_add_option_page() {
-		if ( function_exists('add_options_page') ) {
+	function wp_dtree_add_option_page(){
+		if(function_exists('add_options_page')){
 			 add_submenu_page('themes.php', 'WP-dTree Settings', 'WP-dTree', 8, __FILE__, 'wp_dtree_option_page');
+			 add_filter('plugin_action_links', 'wp_dtree_add_plugin_actions', 10, 2 );
 		}
 	}
 	
-	function wp_dtree_add2head() {
+	function wp_dtree_add2head(){
 		$wpdtreeopt = get_option('wp_dtree_options');		
 		$rssicon = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png";	//normal
 		$rssicon2 = get_bloginfo('wpurl') . "/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png"; //higlight				
@@ -232,7 +277,7 @@
 		echo $cd;
 	}
 	
-	function wp_dtree_delete_options() {
+	function wp_dtree_delete_options(){
 		delete_option('wp_dtree_options');
 	}
 	
@@ -245,25 +290,27 @@
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
-			'closelevels' => '0',
+			'closelevels' => '1',
 			'folderlinks' => '0',
 			'useselection' => '0',			
-			'topnode' => 'Links',			
+			'topnode' => __('Links'),			
 			'show_updated' => 0,
 			'catsorder' => 'name'
 		);			
 		
 		$arcoptions = array(
+			'sortby' => 'post_date',
+			'sortorder' => 'DESC',
 			'arctype' => 'monthly',
 			'listpost' => '1',
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
-			'closelevels' => '0',
-			'folderlinks' => '1',
+			'closelevels' => '1',
+			'folderlinks' => '0',
 			'useselection' => '0',
 			'opentosel' => '0',
-			'topnode' => 'Archives',
+			'topnode' => __('Archives'),
 			'showrss' => '0',
 			'showcount' => '1'
 		);
@@ -271,17 +318,19 @@
 		$catoptions = array(
 			'sortby' => 'ID',
 			'sortorder' => 'ASC',
-			'hideempty' => '0',
+			'cpsortby' => 'post_date',
+			'cpsortorder' => 'DESC',			
+			'hideempty' => '1',
 			'exclude' => '1',
 			'listpost' => '1',			
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
-			'closelevels' => '0',
+			'closelevels' => '1',
 			'folderlinks' => '0',
 			'useselection' => '0',
 			'opentosel' => '0',
-			'topnode' => 'Categories',
+			'topnode' => __('Categories'),
 			'showrss' => '0',
 			'showcount' => '1'
 		);
@@ -292,15 +341,15 @@
 			'oclink' => '1',
 			'uselines' => '1',
 			'useicons' => '0',
-			'closelevels' => '0',
+			'closelevels' => '1',
 			'folderlinks' => '0',
 			'useselection' => '0',
 			'opentosel' => '0',
-			'topnode' => 'Pages'
+			'topnode' => __('Pages')
 		);
 	
 		$effoptions = array(
-			'effon' => '0',
+			'effon' => '1',
 			'efftype' => 'blind',
 			'duration' => '0.5'
 		);
@@ -316,8 +365,8 @@
 	
 		$genoptions = array(
 			'truncate' => '16',
-			'openlink' => 'open all',
-			'closelink' => 'close all',
+			'openlink' => __('open all'),
+			'closelink' => __('close all'),
 			'exclude' => ''			
 		);				
 		
@@ -333,70 +382,77 @@
 		update_option('wp_dtree_options', $newwpdtreeopt);		
 	}
 
-	function wp_dtree_option_page() {
-		$wpdtreeopt = get_option('wp_dtree_options');
-		
-		if( isset($_POST['submit']) ) {	
-			( !isset($_POST['lsortby']) ) 	 	? $lsortby = "name" : $lsortby = $_POST['lsortby'] ;
-			( !isset($_POST['lsortorder']) ) 	? $lsortorder = "ASC" : $lsortorder = $_POST['lsortorder'] ;						
-			( !isset($_POST['loclink']) ) 		? $loclink = "0" : $loclink = $_POST['loclink'] ;
-			( !isset($_POST['luselines']) ) 	? $luselines = "0" : $luselines = $_POST['luselines'] ;
-			( !isset($_POST['luseicons']) ) 	? $luseicons = "0" : $luseicons = $_POST['luseicons'] ;
-			( !isset($_POST['lcloselevels']) ) 	? $lcloselevels = "0" : $lcloselevels = $_POST['lcloselevels'] ;
-			( !isset($_POST['lfolderlinks']) ) 	? $lfolderlinks = "0" : $lfolderlinks = $_POST['lfolderlinks'] ;
-			( !isset($_POST['luseselection']) ) ? $luseselection = "0" : $luseselection = $_POST['luseselection'] ;			
-			( !isset($_POST['ltopnode']) ) 		? $ltopnode = "Links" : $ltopnode = $_POST['ltopnode'] ;
-			( !isset($_POST['lcatsorder']) ) 	? $lcatsorder = "name" : $lcatsorder = $_POST['lcatsorder'] ;						
-			( !isset($_POST['arctype']) ) 		? $arctype = "monthly" : $arctype = $_POST['arctype'] ;
-			( !isset($_POST['alistpost']) ) 	? $alistpost = "0" : $alistpost = $_POST['alistpost'] ;			
-			( !isset($_POST['aoclink']) ) 		? $aoclink = "0" : $aoclink = $_POST['aoclink'] ;
-			( !isset($_POST['auselines']) ) 	? $auselines = "0" : $auselines = $_POST['auselines'] ;
-			( !isset($_POST['auseicons']) ) 	? $auseicons = "0" : $auseicons = $_POST['auseicons'] ;
-			( !isset($_POST['acloselevels']) ) 	? $acloselevels = "0" : $acloselevels = $_POST['acloselevels'] ;
-			( !isset($_POST['afolderlinks']) ) 	? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
-			( !isset($_POST['auseselection']) ) ? $auseselection = "0" : $auseselection = $_POST['auseselection'] ;
+	function wp_dtree_option_page(){
+		if(function_exists('current_user_can') && !current_user_can('manage_options') ){
+			die(__('Cheatin&#8217; uh?'));
+		}
+		add_action('in_admin_footer', 'wp_dtree_add_admin_footer');
+		$wpdtreeopt = get_option('wp_dtree_options');		
+		if( isset($_POST['submit'])){	
+			( !isset($_POST['lsortby']))	 	? $lsortby = "name" : $lsortby = $_POST['lsortby'] ;
+			( !isset($_POST['lsortorder']))		? $lsortorder = "ASC" : $lsortorder = $_POST['lsortorder'] ;						
+			( !isset($_POST['loclink']))		? $loclink = "1" : $loclink = $_POST['loclink'] ;
+			( !isset($_POST['luselines']))		? $luselines = "1" : $luselines = $_POST['luselines'] ;
+			( !isset($_POST['luseicons']))		? $luseicons = "0" : $luseicons = $_POST['luseicons'] ;
+			( !isset($_POST['lcloselevels']))	? $lcloselevels = "1" : $lcloselevels = $_POST['lcloselevels'] ;
+			( !isset($_POST['lfolderlinks']))	? $lfolderlinks = "0" : $lfolderlinks = $_POST['lfolderlinks'] ;
+			( !isset($_POST['luseselection']))	? $luseselection = "0" : $luseselection = $_POST['luseselection'] ;			
+			( !isset($_POST['ltopnode']))		? $ltopnode = "Links" : $ltopnode = $_POST['ltopnode'] ;
+			( !isset($_POST['lcatsorder']))		? $lcatsorder = "name" : $lcatsorder = $_POST['lcatsorder'] ;						
+			( !isset($_POST['asortby']))	 	? $asortby = "post_date" : $asortby = $_POST['asortby'] ;
+			( !isset($_POST['asortorder']))		? $asortorder = "DESC" : $asortorder = $_POST['asortorder'] ;				
+			( !isset($_POST['arctype']))		? $arctype = "monthly" : $arctype = $_POST['arctype'] ;
+			( !isset($_POST['alistpost']))		? $alistpost = "1" : $alistpost = $_POST['alistpost'] ;			
+			( !isset($_POST['aoclink']))		? $aoclink = "1" : $aoclink = $_POST['aoclink'] ;
+			( !isset($_POST['auselines']))		? $auselines = "1" : $auselines = $_POST['auselines'] ;
+			( !isset($_POST['auseicons']))		? $auseicons = "0" : $auseicons = $_POST['auseicons'] ;
+			( !isset($_POST['acloselevels']))	? $acloselevels = "1" : $acloselevels = $_POST['acloselevels'] ;
+			( !isset($_POST['afolderlinks']))	? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
+			( !isset($_POST['auseselection']))	? $auseselection = "0" : $auseselection = $_POST['auseselection'] ;
 			( !isset($_POST['aopentosel']) )	? $aopentosel = "0" : $aopentosel = $_POST['aopentosel'] ;
-			( !isset($_POST['atopnode']) ) 		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
-			( !isset($_POST['ashowcount']) ) 	? $ashowcount = "0" : $ashowcount = $_POST['ashowcount'] ;			
+			( !isset($_POST['atopnode']))		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
+			( !isset($_POST['ashowcount']))		? $ashowcount = "1" : $ashowcount = $_POST['ashowcount'] ;			
 			( !isset($_POST['ashowrss']))		? $ashowrss = "0" : $ashowrss = $_POST['ashowrss'];		
-			( !isset($_POST['csortby']) ) 	 	? $csortby = "ID" : $csortby = $_POST['csortby'] ;
-			( !isset($_POST['csortorder']) ) 	? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
-			( !isset($_POST['chideempty']) ) 	? $chideempty = "0" : $chideempty = $_POST['chideempty'] ;
-			( !isset($_POST['cexclude']) ) 		? $cexclude = '1' : $cexclude = $_POST['cexclude'] ;
-			( !isset($_POST['clistpost']) ) 	? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;			
-			( !isset($_POST['coclink']) ) 		? $coclink = "0" : $coclink = $_POST['coclink'] ;
-			( !isset($_POST['cuselines']) ) 	? $cuselines = "0" : $cuselines = $_POST['cuselines'] ;
-			( !isset($_POST['cuseicons']) ) 	? $cuseicons = "0" : $cuseicons = $_POST['cuseicons'] ;
-			( !isset($_POST['ccloselevels']) ) 	? $ccloselevels = "0" : $ccloselevels = $_POST['ccloselevels'] ;
-			( !isset($_POST['cfolderlinks']) ) 	? $cfolderlinks = "0" : $cfolderlinks = $_POST['cfolderlinks'] ;
-			( !isset($_POST['cuseselection']) ) ? $cuseselection = "0" : $cuseselection = $_POST['cuseselection'] ;
-			( !isset($_POST['copentosel']) ) 	? $copentosel = "0" : $copentosel = $_POST['copentosel'] ;
-			( !isset($_POST['ctopnode']) ) 		? $ctopnode = "Categories" : $ctopnode = $_POST['ctopnode'] ;			
-			( !isset($_POST['cshowcount']) ) 	? $showcount = "0" : $showcount = $_POST['cshowcount'] ;			
+			( !isset($_POST['csortby']))	 	? $csortby = "ID" : $csortby = $_POST['csortby'] ;
+			( !isset($_POST['cpsortby']))	 	? $cpsortby = "post_date" : $cpsortby = $_POST['cpsortby'] ;
+			( !isset($_POST['cpsortorder']))	? $cpsortorder = "DESC" : $cpsortorder = $_POST['cpsortorder'] ;
+			( !isset($_POST['csortorder']))		? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
+			( !isset($_POST['chideempty']))		? $chideempty = "1" : $chideempty = $_POST['chideempty'] ;
+			( !isset($_POST['cexclude']))		? $cexclude = '1' : $cexclude = $_POST['cexclude'] ;
+			( !isset($_POST['clistpost']))		? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;			
+			( !isset($_POST['coclink']))		? $coclink = "1" : $coclink = $_POST['coclink'] ;
+			( !isset($_POST['cuselines']))		? $cuselines = "1" : $cuselines = $_POST['cuselines'] ;
+			( !isset($_POST['cuseicons']))		? $cuseicons = "0" : $cuseicons = $_POST['cuseicons'] ;
+			( !isset($_POST['ccloselevels']))	? $ccloselevels = "1" : $ccloselevels = $_POST['ccloselevels'] ;
+			( !isset($_POST['cfolderlinks']))	? $cfolderlinks = "0" : $cfolderlinks = $_POST['cfolderlinks'] ;
+			( !isset($_POST['cuseselection']))	? $cuseselection = "0" : $cuseselection = $_POST['cuseselection'] ;
+			( !isset($_POST['copentosel']))		? $copentosel = "0" : $copentosel = $_POST['copentosel'] ;
+			( !isset($_POST['ctopnode']))		? $ctopnode = "Categories" : $ctopnode = $_POST['ctopnode'] ;			
+			( !isset($_POST['cshowcount']))		? $showcount = "1" : $showcount = $_POST['cshowcount'] ;			
 			( !isset($_POST['showrss']))		? $showrss = "0" : $showrss = $_POST['showrss'];	
-			( !isset($_POST['psortby']) ) 		? $psortby = "ID" : $psortby = $_POST['psortby'] ;
-			( !isset($_POST['psortorder']) ) 	? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;			
-			( !isset($_POST['poclink']) ) 		? $poclink = "0" : $poclink = $_POST['poclink'] ;
-			( !isset($_POST['puselines']) ) 	? $puselines = "0" : $puselines = $_POST['puselines'] ;
-			( !isset($_POST['puseicons']) ) 	? $puseicons = "0" : $puseicons = $_POST['puseicons'] ;
-			( !isset($_POST['pcloselevels']) ) 	? $pcloselevels = "0" : $pcloselevels = $_POST['pcloselevels'] ;
-			( !isset($_POST['pfolderlinks']) ) 	? $pfolderlinks = "0" : $pfolderlinks = $_POST['pfolderlinks'] ;
-			( !isset($_POST['puseselection']) ) ? $puseselection = "0" : $puseselection = $_POST['puseselection'] ;
-			( !isset($_POST['popentosel']) ) 	? $popentosel = "0" : $popentosel = $_POST['popentosel'] ;
-			( !isset($_POST['ptopnode']) ) 		? $ptopnode = "Pages" : $ptopnode = $_POST['ptopnode'] ;	
-			( !isset($_POST['effon']) ) 		? $effon = "0" :  $effon = $_POST['effon'] ;
-			( !isset($_POST['efftype']) ) 		? $efftype = "blind" : $efftype = $_POST['efftype'] ;
-			( !isset($_POST['duration']) ) 		? $duration = "0.5" : $duration = $_POST['duration'] ;			
-			( !isset($_POST['fontsize']) ) 		? $fontsize = "11" : $fontsize = $_POST['fontsize'] ;
-			( !isset($_POST['mfontcolor']) ) 	? $mfontcolor = "000000" : $mfontcolor = $_POST['mfontcolor'] ;
-			( !isset($_POST['lfontcolor']) ) 	? $lfontcolor = "999999" : $lfontcolor = $_POST['lfontcolor'] ;
-			( !isset($_POST['lfontdecor']) ) 	? $lfontdecor = "none" : $lfontdecor = $_POST['lfontdecor'] ;
-			( !isset($_POST['hfontcolor']) ) 	? $hfontcolor = "CCCCCC" : $hfontcolor = $_POST['hfontcolor'] ;
-			( !isset($_POST['hfontdecor']) ) 	? $hfontdecor = "underline" : $hfontdecor = $_POST['hfontdecor'] ;	
-			( !isset($_POST['openlink']) ) 		? $openlink = "open all" : $openlink = $_POST['openlink'] ;
-			( !isset($_POST['closelink']) ) 	? $closelink = "close all" : $closelink = $_POST['closelink'] ;
-			( !isset($_POST['exclude']) ) 		? $exclude = '' : $exclude = $_POST['exclude'] ;
-			( !isset($_POST['truncate']) ) 		? $ptruncate = "16" : $truncate = $_POST['truncate'] ;				
+			( !isset($_POST['psortby']))		? $psortby = "ID" : $psortby = $_POST['psortby'] ;
+			( !isset($_POST['psortorder']))		? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;			
+			( !isset($_POST['poclink']))		? $poclink = "1" : $poclink = $_POST['poclink'] ;
+			( !isset($_POST['puselines']))		? $puselines = "1" : $puselines = $_POST['puselines'] ;
+			( !isset($_POST['puseicons']))		? $puseicons = "0" : $puseicons = $_POST['puseicons'] ;
+			( !isset($_POST['pcloselevels']))	? $pcloselevels = "1" : $pcloselevels = $_POST['pcloselevels'] ;
+			( !isset($_POST['pfolderlinks']))	? $pfolderlinks = "0" : $pfolderlinks = $_POST['pfolderlinks'] ;
+			( !isset($_POST['puseselection']))	? $puseselection = "0" : $puseselection = $_POST['puseselection'] ;
+			( !isset($_POST['popentosel']))		? $popentosel = "0" : $popentosel = $_POST['popentosel'] ;
+			( !isset($_POST['ptopnode']))		? $ptopnode = "Pages" : $ptopnode = $_POST['ptopnode'] ;	
+			( !isset($_POST['effon']))			? $effon = "1" :  $effon = $_POST['effon'] ;
+			( !isset($_POST['efftype']))		? $efftype = "blind" : $efftype = $_POST['efftype'] ;
+			( !isset($_POST['duration']))		? $duration = "0.5" : $duration = $_POST['duration'] ;			
+			( !isset($_POST['fontsize']))		? $fontsize = "11" : $fontsize = $_POST['fontsize'] ;
+			( !isset($_POST['mfontcolor']))		? $mfontcolor = "000000" : $mfontcolor = $_POST['mfontcolor'] ;
+			( !isset($_POST['lfontcolor']))		? $lfontcolor = "999999" : $lfontcolor = $_POST['lfontcolor'] ;
+			( !isset($_POST['lfontdecor']))		? $lfontdecor = "none" : $lfontdecor = $_POST['lfontdecor'] ;
+			( !isset($_POST['hfontcolor']))		? $hfontcolor = "CCCCCC" : $hfontcolor = $_POST['hfontcolor'] ;
+			( !isset($_POST['hfontdecor']))		? $hfontdecor = "underline" : $hfontdecor = $_POST['hfontdecor'] ;	
+			( !isset($_POST['openlink']))		? $openlink = "open all" : $openlink = $_POST['openlink'] ;
+			( !isset($_POST['closelink']))		? $closelink = "close all" : $closelink = $_POST['closelink'] ;
+			( !isset($_POST['exclude']))		? $exclude = '' : $exclude = $_POST['exclude'] ;
+			( !isset($_POST['truncate']))		? $ptruncate = "16" : $truncate = $_POST['truncate'] ;				
 			
 			$lnkoptions = array(
 				'sortby' => $lsortby,
@@ -407,12 +463,14 @@
 				'closelevels' => $lcloselevels,
 				'folderlinks' => $lfolderlinks,
 				'useselection' => $luseselection,			
-				'topnode' => $ltopnode,			
+				'topnode' => __($ltopnode),			
 				'show_updated' => 0,
 				'catsorder' => $lcatsorder
 			);		
 			
 			$arcoptions = array(
+				'sortby' => $asortby,
+				'sortorder' => $asortorder,	
 				'arctype' => $arctype,
 				'listpost' => $alistpost,				
 				'oclink' => $aoclink,
@@ -422,14 +480,16 @@
 				'folderlinks' => $afolderlinks,
 				'useselection' => $auseselection,
 				'opentosel' => $aopentosel,
-				'topnode' => $atopnode,
+				'topnode' => __($atopnode),
 				'showcount' => $ashowcount,
 				'showrss' => $ashowrss
 			);
 	
 			$catoptions = array(
-				'sortby' => $csortby,
+				'sortby' => $csortby,				
 				'sortorder' => $csortorder,
+				'cpsortby' => $cpsortby,
+				'cpsortorder' => $cpsortorder,
 				'hideempty' => $chideempty,
 				'exclude' => $cexclude,
 				'listpost' => $clistpost,				
@@ -440,7 +500,7 @@
 				'folderlinks' => $cfolderlinks,
 				'useselection' => $cuseselection,
 				'opentosel' => $copentosel,
-				'topnode' => $ctopnode,
+				'topnode' => __($ctopnode),
 				'showcount' => $showcount,
 				'showrss' => $showrss
 			);
@@ -455,7 +515,7 @@
 				'folderlinks' => $pfolderlinks,
 				'useselection' => $puseselection,
 				'opentosel' => $popentosel,
-				'topnode' => $ptopnode
+				'topnode' => __($ptopnode)
 			);
 	
 			$effoptions = array(
@@ -475,7 +535,7 @@
 		
 			$genoptions = array(
 				'truncate' => $truncate,
-				'openlink' => $openlink,
+				'openlink' => __($openlink),
 				'closelink' => $closelink,
 				'exclude' => $exclude				
 			);
@@ -499,16 +559,16 @@
 				$wpdtreeopt['effopt']['duration'] = 0.5;
 			}			
 			
-			if ( !$effon ) {
+			if(!$effon){
 				update_option('wp_dtree_options', $wpdtreeopt);
 				echo "<div id=\"message\" class=\"updated fade\"><p>";
-				echo "<font color=\"red\">WP-dTree settings updated...</font><br />";
+				echo "<font color=\"black\">".__('WP-dTree settings updated...')."</font><br />";
 				echo "</p></div>";
-			} else {
+			} else{
 				update_option('wp_dtree_options', $wpdtreeopt);
 				echo "<div id=\"message\" class=\"updated fade\"><p>";
-				echo "<font color=\"red\">WP-dTree settings updated...</font><br />";
-				echo "<font color=\"red\">Effects are active...</font><br />";
+				echo "<font color=\"black\">".__('WP-dTree settings updated...')."</font><br />";
+				echo "<font color=\"black\">".__('Scriptaculous Effects are active...')."</font><br />";
 				echo "</p></div>";
 			}
 			wp_dtree_update_cache(); //update cache when we edit plugin settings.		
@@ -518,7 +578,7 @@
 	<form method="post">	
 	<div class="wrap">	
 		<h2>WP-dTree Settings</h2>		
-		<table class="optiontable">
+		<table class="optiontable">		
 			<tr>
 				<td></td>
 				<td><strong>Archive</strong></td>
@@ -535,52 +595,52 @@
 			</tr>		
 			<tr>
 				<td>Display Open/Close links</td>
-				<td><input type="checkbox" name="aoclink" value="1" <?php if ($wpdtreeopt['arcopt']['oclink']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="coclink" value="1" <?php if ($wpdtreeopt['catopt']['oclink']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="poclink" value="1" <?php if ($wpdtreeopt['pgeopt']['oclink']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="loclink" value="1" <?php if ($wpdtreeopt['lnkopt']['oclink']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="aoclink" value="1" <?php if($wpdtreeopt['arcopt']['oclink']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="coclink" value="1" <?php if($wpdtreeopt['catopt']['oclink']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="poclink" value="1" <?php if($wpdtreeopt['pgeopt']['oclink']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="loclink" value="1" <?php if($wpdtreeopt['lnkopt']['oclink']){ echo "checked";} ?> /></td>
 			</tr>
 			<tr class="alternate">
 				<td>Draw lines</td>
-				<td><input type="checkbox" name="auselines" value="1" <?php if ($wpdtreeopt['arcopt']['uselines']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="cuselines" value="1" <?php if ($wpdtreeopt['catopt']['uselines']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="puselines" value="1" <?php if ($wpdtreeopt['pgeopt']['uselines']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="luselines" value="1" <?php if ($wpdtreeopt['lnkopt']['uselines']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="auselines" value="1" <?php if($wpdtreeopt['arcopt']['uselines']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="cuselines" value="1" <?php if($wpdtreeopt['catopt']['uselines']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="puselines" value="1" <?php if($wpdtreeopt['pgeopt']['uselines']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="luselines" value="1" <?php if($wpdtreeopt['lnkopt']['uselines']){ echo "checked";} ?> /></td>
 			</tr>
 			<tr>
 				<td>Display icons</td>
-				<td><input type="checkbox" name="auseicons" value="1" <?php if ($wpdtreeopt['arcopt']['useicons']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="cuseicons" value="1" <?php if ($wpdtreeopt['catopt']['useicons']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="puseicons" value="1" <?php if ($wpdtreeopt['pgeopt']['useicons']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="luseicons" value="1" <?php if ($wpdtreeopt['lnkopt']['useicons']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="auseicons" value="1" <?php if($wpdtreeopt['arcopt']['useicons']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="cuseicons" value="1" <?php if($wpdtreeopt['catopt']['useicons']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="puseicons" value="1" <?php if($wpdtreeopt['pgeopt']['useicons']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="luseicons" value="1" <?php if($wpdtreeopt['lnkopt']['useicons']){ echo "checked";} ?> /></td>
 			</tr>
 			<tr class="alternate">
 				<td>Close same levels</td>
-				<td><input type="checkbox" name="acloselevels" value="1" <?php if ($wpdtreeopt['arcopt']['closelevels']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="ccloselevels" value="1" <?php if ($wpdtreeopt['catopt']['closelevels']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="pcloselevels" value="1" <?php if ($wpdtreeopt['pgeopt']['closelevels']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="lcloselevels" value="1" <?php if ($wpdtreeopt['lnkopt']['closelevels']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="acloselevels" value="1" <?php if($wpdtreeopt['arcopt']['closelevels']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="ccloselevels" value="1" <?php if($wpdtreeopt['catopt']['closelevels']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="pcloselevels" value="1" <?php if($wpdtreeopt['pgeopt']['closelevels']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="lcloselevels" value="1" <?php if($wpdtreeopt['lnkopt']['closelevels']){ echo "checked";} ?> /></td>
 			</tr>
 			<tr>
 				<td>Folders are links</td>
-				<td><input type="checkbox" name="afolderlinks" value="1" <?php if ($wpdtreeopt['arcopt']['folderlinks']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="cfolderlinks" value="1" <?php if ($wpdtreeopt['catopt']['folderlinks']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="pfolderlinks" value="1" <?php if ($wpdtreeopt['pgeopt']['folderlinks']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="afolderlinks" value="1" <?php if($wpdtreeopt['arcopt']['folderlinks']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="cfolderlinks" value="1" <?php if($wpdtreeopt['catopt']['folderlinks']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="pfolderlinks" value="1" <?php if($wpdtreeopt['pgeopt']['folderlinks']){ echo "checked";} ?> /></td>
 				<td></td>
 			</tr>
 			<tr class="alternate">
 				<td>Open to selection</td>
-				<td><input type="checkbox" name="aopentosel" value="1" <?php if ($wpdtreeopt['arcopt']['opentosel']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="copentosel" value="1" <?php if ($wpdtreeopt['catopt']['opentosel']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="popentosel" value="1" <?php if ($wpdtreeopt['pgeopt']['opentosel']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="aopentosel" value="1" <?php if($wpdtreeopt['arcopt']['opentosel']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="copentosel" value="1" <?php if($wpdtreeopt['catopt']['opentosel']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="popentosel" value="1" <?php if($wpdtreeopt['pgeopt']['opentosel']){ echo "checked";} ?> /></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td>Highlight selection</td>
-				<td><input type="checkbox" name="auseselection" value="1" <?php if ($wpdtreeopt['arcopt']['useselection']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="cuseselection" value="1" <?php if ($wpdtreeopt['catopt']['useselection']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="puseselection" value="1" <?php if ($wpdtreeopt['pgeopt']['useselection']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="luseselection" value="1" <?php if ($wpdtreeopt['lnkopt']['useselection']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="auseselection" value="1" <?php if($wpdtreeopt['arcopt']['useselection']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="cuseselection" value="1" <?php if($wpdtreeopt['catopt']['useselection']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="puseselection" value="1" <?php if($wpdtreeopt['pgeopt']['useselection']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="luseselection" value="1" <?php if($wpdtreeopt['lnkopt']['useselection']){ echo "checked";} ?> /></td>
 			</tr>
 			<tr class="alternate">
 				<td>Exclude Category</td>
@@ -591,11 +651,25 @@
 			</tr>			
 			<tr>
 				<td>Sort by</td>
-				<td></td>
+				<td>
+					<select name="asortby">
+						<option value="post_title"<?php if($wpdtreeopt['arcopt']['sortby'] == 'post_title'){ echo(' selected="selected"');}?>>Title</option>						
+						<option value="post_date"<?php if($wpdtreeopt['arcopt']['sortby'] == 'post_date'){ echo(' selected="selected"');}?>>Date</option>
+						<option value="ID"<?php if($wpdtreeopt['arcopt']['sortby'] == 'ID'){ echo(' selected="selected"');}?>>ID</option>
+					</select>
+					<select name="asortorder">
+						<option value="ASC"<?php if($wpdtreeopt['arcopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
+						<option value="DESC"<?php if($wpdtreeopt['arcopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
+					</select>
+				</td>
 				<td>
 					<select name="csortby">
 						<option value="ID"<?php if($wpdtreeopt['catopt']['sortby'] == 'ID'){ echo(' selected="selected"');}?>>ID</option>
 						<option value="name"<?php if($wpdtreeopt['catopt']['sortby'] == 'name'){ echo(' selected="selected"');}?>>Name</option>
+					</select>
+					<select name="csortorder">
+						<option value="ASC"<?php if($wpdtreeopt['catopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
+						<option value="DESC"<?php if($wpdtreeopt['catopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
 					</select>
 				</td>
 				<td>
@@ -604,6 +678,10 @@
 						<option value="menu_order"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'menu_order'){ echo(' selected="selected"');}?>>Menu Order</option>
 						<option value="post_date"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'post_date'){ echo(' selected="selected"');}?>>Date</option>
 						<option value="ID"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'ID'){ echo(' selected="selected"');}?>>ID</option>
+					</select>
+					<select name="psortorder">
+						<option value="ASC"<?php if($wpdtreeopt['pgeopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
+						<option value="DESC"<?php if($wpdtreeopt['pgeopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
 					</select>
 				</td>
 				<td>
@@ -616,6 +694,10 @@
 						<option value="updated"<?php if($wpdtreeopt['lnkopt']['sortby'] == 'updated'){ echo(' selected="selected"');}?>>Updated</option>
 						<option value="length"<?php if($wpdtreeopt['lnkopt']['sortby'] == 'length'){ echo(' selected="selected"');}?>>Length</option>
 						<option value="rand"<?php if($wpdtreeopt['lnkopt']['sortby'] == 'rand'){ echo(' selected="selected"');}?>>Random</option>
+					</select>
+					<select name="lsortorder">
+						<option value="ASC"<?php if($wpdtreeopt['lnkopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
+						<option value="DESC"<?php if($wpdtreeopt['lnkopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
 					</select>
 				</td>
 			</tr>	
@@ -634,28 +716,6 @@
 			</td>
 			</tr>					
 			<tr>
-				<td>Sort order</td>
-				<td></td>
-				<td>
-					<select name="csortorder">
-						<option value="ASC"<?php if($wpdtreeopt['catopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
-						<option value="DESC"<?php if($wpdtreeopt['catopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
-					</select>
-				</td>
-				<td>
-					<select name="psortorder">
-						<option value="ASC"<?php if($wpdtreeopt['pgeopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
-						<option value="DESC"<?php if($wpdtreeopt['pgeopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
-					</select>
-				</td>
-				<td>
-					<select name="lsortorder">
-						<option value="ASC"<?php if($wpdtreeopt['lnkopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
-						<option value="DESC"<?php if($wpdtreeopt['lnkopt']['sortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
-					</select>
-				</td>
-			</tr>
-			<tr class="alternate">
 				<td>Tree type</td>
 				<td>
 					<select name="arctype">
@@ -667,31 +727,43 @@
 				<td></td>
 				<td></td>
 			</tr>
-			<tr>
+			<tr class="alternate">
 				<td>List posts</td>
-				<td><input type="checkbox" name="alistpost" value="1" <?php if ($wpdtreeopt['arcopt']['listpost']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="clistpost" value="1" <?php if ($wpdtreeopt['catopt']['listpost']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="alistpost" value="1" <?php if($wpdtreeopt['arcopt']['listpost']){ echo "checked";} ?> /></td>
+				<td>
+					<input type="checkbox" name="clistpost" value="1" <?php if($wpdtreeopt['catopt']['listpost']){ echo "checked";} ?> />
+					<span> by: </span>
+					<select name="cpsortby">
+						<option value="post_title"<?php if($wpdtreeopt['catopt']['cpsortby'] == 'post_title'){ echo(' selected="selected"');}?>>Title</option>						
+						<option value="post_date"<?php if($wpdtreeopt['catopt']['cpsortby'] == 'post_date'){ echo(' selected="selected"');}?>>Date</option>
+						<option value="ID"<?php if($wpdtreeopt['catopt']['cpsortby'] == 'ID'){ echo(' selected="selected"');}?>>ID</option>
+					</select>
+					<select name="cpsortorder">
+						<option value="ASC"<?php if($wpdtreeopt['catopt']['cpsortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>
+						<option value="DESC"<?php if($wpdtreeopt['catopt']['cpsortorder'] == 'DESC'){ echo(' selected="selected"');}?>>Descending</option>
+					</select>				
+				</td>
 				<td></td>
 				<td></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Hide empty categories</td>
 				<td></td>
-				<td><input type="checkbox" name="chideempty" value="1" <?php if ($wpdtreeopt['catopt']['hideempty']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="chideempty" value="1" <?php if($wpdtreeopt['catopt']['hideempty']){ echo "checked";} ?> /></td>
 				<td></td>
 				<td></td>
 			</tr>			
-			<tr>
+			<tr class="alternate">
 				<td>Show postcount</td>
-				<td><input type="checkbox" name="ashowcount" value="1" <?php if ($wpdtreeopt['arcopt']['showcount']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="cshowcount" value="1" <?php if ($wpdtreeopt['catopt']['showcount']){ echo "checked";} ?> /></td>				
+				<td><input type="checkbox" name="ashowcount" value="1" <?php if($wpdtreeopt['arcopt']['showcount']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="cshowcount" value="1" <?php if($wpdtreeopt['catopt']['showcount']){ echo "checked";} ?> /></td>				
 				<td></td>
 				<td></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td>Show RSS-icons</td>
-				<td><input type="checkbox" name="ashowrss" value="1" <?php if ($wpdtreeopt['arcopt']['showrss']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="showrss" value="1" <?php if ($wpdtreeopt['catopt']['showrss']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="ashowrss" value="1" <?php if($wpdtreeopt['arcopt']['showrss']){ echo "checked";} ?> /></td>
+				<td><input type="checkbox" name="showrss" value="1" <?php if($wpdtreeopt['catopt']['showrss']){ echo "checked";} ?> /></td>
 				<td></td>
 				<td></td>
 			</tr>			
@@ -718,7 +790,7 @@
 					<label>Exclude posts/pages</label>
 				</td>
 				<td>
-					You can exclude specific posts or pages from the tree. <br>The format for this is 'ID1,ID2,ID3', where the ID is based on the ID you see when you manage your posts/pages.
+					Enter the page IDs to exclude as a comma-separated list, like so: "1,2,3".<br> The ID can be seen in the URL when you edit your posts/pages. 
 				</td>			
 			</tr>
 			<tr>				
@@ -730,9 +802,9 @@
 					Determines the width of your tree
 				</td>
 			</tr>
-			</tr>
-			<td colspan="3"></td>
 			<tr>
+			<td colspan="3"></td>
+			</tr>
 		</table>
 	</div>	
 	<div class="wrap">
@@ -742,7 +814,7 @@
 				<td width="280">
 					<fieldset class="options">
 						<p>
-						<label><input type="checkbox" name="effon" value="true" <?php if ($wpdtreeopt['effopt']['effon']){ echo "checked";} ?> /> Enable scriptaculous effects.</label>
+						<label><input type="checkbox" name="effon" value="true" <?php if($wpdtreeopt['effopt']['effon']){ echo "checked";} ?> /> Enable scriptaculous effects.</label>
 						</p>
 						<p>
 						<select name="efftype">
@@ -763,7 +835,7 @@
 					<p>Click the checkbox to enable effects, then select the effect from the drop down menu.</p>					
 				</td>
 			</tr>
-			</tr>
+			<tr>
 			<td colspan="3"></td>
 			<tr>
 		</table>
@@ -807,9 +879,9 @@
 					<p>This area sets the CSS properties for the links that are displayed in your tree.</p>
 				</td>
 			</tr>
-			</tr>
-			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
 			<tr>
+			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
+			</tr>
 		</table>
 	</div>
 	</form>

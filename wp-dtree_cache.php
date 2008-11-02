@@ -10,18 +10,18 @@ function wp_dtree_get_error_msg(){
 	return "WP-dTree-3.4: cache table (".wp_dtree_get_table_name().") is either missing or outdated. Disable the plugin and re-install it again.";
 }
 
-function wp_dtree_install_cache() {	
+function wp_dtree_install_cache(){	
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();
 	$wp_dtree_db_version = wp_dtree_get_table_version();  
 	$wpdb->show_errors();	
-	if(!wp_dtree_table_exists()) {	
+	if(!wp_dtree_table_exists()){	
 		$charset_collate = '';
-		if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
-			if ( ! empty($wpdb->charset) ){
+		if( version_compare(mysql_get_server_info(), '4.1.0', '>=') ){
+			if( ! empty($wpdb->charset) ){
 				$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 			}
-			if ( ! empty($wpdb->collate) ){
+			if( ! empty($wpdb->collate) ){
 				$charset_collate .= " COLLATE $wpdb->collate";
 			}
 		}			
@@ -37,8 +37,8 @@ function wp_dtree_install_cache() {
 		update_option("wp_dtree_db_version", $wp_dtree_db_version);
 		wp_dtree_update_cache();
 		
-	} else {
-		if(!wp_dtree_table_is_current()) {					 
+	} else{
+		if(!wp_dtree_table_is_current()){					 
 			wp_dtree_uninstall_cache();
 			wp_dtree_install_cache();						
 		}		
@@ -46,18 +46,18 @@ function wp_dtree_install_cache() {
 	}	
 }
 
-function wp_dtree_uninstall_cache() {			
+function wp_dtree_uninstall_cache(){			
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();
 	$wpdb->show_errors();	
-	if(!wp_dtree_table_exists()) { 
+	if(!wp_dtree_table_exists()){ 
 		return false; 
 	}   		
 	$wpdb->query("DROP TABLE " . $wp_dtree_cache);	
 	return true;
 }
 
-function wp_dtree_update_cache() {
+function wp_dtree_update_cache(){
 	wp_dtree_clean_exclusion_list(); //removes ID's from posts that has been deleted in the past.	
 	wp_dtree_update_links();
 	wp_dtree_update_pages();
@@ -65,16 +65,16 @@ function wp_dtree_update_cache() {
 	wp_dtree_update_categories();
 }
 
-//post_id is set if this function is called for the delete_post action. 
+//post_id is set ifthis function is called for the delete_post action. 
 //delete_post is actually hooked _prior_ to deleting the post, so it will inevitably 
 //be added to our cached tree. Thus we take care to add it to our exclude list.
-function wp_dtree_update_archives($post_ID = -1) {		
-	if($post_ID > 0) {		
+function wp_dtree_update_archives($post_ID = -1){		
+	if($post_ID > 0){		
 		$wpdtreeopt = get_option('wp_dtree_options');
 		$excluded = $wpdtreeopt['genopt']['exclude']; 
-		if(empty($excluded))  {
+		if(empty($excluded)) {
 			$excluded = $post_ID; 
-		} else {			
+		} else{			
 			$excluded = $excluded . "," . $post_ID;
 		}		
 		$wpdtreeopt['genopt']['exclude'] = $excluded;
@@ -93,14 +93,14 @@ function wp_dtree_update_categories(){
 	wp_dtree_insert_tree_data(wp_dtree_get_categories_arr(), 'cat');
 }
 
-function wp_dtree_update_pages() {	   
+function wp_dtree_update_pages(){	   
 	wp_dtree_insert_tree_data(wp_dtree_get_pages_arr(), 'pge');	
 }
 
-function wp_dtree_insert_tree_data($treedata, $treetype) {
+function wp_dtree_insert_tree_data($treedata, $treetype){
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();	
-	if(!wp_dtree_table_exists() || !wp_dtree_table_is_current()) {		
+	if(!wp_dtree_table_exists() || !wp_dtree_table_is_current()){		
 		wp_dtree_install_cache();		
 	}		
 	$wpdb->show_errors();
@@ -132,21 +132,21 @@ function wp_dtree_safe_insert($treedata, $treetype){
 }
 
 //remove those ID's that doesn't exist in the database anymore. (eg; has been deleted)
-function wp_dtree_clean_exclusion_list() {
+function wp_dtree_clean_exclusion_list(){
 	global $wpdb;
 	$wpdb->show_errors();
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$excluded = $wpdtreeopt['genopt']['exclude'];	
-	if ( !empty($excluded) ) {
+	if( !empty($excluded) ){
 		$cleanlist = '';
 		$exposts = preg_split('/[\s,]+/',$excluded);
-		if ( count($exposts) ) {
-			foreach ( $exposts as $expostID ) {				
+		if( count($exposts) ){
+			foreach ( $exposts as $expostID ){				
 				$exists = $wpdb->query( "SELECT * FROM ".$wpdb->posts." WHERE ID = ". intval($expostID) );				
 				if($exists)	{
-					if(empty($cleanlist))  {
+					if(empty($cleanlist)) {
 						$cleanlist = intval($expostID); 
-					} else {		
+					} else{		
 						$cleanlist = $cleanlist . "," . intval($expostID);
 					}				
 				}				
@@ -161,7 +161,7 @@ function wp_dtree_table_is_current(){
 	return get_option('wp_dtree_db_version') == wp_dtree_get_table_version();
 }
 
-function wp_dtree_table_exists() {
+function wp_dtree_table_exists(){
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();
 	return $wpdb->get_var("show tables like '".$wp_dtree_cache."'") == $wp_dtree_cache;

@@ -1,6 +1,6 @@
 <?php
 
-function wp_dtree_get_archives_arr() {
+function wp_dtree_get_archives_arr(){
 	global $month, $wpdb;
 	$idtranspose = wp_dtree_get_id_transpose();
 	$now = current_time('mysql');
@@ -8,24 +8,26 @@ function wp_dtree_get_archives_arr() {
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$arctype = $wpdtreeopt['arcopt']['arctype'];
 	$listchildpost = $wpdtreeopt['arcopt']['listpost'];
+	$sort_column = $wpdtreeopt['arcopt']['sortby']; //ID, post_name, post_date
+	$sort_order = $wpdtreeopt['arcopt']['sortorder']; //ASC or DESC
 	$postexclude = $wpdtreeopt['genopt']['exclude'];
 
-	if ( !isset($idcount) ) {
+	if( !isset($idcount) ){
 		$idcount = 1;
 	}
-	if ( !isset($mpidcount) ) {
+	if( !isset($mpidcount) ){
 		$mpidcount = 0;
 	}
-	if ( !isset($pidcount) ) {
+	if( !isset($pidcount) ){
 		$pidcount = 0;
 	}
 
 	$checkPostType = " AND post_type = 'post'"; //OR post_type = 'page'
 	$postexclusions = '';
-	if ( !empty($postexclude) ) {
+	if( !empty($postexclude) ){
 		$exposts = preg_split('/[\s,]+/',$postexclude);
-		if ( count($exposts) ) {
-			foreach ( $exposts as $expost ) {
+		if( count($exposts) ){
+			foreach ( $exposts as $expost ){
 				$postexclusions .= ' AND ID <> ' . intval($expost) . ' ';
 			}
 		}
@@ -42,11 +44,11 @@ function wp_dtree_get_archives_arr() {
 		. " ORDER BY post_date DESC"
 	);
 
-	if ( $arcresults ) {
+	if($arcresults){
 		$curyear = -1;
-		foreach ( $arcresults as $arcresult ) {
-			if ( $arctype == 'yearly' ) {
-				if ( $arcresult->year != $curyear ) {
+		foreach($arcresults as $arcresult){
+			if( $arctype == 'yearly' ){
+				if( $arcresult->year != $curyear ){
 					$postcount = 0;
 					foreach($arcresults as $temp){
 						if($temp->year == $arcresult->year){
@@ -67,9 +69,9 @@ function wp_dtree_get_archives_arr() {
 				}
 			}
 
-			if ( $arctype != 'yearly' ) {
+			if( $arctype != 'yearly' ){
 				$name_title = $month[zeroise($arcresult->month, 2)]." ".$arcresult->year;
-			} else {
+			} else{
 				$name_title = $month[zeroise($arcresult->month, 2)];
 			}
 			
@@ -83,7 +85,7 @@ function wp_dtree_get_archives_arr() {
 			$pidcount = $idcount;
 			$idcount++;
 
-			if ( $listchildpost ) {
+			if( $listchildpost ){
 				$startmonth = $arcresult->year."-".zeroise($arcresult->month, 2)."-01 00:00:00";
 				$endmonth = wp_dtree_add_month($startmonth, 1);
 				$postresults = $wpdb->get_results(
@@ -94,11 +96,11 @@ function wp_dtree_get_archives_arr() {
 							. " AND post_status = 'publish'"
 							.$postexclusions
 							.$checkPostType
-							. " ORDER BY post_date DESC"
+							. " ORDER BY $sort_column $sort_order"
 				);
 
-				if ( $postresults ) {
-					foreach ( $postresults as $postresult ) {
+				if( $postresults ){
+					foreach ( $postresults as $postresult ){
 						$results[$idcount] = array( 
 							'id' => $idcount + $idtranspose['arcpost'], 
 							'pid' => $pidcount + $idtranspose['arc'], 
@@ -115,7 +117,7 @@ function wp_dtree_get_archives_arr() {
 	return wp_dtree_build_tree($results, 'arc');
 }
 	
-function wp_dtree_get_archives() {	
+function wp_dtree_get_archives(){	
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();	
 	$wpdtreeopt = get_option('wp_dtree_options');	
@@ -132,12 +134,12 @@ function wp_dtree_get_archives() {
 	
 }
 
-function wp_dtree_open_arc_to($arcstring) {
+function wp_dtree_open_arc_to($arcstring){
 	$ruri = $_SERVER['REQUEST_URI']; 
 	$path = str_replace(get_bloginfo('url'), "", $ruri);	
 	$path = ltrim($path, '/');
 	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)) {
+	if($path == "/" || empty($path) || empty($ruri)){
 		return ""; 
 	}
 	$strings = explode(";", $arcstring); //lots of arc.a('','','',''); statements
