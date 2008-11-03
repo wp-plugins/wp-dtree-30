@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
-	Version: 3.4.3
+	Version: 3.5
 	Author: <a href="http://www.ulfben.com/">Ulf Benjaminsson</a>
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
@@ -17,7 +17,7 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
-	Changes in v3.4.3 (2008-11-02)
+	Changes in v3.5 (2008-11-02)
 	I18N
 	Sorting posts archive tree
 	Sorting posts in category tree
@@ -113,7 +113,7 @@
 			$plugin_data = get_plugin_data(__FILE__);
 			return "".$plugin_data['Version'];
 		}
-		return "3.4.3";
+		return "3.5";
 	}
 	
 	require_once("wp-dtree_lnk-functions.php");
@@ -391,10 +391,10 @@
 		if( isset($_POST['submit'])){	
 			( !isset($_POST['lsortby']))	 	? $lsortby = "name" : $lsortby = $_POST['lsortby'] ;
 			( !isset($_POST['lsortorder']))		? $lsortorder = "ASC" : $lsortorder = $_POST['lsortorder'] ;						
-			( !isset($_POST['loclink']))		? $loclink = "1" : $loclink = $_POST['loclink'] ;
-			( !isset($_POST['luselines']))		? $luselines = "1" : $luselines = $_POST['luselines'] ;
+			( !isset($_POST['loclink']))		? $loclink = "0" : $loclink = $_POST['loclink'] ;
+			( !isset($_POST['luselines']))		? $luselines = "0" : $luselines = $_POST['luselines'] ;
 			( !isset($_POST['luseicons']))		? $luseicons = "0" : $luseicons = $_POST['luseicons'] ;
-			( !isset($_POST['lcloselevels']))	? $lcloselevels = "1" : $lcloselevels = $_POST['lcloselevels'] ;
+			( !isset($_POST['lcloselevels']))	? $lcloselevels = "0" : $lcloselevels = $_POST['lcloselevels'] ;
 			( !isset($_POST['lfolderlinks']))	? $lfolderlinks = "0" : $lfolderlinks = $_POST['lfolderlinks'] ;
 			( !isset($_POST['luseselection']))	? $luseselection = "0" : $luseselection = $_POST['luseselection'] ;			
 			( !isset($_POST['ltopnode']))		? $ltopnode = "Links" : $ltopnode = $_POST['ltopnode'] ;
@@ -402,45 +402,45 @@
 			( !isset($_POST['asortby']))	 	? $asortby = "post_date" : $asortby = $_POST['asortby'] ;
 			( !isset($_POST['asortorder']))		? $asortorder = "DESC" : $asortorder = $_POST['asortorder'] ;				
 			( !isset($_POST['arctype']))		? $arctype = "monthly" : $arctype = $_POST['arctype'] ;
-			( !isset($_POST['alistpost']))		? $alistpost = "1" : $alistpost = $_POST['alistpost'] ;			
-			( !isset($_POST['aoclink']))		? $aoclink = "1" : $aoclink = $_POST['aoclink'] ;
-			( !isset($_POST['auselines']))		? $auselines = "1" : $auselines = $_POST['auselines'] ;
+			( !isset($_POST['alistpost']))		? $alistpost = "0" : $alistpost = $_POST['alistpost'] ;			
+			( !isset($_POST['aoclink']))		? $aoclink = "0" : $aoclink = $_POST['aoclink'] ;
+			( !isset($_POST['auselines']))		? $auselines = "0" : $auselines = $_POST['auselines'] ;
 			( !isset($_POST['auseicons']))		? $auseicons = "0" : $auseicons = $_POST['auseicons'] ;
-			( !isset($_POST['acloselevels']))	? $acloselevels = "1" : $acloselevels = $_POST['acloselevels'] ;
+			( !isset($_POST['acloselevels']))	? $acloselevels = "0" : $acloselevels = $_POST['acloselevels'] ;
 			( !isset($_POST['afolderlinks']))	? $afolderlinks = "0" : $afolderlinks = $_POST['afolderlinks'] ;
 			( !isset($_POST['auseselection']))	? $auseselection = "0" : $auseselection = $_POST['auseselection'] ;
 			( !isset($_POST['aopentosel']) )	? $aopentosel = "0" : $aopentosel = $_POST['aopentosel'] ;
 			( !isset($_POST['atopnode']))		? $atopnode = "Archives" : $atopnode = $_POST['atopnode'] ;
-			( !isset($_POST['ashowcount']))		? $ashowcount = "1" : $ashowcount = $_POST['ashowcount'] ;			
+			( !isset($_POST['ashowcount']))		? $ashowcount = "0" : $ashowcount = $_POST['ashowcount'] ;			
 			( !isset($_POST['ashowrss']))		? $ashowrss = "0" : $ashowrss = $_POST['ashowrss'];		
 			( !isset($_POST['csortby']))	 	? $csortby = "ID" : $csortby = $_POST['csortby'] ;
 			( !isset($_POST['cpsortby']))	 	? $cpsortby = "post_date" : $cpsortby = $_POST['cpsortby'] ;
 			( !isset($_POST['cpsortorder']))	? $cpsortorder = "DESC" : $cpsortorder = $_POST['cpsortorder'] ;
 			( !isset($_POST['csortorder']))		? $csortorder = "ASC" : $csortorder = $_POST['csortorder'] ;
-			( !isset($_POST['chideempty']))		? $chideempty = "1" : $chideempty = $_POST['chideempty'] ;
+			( !isset($_POST['chideempty']))		? $chideempty = "0" : $chideempty = $_POST['chideempty'] ;
 			( !isset($_POST['cexclude']))		? $cexclude = '1' : $cexclude = $_POST['cexclude'] ;
 			( !isset($_POST['clistpost']))		? $clistpost = "0" : $clistpost = $_POST['clistpost'] ;			
-			( !isset($_POST['coclink']))		? $coclink = "1" : $coclink = $_POST['coclink'] ;
-			( !isset($_POST['cuselines']))		? $cuselines = "1" : $cuselines = $_POST['cuselines'] ;
+			( !isset($_POST['coclink']))		? $coclink = "0" : $coclink = $_POST['coclink'] ;
+			( !isset($_POST['cuselines']))		? $cuselines = "0" : $cuselines = $_POST['cuselines'] ;
 			( !isset($_POST['cuseicons']))		? $cuseicons = "0" : $cuseicons = $_POST['cuseicons'] ;
-			( !isset($_POST['ccloselevels']))	? $ccloselevels = "1" : $ccloselevels = $_POST['ccloselevels'] ;
+			( !isset($_POST['ccloselevels']))	? $ccloselevels = "0" : $ccloselevels = $_POST['ccloselevels'] ;
 			( !isset($_POST['cfolderlinks']))	? $cfolderlinks = "0" : $cfolderlinks = $_POST['cfolderlinks'] ;
 			( !isset($_POST['cuseselection']))	? $cuseselection = "0" : $cuseselection = $_POST['cuseselection'] ;
 			( !isset($_POST['copentosel']))		? $copentosel = "0" : $copentosel = $_POST['copentosel'] ;
 			( !isset($_POST['ctopnode']))		? $ctopnode = "Categories" : $ctopnode = $_POST['ctopnode'] ;			
-			( !isset($_POST['cshowcount']))		? $showcount = "1" : $showcount = $_POST['cshowcount'] ;			
+			( !isset($_POST['cshowcount']))		? $showcount = "0" : $showcount = $_POST['cshowcount'] ;			
 			( !isset($_POST['showrss']))		? $showrss = "0" : $showrss = $_POST['showrss'];	
 			( !isset($_POST['psortby']))		? $psortby = "ID" : $psortby = $_POST['psortby'] ;
 			( !isset($_POST['psortorder']))		? $psortorder = "ASC" : $psortorder = $_POST['psortorder'] ;			
-			( !isset($_POST['poclink']))		? $poclink = "1" : $poclink = $_POST['poclink'] ;
-			( !isset($_POST['puselines']))		? $puselines = "1" : $puselines = $_POST['puselines'] ;
+			( !isset($_POST['poclink']))		? $poclink = "0" : $poclink = $_POST['poclink'] ;
+			( !isset($_POST['puselines']))		? $puselines = "0" : $puselines = $_POST['puselines'] ;
 			( !isset($_POST['puseicons']))		? $puseicons = "0" : $puseicons = $_POST['puseicons'] ;
-			( !isset($_POST['pcloselevels']))	? $pcloselevels = "1" : $pcloselevels = $_POST['pcloselevels'] ;
+			( !isset($_POST['pcloselevels']))	? $pcloselevels = "0" : $pcloselevels = $_POST['pcloselevels'] ;
 			( !isset($_POST['pfolderlinks']))	? $pfolderlinks = "0" : $pfolderlinks = $_POST['pfolderlinks'] ;
 			( !isset($_POST['puseselection']))	? $puseselection = "0" : $puseselection = $_POST['puseselection'] ;
 			( !isset($_POST['popentosel']))		? $popentosel = "0" : $popentosel = $_POST['popentosel'] ;
 			( !isset($_POST['ptopnode']))		? $ptopnode = "Pages" : $ptopnode = $_POST['ptopnode'] ;	
-			( !isset($_POST['effon']))			? $effon = "1" :  $effon = $_POST['effon'] ;
+			( !isset($_POST['effon']))			? $effon = "0" :  $effon = $_POST['effon'] ;
 			( !isset($_POST['efftype']))		? $efftype = "blind" : $efftype = $_POST['efftype'] ;
 			( !isset($_POST['duration']))		? $duration = "0.5" : $duration = $_POST['duration'] ;			
 			( !isset($_POST['fontsize']))		? $fontsize = "11" : $fontsize = $_POST['fontsize'] ;
