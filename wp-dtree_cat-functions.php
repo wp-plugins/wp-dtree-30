@@ -11,7 +11,7 @@ function wp_dtree_get_categories_arr(){
 	$hide_empty = $wpdtreeopt['catopt']['hideempty']; //true or false (eg. 0 / 1)
 	$listchildpost = $wpdtreeopt['catopt']['listpost']; //show posts under category
 	$countSubCatsPost = true;
-	$dupes = true; //wether posts are allowed to show up under more than one category.
+	$allowDupes = true; //wether posts are allowed to show up under more than one category.
 	$postexclude = $wpdtreeopt['genopt']['exclude']; //excluded post's ID.
 
 	if( !isset($idcount) ){ $idcount = 1; }	
@@ -90,11 +90,11 @@ function wp_dtree_get_categories_arr(){
 	}
 	$postresults = (array)$wpdb->get_results($query);	
 
-	//NOTE: $dupes and $unique is a super ugly hack to filter out posts in multiple categories.
+	//NOTE: $allowDupes and $unique is a super ugly hack to filter out posts in multiple categories.
 	//TODO: find out how to build the SQL-query to perform this for us.	
 	$unique = array();
 	foreach($postresults as $postresult){
-		if($dupes || !isset($unique[$postresult->id])){
+		if($allowDupes || !isset($unique[$postresult->id])){
 			$results[$idcount] = array('id' => $postresult->id + $idtranspose['catpost'], 'pid' => $postresult->catid + $idtranspose['cat'], 'name' => __($postresult->title), 'url' => get_permalink($postresult->id), 'title' => __($postresult->title));
 			$idcount++;
 		}

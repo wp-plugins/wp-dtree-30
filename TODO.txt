@@ -1,0 +1,41 @@
+This is an informal changelog/todo for the development version of WP-dTree.
+
+There's two things you can do to help out: 
+	1. run this version on your blog and report any issues.
+	2. check something of the TODO-list. :)
+
+Thank you!
+
+//Ulf Benjaminsson
+2008-11-03
+
+
+REQUESTS (* == done): 
+* "Close same level" is broken: http://wordpress.org/support/topic/208837
+* Include private posts in trees: http://wordpress.org/support/topic/204424
+* Quotes "" in post names fucks alt-texts: http://wordpress.org/support/topic/203570
+* Nestled cats may get excluded: http://wordpress.org/support/topic/165721?replies=28
+* Include sub-categories when counting posts: http://wordpress.org/support/topic/212249
+* Include link target attribute: http://wordpress.org/support/topic/212986
+* Custom sort order for archives: http://wordpress.org/support/topic/202502
+* Custom sort order for posts in categories: http://wordpress.org/support/topic/205163
+* I18N: http://wordpress.org/support/topic/213147
+
+
+TODO:
+Make the caching behaviour more obvious OR more transparent. 
+ 	- prominent button for "refresh cache?
+	- inline documentation? 
+	- or find every possibly related WP hook to run cache updates on. 
+
+Filter category tree content, so multi-cat posts are included only once. (see wp-dtree_cat-functions.php -> $allowDupes)
+Improve the admin screen feng-shui.
+Display information message on first run. (tell user to activate widgets, where settings are)
+
+
+KNOWN BUGS:
+Open To Selection breaks archive tree. Again.
+RSS icons are not displayed in IE if count is on.
+
+
+
