@@ -60,7 +60,7 @@ function wp_dtree_get_archives_arr(){
 						'id' => $idcount + $idtranspose['arc'], 
 						'pid' => 0 + $idtranspose['arc'],						 
 						'url' => get_year_link($arcresult->year), 
-						'title' => $arcresult->year,
+						'title' => __($arcresult->year),
 						'post_count' => $postcount
 					);					
 					$mpidcount = $idcount;
@@ -79,7 +79,7 @@ function wp_dtree_get_archives_arr(){
 				'id' => $idcount + $idtranspose['arc'], 
 				'pid' => $mpidcount + $idtranspose['arc'],				 
 				'url' => get_month_link($arcresult->year, $arcresult->month), 
-				'title' => $name_title,
+				'title' => __($name_title),
 				'post_count' => $arcresult->posts
 			);
 			$pidcount = $idcount;
@@ -104,9 +104,9 @@ function wp_dtree_get_archives_arr(){
 						$results[$idcount] = array( 
 							'id' => $idcount + $idtranspose['arcpost'], 
 							'pid' => $pidcount + $idtranspose['arc'], 
-							'name' => $postresult->post_title, 
+							'name' => __($postresult->post_title), 
 							'url' => get_permalink($postresult->ID), 
-							'title' => $postresult->post_title
+							'title' => __($postresult->post_title)
 						);
 						$idcount++;
 					}
@@ -122,7 +122,7 @@ function wp_dtree_get_archives(){
 	$wp_dtree_cache = wp_dtree_get_table_name();	
 	$wpdtreeopt = get_option('wp_dtree_options');	
 	$arcresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'arc' ORDER BY id");		 	
-	print("\n<!-- WP-dTree 3.4, arc tree: " . strlen($arcresults) . " chars. -->");
+	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", arc tree: " . strlen($arcresults) . " chars. -->");
 	if(!strlen($arcresults)){return;}		
  	echo $arcresults;	
  	if($wpdtreeopt['arcopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
@@ -139,8 +139,8 @@ function wp_dtree_open_arc_to($arcstring){
 	$path = str_replace(get_bloginfo('url'), "", $ruri);	
 	$path = ltrim($path, '/');
 	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)){
-		return ""; 
+	if($path == '/' || empty($path) || empty($ruri)){
+		return ''; 
 	}
 	$strings = explode(";", $arcstring); //lots of arc.a('','','',''); statements
 	foreach ($strings as $string){

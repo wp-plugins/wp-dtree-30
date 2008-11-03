@@ -24,7 +24,7 @@ function wp_dtree_get_links_arr(){
 			'id' => $cat->term_id + $idtranspose['lnk'], 
 			'pid' => $cat->parent+$idtranspose['lnk'],					 
 			'url' => "", 
-			'title' => $cat->name					
+			'title' => __($cat->name)					
 		);
 		$idcount++;
 		$lnkresults = get_bookmarks(array(
@@ -44,7 +44,7 @@ function wp_dtree_get_links_arr(){
 					'id' => $lnkresult->link_id + $idtranspose['lnkpost'], 
 					'pid' => $cat->term_id + $idtranspose['lnk'],					 
 					'url' => $lnkresult->link_url, 
-					'title' => $lnkresult->link_name,
+					'title' => __($lnkresult->link_name),
 					'target' => $lnkresult->link_target				
 				);
 				$idcount++;

@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
-	Version: 3.5
+	Version: 3.4.3
 	Author: <a href="http://www.ulfben.com/">Ulf Benjaminsson</a>
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
@@ -113,7 +113,7 @@
 			$plugin_data = get_plugin_data(__FILE__);
 			return "".$plugin_data['Version'];
 		}
-		return "3.5";
+		return "3.4.3";
 	}
 	
 	require_once("wp-dtree_lnk-functions.php");
@@ -370,7 +370,7 @@
 			'exclude' => ''			
 		);				
 		
-		$newwpdtreeopt = array(
+		/*$newwpdtreeopt = array(
 			'arcopt' => (!isset($oldwpdtreeopt['arcopt']) ? $arcoptions : $oldwpdtreeopt['arcopt']),
 			'catopt' => (!isset($oldwpdtreeopt['catopt']) ? $catoptions : $oldwpdtreeopt['catopt']),
 			'pgeopt' => (!isset($oldwpdtreeopt['pgeopt']) ? $pgeoptions : $oldwpdtreeopt['pgeopt']),
@@ -378,10 +378,33 @@
 			'cssopt' => (!isset($oldwpdtreeopt['cssopt']) ? $cssoptions : $oldwpdtreeopt['cssopt']),
 			'genopt' => (!isset($oldwpdtreeopt['genopt']) ? $genoptions : $oldwpdtreeopt['genopt']),
 			'lnkopt' => (!isset($oldwpdtreeopt['lnkopt']) ? $lnkoptions : $oldwpdtreeopt['lnkopt'])
-		);					
+		);*/			
+		
+		$newwpdtreeopt = array(
+			'arcopt' => wp_dtree_merge_arrays($oldwpdtreeopt['arcopt'], $arcoptions),
+			'catopt' => wp_dtree_merge_arrays($oldwpdtreeopt['catopt'], $catoptions),
+			'pgeopt' => wp_dtree_merge_arrays($oldwpdtreeopt['pgeopt'], $pgeoptions),
+			'effopt' => wp_dtree_merge_arrays($oldwpdtreeopt['effopt'], $effoptions),
+			'cssopt' => wp_dtree_merge_arrays($oldwpdtreeopt['cssopt'], $cssoptions),
+			'genopt' => wp_dtree_merge_arrays($oldwpdtreeopt['genopt'], $genoptions),
+			'lnkopt' => wp_dtree_merge_arrays($oldwpdtreeopt['lnkopt'], $lnkoptions)
+		);			
 		update_option('wp_dtree_options', $newwpdtreeopt);		
 	}
 
+	//takes an old (a) and a new (b) array of settings. 
+	//preserves the old values and incorporates the new ones.
+	function wp_dtree_merge_arrays($a, $b){
+		if(!isset($a)){return $b;}
+		foreach($b as $key => $newval){			
+			if(!isset($a[$key])){	
+				//print_r("Merging: ".$key." = ".$newval."<br>");			
+				$a[$key] = $newval;
+			}
+		}
+		return $a;		
+	}
+	
 	function wp_dtree_option_page(){
 		if(function_exists('current_user_can') && !current_user_can('manage_options') ){
 			die(__('Cheatin&#8217; uh?'));

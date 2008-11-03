@@ -20,7 +20,7 @@ function wp_dtree_get_pages_arr(){
 	$pageresults = &get_pages($args);
 	if( $pageresults ){
 		foreach ( $pageresults as $pageresult ){
-			$results[$idcount] = array( 'id' => $pageresult->ID + $idtranspose['pge'], 'pid' => $pageresult->post_parent + $idtranspose['pge'], 'url' => get_permalink($pageresult->ID), 'title' => addslashes($pageresult->post_title));
+			$results[$idcount] = array( 'id' => $pageresult->ID + $idtranspose['pge'], 'pid' => $pageresult->post_parent + $idtranspose['pge'], 'url' => get_permalink($pageresult->ID), 'title' => addslashes(__($pageresult->post_title)));
 			$idcount++;
 		}
 	}	 

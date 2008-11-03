@@ -39,7 +39,7 @@ function wp_dtree_get_categories_arr(){
 				'id' => $catresult->cat_ID + $idtranspose['cat'], 
 				'pid' => $catresult->category_parent + $idtranspose['cat'],					 
 				'url' => get_category_link($catresult->cat_ID), 
-				'title' => $catresult->cat_name					
+				'title' => __($catresult->cat_name)					
 			);
 			$idcount++;
 		}		
@@ -95,7 +95,7 @@ function wp_dtree_get_categories_arr(){
 	$unique = array();
 	foreach($postresults as $postresult){
 		if($dupes || !isset($unique[$postresult->id])){
-			$results[$idcount] = array('id' => $postresult->id + $idtranspose['catpost'], 'pid' => $postresult->catid + $idtranspose['cat'], 'name' => $postresult->title, 'url' => get_permalink($postresult->id), 'title' => $postresult->title);
+			$results[$idcount] = array('id' => $postresult->id + $idtranspose['catpost'], 'pid' => $postresult->catid + $idtranspose['cat'], 'name' => __($postresult->title), 'url' => get_permalink($postresult->id), 'title' => __($postresult->title));
 			$idcount++;
 		}
 		$unique[$postresult->id] = $postresult->id;
