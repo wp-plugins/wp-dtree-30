@@ -54,12 +54,10 @@ global $curdir;
 global $withEff;
 global $effStyle;
 global $duration;
-global $trunc;
 $curdir = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']); //fix contributed by Zarquod: http://wordpress.org/support/topic/136547
 $effStyle = "blind";
 $withEff = 1;
 $duration = 0.5;
-$trunc = 16; 
 if( isset($_REQUEST['eff']) ){
 	$effStyle = $_REQUEST['eff'];
 }
@@ -68,9 +66,6 @@ if( isset($_REQUEST['witheff']) ){
 }
 if( isset($_REQUEST['effdur']) ){
 	$duration = $_REQUEST['effdur'];
-}
-if( isset($_REQUEST['trunc']) ){
-	$trunc = $_REQUEST['trunc'];
 }
 if( 'slide' == $effStyle ){
 	$effCall_o = "SlideDown";
@@ -116,7 +111,7 @@ function wp_dtree_Node(id, pid, name, url, title, targ, count, rsspath){
 };
 
 // Tree object
-function wp_dTree(objName, baseUrl){
+function wp_dTree(objName, baseUrl, truncate){
 	this.config ={
 		target			: null,
 		folderLinks		: false,
@@ -145,6 +140,7 @@ function wp_dTree(objName, baseUrl){
 		nlMinus		: '<?php echo $curdir; ?>/dtree-img/nolines_minus.gif'	
 	};
 	this._url = baseUrl; 
+	this._truncate = truncate;
 	this.obj = objName;
 	this.awp_dtree_Nodes = [];
 	this.aIndent = [];
@@ -162,7 +158,7 @@ wp_dTree.prototype.a = function(id, pid, title, path, link_target, count, rsspat
 	if(typeof(rsspath) != "undefined" && rsspath != ""){
 		rsspath = "<a class='dtreerss' style='padding-right:15px' href='" + this._url + rsspath + "'> </a>";	
 	}	
-	name = this.htmlEntities(this.truncate(title, <?php echo $trunc; ?>));	
+	name = this.htmlEntities(this.truncate(title, this._truncate));	
 	path += "";	//remove this and the next line breaks down for some reason.
 	var url = path; //default value.
   	if(!path.indexOf('http://') == 0){		//if the path doesn't start with "http://" (eg. home path)

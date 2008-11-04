@@ -1,5 +1,5 @@
 <?php
-header("Content-type: text/css");
+header('Content-type: text/css');
 ?>
 /*
 *	WP-dTree 3.2 | Ulf Benjaminsson | 20071015
@@ -21,22 +21,29 @@ header("Content-type: text/css");
 */
 
 <?php
+global $fontf;
+$fontf = 'Verdana, Geneva, Arial, Helvetica, sans-serif';
 global $fontsize;
-$fontsize = "11";
+$fontsize = '11';
 global $mfontcolor;
-$mfontcolor = "000000";
+$mfontcolor = '000000'; //font color
 global $lfontcolor;
-$lfontcolor = "999999";
+$lfontcolor = '999999'; //link font color
+global $sfontdecor; //selected node font decor
+$sfontdecor = 'underline';
 global $lfontdecor;
-$lfontdecor = "none";
+$lfontdecor = 'none';
 global $hfontcolor;
-$hfontcolor = "CCCCCC";
+$hfontcolor = 'CCCCCC'; //hover link color
 global $hfontdecor;
-$hfontdecor = "underline";
+$hfontdecor = 'underline'; //hover link decor
 global $rssicon;
-$rssicon = "";
+$rssicon = '';
 global $rssicon2;
-$rssicon2 = "";
+$rssicon2 = '';
+if ( isset($_REQUEST['fontf']) ) {
+	$fontf = urldecode($_REQUEST['fontf']);
+} 
 if ( isset($_REQUEST['fontsize']) ) {
 	$fontsize = $_REQUEST['fontsize'];
 } 
@@ -55,7 +62,9 @@ if ( isset($_REQUEST['hfontcolor']) ) {
 if ( isset($_REQUEST['hfontdecor']) ) {	
 	$hfontdecor = $_REQUEST['hfontdecor'];
 } 
-$sfontdecor = $hfontdecor;
+if ( isset($_REQUEST['sfontdecor']) ) {	
+	$sfontdecor = $_REQUEST['sfontdecor'];
+} 
 if ( isset($_REQUEST['rssgfx']) ) {
 	$rssicon = $_REQUEST['rssgfx'];
 }
@@ -64,7 +73,7 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 }
 ?>
 #dtreec, #dtreea, #dtreep, #dtreel, #dtreecatwrapper, #dtreearcwrapper, #dtreepgewrapper, #dtreelnkwrapper {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-family: <?php echo $fontf ?>;
 	margin: 3px 0px 0px 0px; /*spacing from the open/close all links*/
 	font-size: <?php echo $fontsize; ?>px;
 	color: #<?php echo $mfontcolor; ?>;
@@ -75,6 +84,8 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 	vertical-align: middle;		
 	float: none; 
 	margin: 0 0px 0px 0;
+	padding: 0px !important;
+	line-height: <?php echo $fontsize; ?>px !important;
 }
 #dtreec a, #dtreea a, #dtreep a, #dtreel a, #dtreecatwrapper a, #dtreearcwrapper a, #dtreepgewrapper a, #dtreelnkwrapper a {
 	display: inline;
@@ -111,7 +122,7 @@ a.dtreerss:hover  {
 }
 /*If you want some cool highlighting on the active node, you can change it here. Default is a simple underline.*/
 #dtreec a.nodeSel, #dtreea a.nodeSel, #dtreep a.nodeSel, #dtreel a.nodeSel {
-	text-decoration: underline;
+	text-decoration: <?php echo $sfontdecor ?>;
 }
 #dtreec .clip, #dtreea .clip, #dtreep .clip, #dtreel .clip {
 	overflow: hidden;

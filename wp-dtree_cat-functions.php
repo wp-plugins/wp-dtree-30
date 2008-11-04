@@ -12,7 +12,7 @@ function wp_dtree_get_categories_arr(){
 	$listchildpost = $wpdtreeopt['catopt']['listpost']; //show posts under category
 	$countSubCatsPost = true;
 	$allowDupes = true; //wether posts are allowed to show up under more than one category.
-	$postexclude = $wpdtreeopt['genopt']['exclude']; //excluded post's ID.
+	$postexclude = $wpdtreeopt['arcopt']['exclude']; //excluded post's ID.
 
 	if( !isset($idcount) ){ $idcount = 1; }	
 	( !empty($excludedcats) ) ? $catexclusions = $excludedcats : $catexclusions = '';	
@@ -105,6 +105,11 @@ function wp_dtree_get_categories_arr(){
 }
 
 function wp_dtree_get_categories(){	
+	$wpdtreeopt = get_option('wp_dtree_options');
+	if($wpdtreeopt['catopt']['isdisabled']){
+		print('<p> WP-dTree '. wp_dtree_get_version() .'; the category tree has been <font color="orange">DISABLED</font> from admin. Did you forget to unload the widget? </p>');		
+		return;
+	}
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();		
 	$wpdtreeopt = get_option('wp_dtree_options');

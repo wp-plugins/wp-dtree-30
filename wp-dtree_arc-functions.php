@@ -10,7 +10,7 @@ function wp_dtree_get_archives_arr(){
 	$listchildpost = $wpdtreeopt['arcopt']['listpost'];
 	$sort_column = $wpdtreeopt['arcopt']['sortby']; //ID, post_name, post_date
 	$sort_order = $wpdtreeopt['arcopt']['sortorder']; //ASC or DESC
-	$postexclude = $wpdtreeopt['genopt']['exclude'];
+	$postexclude = $wpdtreeopt['arcopt']['exclude'];
 
 	if( !isset($idcount) ){
 		$idcount = 1;
@@ -117,7 +117,12 @@ function wp_dtree_get_archives_arr(){
 	return wp_dtree_build_tree($results, 'arc');
 }
 	
-function wp_dtree_get_archives(){	
+function wp_dtree_get_archives(){
+	$wpdtreeopt = get_option('wp_dtree_options');
+	if($wpdtreeopt['arcopt']['isdisabled']){
+		print('<p> WP-dTree '. wp_dtree_get_version() .'; the archive tree has been <font color="orange">DISABLED</font> from admin. Did you forget to unload the widget? </p>');		
+		return;
+	}	
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();	
 	$wpdtreeopt = get_option('wp_dtree_options');	

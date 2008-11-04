@@ -6,9 +6,8 @@ function wp_dtree_get_links_arr(){
 	$sort_column = $wpdtreeopt['lnkopt']['sortby']; //ID, name, rating etc.
 	$sort_order = $wpdtreeopt['lnkopt']['sortorder']; //ASC or DESC
 	$cats_orderby = (!isset($wpdtreeopt['lnkopt']['catsorder']) ? 'name' : $wpdtreeopt['lnkopt']['catsorder']);
-	
-	if( !isset($idcount) ){ $idcount = 1; }	
-	( !empty($excludedlnks) ) ? $lnkexclusions = $excludedlnks : $lnkexclusions = '';		
+	//$lnkexclude = $wpdtreeopt['lnkopt']['exclude'];
+	if( !isset($idcount) ){ $idcount = 1; }		
 	
 	$cats = get_terms('link_category', array(
 		'name__like' => '', 
@@ -54,7 +53,12 @@ function wp_dtree_get_links_arr(){
 	return wp_dtree_build_tree($results, 'lnk');
 }
 
-function wp_dtree_get_links(){	
+function wp_dtree_get_links(){
+	$wpdtreeopt = get_option('wp_dtree_options');
+	if($wpdtreeopt['lnkopt']['isdisabled']){
+		print('<p> WP-dTree '. wp_dtree_get_version() .'; the link tree has been <font color="orange">DISABLED</font> from admin. Did you forget to unload the widget? </p>');		
+		return;
+	}	
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name();		
 	$wpdtreeopt = get_option('wp_dtree_options');

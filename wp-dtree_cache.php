@@ -7,7 +7,7 @@ function wp_dtree_get_table_version(){
 	return 7;
 }
 function wp_dtree_get_error_msg(){
-	return "WP-dTree-3.4: cache table (".wp_dtree_get_table_name().") is either missing or outdated. Disable the plugin and re-install it again.";
+	return "WP-dTree-".wp_dtree_get_version().": cache table (".wp_dtree_get_table_name().") is either missing or outdated. Disable the plugin and re-install it again.";
 }
 
 function wp_dtree_install_cache(){	
@@ -58,35 +58,32 @@ function wp_dtree_uninstall_cache(){
 }
 
 function wp_dtree_update_cache(){
-	wp_dtree_clean_exclusion_list(); //removes ID's from posts that has been deleted in the past.	
-	wp_dtree_update_links();
-	wp_dtree_update_pages();
-	wp_dtree_update_archives();	
-	wp_dtree_update_categories();
+	$wpdtreeopt = get_option('wp_dtree_options');	
+	/*$excluded = $wpdtreeopt['genopt']['exclude']; //old dtree option	
+	wp_dtree_clean_exclusion_list($excluded); //removes ID's from posts that has been deleted in the past.	*/		
+	if(!$wpdtreeopt['lnkopt']['isdisabled']){
+		wp_dtree_update_links();
+	}
+	if(!$wpdtreeopt['pgeopt']['isdisabled']){
+		wp_dtree_update_pages();
+	}
+	if(!$wpdtreeopt['arcopt']['isdisabled']){
+		wp_dtree_update_archives();	
+	}
+	if(!$wpdtreeopt['catopt']['isdisabled']){
+		wp_dtree_update_categories();
+	}
 }
 
-//post_id is set ifthis function is called for the delete_post action. 
-//delete_post is actually hooked _prior_ to deleting the post, so it will inevitably 
-//be added to our cached tree. Thus we take care to add it to our exclude list.
-function wp_dtree_update_archives($post_ID = -1){		
-	if($post_ID > 0){		
-		$wpdtreeopt = get_option('wp_dtree_options');
-		$excluded = $wpdtreeopt['genopt']['exclude']; 
-		if(empty($excluded)) {
-			$excluded = $post_ID; 
-		} else{			
-			$excluded = $excluded . "," . $post_ID;
-		}		
-		$wpdtreeopt['genopt']['exclude'] = $excluded;
-		update_option('wp_dtree_options', $wpdtreeopt);				
-		wp_dtree_update_categories(); //we must update categories as well, or the deleted post will still be visible there.
-		wp_dtree_update_pages(); //for good measure...		
-	}	
+function wp_dtree_update_archives(){		
 	wp_dtree_insert_tree_data(wp_dtree_get_archives_arr(), 'arc');
 }								
 
-function wp_dtree_update_links(){
-	wp_dtree_insert_tree_data(wp_dtree_get_links_arr(), 'lnk');
+function wp_dtree_update_links(){ //gets called directly from hooks, thus the redundant test here.
+	$wpdtreeopt = get_option('wp_dtree_options');
+	if(!$wpdtreeopt['lnkopt']['isdisabled']){	
+		wp_dtree_insert_tree_data(wp_dtree_get_links_arr(), 'lnk');
+	}
 }
 
 function wp_dtree_update_categories(){	      
@@ -132,11 +129,9 @@ function wp_dtree_safe_insert($treedata, $treetype){
 }
 
 //remove those ID's that doesn't exist in the database anymore. (eg; has been deleted)
-function wp_dtree_clean_exclusion_list(){
+function wp_dtree_clean_exclusion_list($excluded){
 	global $wpdb;
-	$wpdb->show_errors();
-	$wpdtreeopt = get_option('wp_dtree_options');
-	$excluded = $wpdtreeopt['genopt']['exclude'];	
+	$wpdb->show_errors();	
 	if( !empty($excluded) ){
 		$cleanlist = '';
 		$exposts = preg_split('/[\s,]+/',$excluded);

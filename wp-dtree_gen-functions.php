@@ -27,7 +27,7 @@ function wp_dtree_build_tree($results, $treetype){
 	$tree .= "<script type=\"text/javascript\">\n";
 	$tree .= "<!--\n"; //closed in the "gettreetype" functions, in case we need to add to the JS.	
 	if( $results ){
-		$tree .= "var " . $t . " = new wp_dTree('" . $t . "', '".trailingslashit(get_bloginfo('url'))."');\n";
+		$tree .= "var " . $t . " = new wp_dTree('" . $t . "', '".trailingslashit(get_bloginfo('url'))."','".$truncate."');\n";
 		$tree .= $t . ".config.useLines=" . $useLines . ";\n";
 		$tree .= $t . ".config.useIcons=" . $useIcons . ";\n";
 		$tree .= $t . ".config.closeSameLevel=" . $cSameLevel . ";\n";
@@ -35,14 +35,14 @@ function wp_dtree_build_tree($results, $treetype){
 		$tree .= $t . ".config.useSelection=" . $useSelection . ";\n";
 		$tree .= $t . ".a(" . $idtranspose[$treetype] . ",-1,'" . $topnode . "');\n";		
 		foreach ($results as $nodedata){										
-			$tree .= wp_dtree_build_node($treetype, $nodedata, $truncate);
+			$tree .= wp_dtree_build_node($treetype, $nodedata);
 		}		
 		$tree .= "document.write(" . $t . ");\n";		
 	}
 	return $tree; 
 }
 
-function wp_dtree_build_node($treetype, $nodedata, $truncate){			
+function wp_dtree_build_node($treetype, $nodedata){			
 	if(!is_array($nodedata)){
 		return __('\n// WP-dTree WARNING: build_node failed.\n\n');		 		
 	} 

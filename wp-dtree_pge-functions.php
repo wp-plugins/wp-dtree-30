@@ -5,7 +5,7 @@ function wp_dtree_get_pages_arr(){
 	$sortby = $wpdtreeopt['pgeopt']['sortby'];
 	$sortorder = $wpdtreeopt['pgeopt']['sortorder'];
 	$listchildpost = $wpdtreeopt['pgeopt']['listpost'];
-	$postexclude = $wpdtreeopt['genopt']['exclude'];
+	$postexclude = $wpdtreeopt['pgeopt']['exclude'];
 
 	$args = "sort_column=".$sortby;
 	$args .= "&sort_order=".$sortorder;
@@ -28,6 +28,11 @@ function wp_dtree_get_pages_arr(){
 }
 
 function wp_dtree_get_pages(){
+	$wpdtreeopt = get_option('wp_dtree_options');
+	if($wpdtreeopt['pgeopt']['isdisabled']){
+		print('<p> WP-dTree '. wp_dtree_get_version() .'; the page tree has been <font color="orange">DISABLED</font> from admin. Did you forget to unload the widget? </p>');		
+		return;
+	}
 	global $wpdb;
 	$wp_dtree_cache = wp_dtree_get_table_name(); 
 	$wpdtreeopt = get_option('wp_dtree_options');  		
