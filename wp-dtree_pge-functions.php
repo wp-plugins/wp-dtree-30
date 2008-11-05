@@ -3,21 +3,25 @@ function wp_dtree_get_pages_arr(){
 	$idtranspose = wp_dtree_get_id_transpose();
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$sortby = $wpdtreeopt['pgeopt']['sortby'];
-	$sortorder = $wpdtreeopt['pgeopt']['sortorder'];
+	$sortorder = $wpdtreeopt['pgeopt']['sortorder']; //'post_title', 'menu_order', 'post_date', 'post_modified', 'ID', 'post_author', 'post_name' (name == slug)
 	$listchildpost = $wpdtreeopt['pgeopt']['listpost'];
 	$postexclude = $wpdtreeopt['pgeopt']['exclude'];
-
-	$args = "sort_column=".$sortby;
-	$args .= "&sort_order=".$sortorder;
-	if( !empty($postexclude) ){
-		$args .= "&exclude=".$postexclude;
-	}
-
-	if( !isset($idcount) ){
+	$authors = '';
+	$include = '';
+	$child_of = 0;
+	$meta_key = '';
+	$meta_value = '';  
+	if(!isset($idcount)){
 		$idcount = 1;
 	}
-
-	$pageresults = &get_pages($args);
+	
+	$pageresults = &get_pages(array(
+		'child_of' => $child_of, 'sort_order' => $sortorder,
+		'sort_column' => $sortby, 'hierarchical' => 0,
+		'exclude' => $postexclude, 'include' => $include,
+		'meta_key' => $meta_key, 'meta_value' => $meta_value,
+		'authors' => $authors)
+	);			
 	if( $pageresults ){
 		foreach ( $pageresults as $pageresult ){
 			$results[$idcount] = array( 'id' => $pageresult->ID + $idtranspose['pge'], 'pid' => $pageresult->post_parent + $idtranspose['pge'], 'url' => get_permalink($pageresult->ID), 'title' => addslashes(__($pageresult->post_title)));

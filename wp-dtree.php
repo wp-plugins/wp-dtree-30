@@ -260,9 +260,9 @@
 	
 	function wp_dtree_add2head(){
 		$wpdtreeopt = get_option('wp_dtree_options');		
-		$rssicon = get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png';	//normal
-		$rssicon2 = get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png'; //higlight				
-		$cd = '<script type="text/JavaScript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree.php?witheff='.$wpdtreeopt['effopt']['effon'].'&amp;eff='.$wpdtreeopt['effopt']['efftype'].'&amp;effdur='.$wpdtreeopt['effopt']['duration'].'" language="javascript"></script>\n';
+		$rssicon = urlencode(get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png');	//normal
+		$rssicon2 = urlencode(get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png'); //higlight				
+		$cd = '<script type="text/javascript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree.php?witheff='.$wpdtreeopt['effopt']['effon'].'&amp;eff='.$wpdtreeopt['effopt']['efftype'].'&amp;effdur='.$wpdtreeopt['effopt']['duration'].'"></script>';
 		$cd .= '<link rel="stylesheet" href="' 
 		. get_bloginfo('wpurl') 
 		. '/wp-content/plugins/wp-dtree-30/style.php?'
@@ -276,7 +276,7 @@
 		.'&amp;hfontdecor='.$wpdtreeopt['cssopt']['hfontdecor']
 		.'&amp;rssgfx='.$rssicon
 		.'&amp;rssgfxh='.$rssicon2
-		.'" type="text/css" media="screen" />\n';
+		.'" type="text/css" media="screen" />';
 		echo $cd;
 	}
 	
@@ -695,11 +695,14 @@
 					</select>
 				</td>
 				<td>
-					<select name="psortby">
+					<select name="psortby">					
 						<option value="post_title"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'post_title'){ echo(' selected="selected"');}?>>Title</option>
 						<option value="menu_order"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'menu_order'){ echo(' selected="selected"');}?>>Menu Order</option>
 						<option value="post_date"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'post_date'){ echo(' selected="selected"');}?>>Date</option>
 						<option value="ID"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'ID'){ echo(' selected="selected"');}?>>ID</option>
+						<option value="post_modified"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'post_modified'){ echo(' selected="selected"');}?>>Modified</option>
+						<option value="post_author"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'post_author'){ echo(' selected="selected"');}?>>Author</option>
+						<option value="post_name"<?php if($wpdtreeopt['pgeopt']['sortby'] == 'post_name'){ echo(' selected="selected"');}?>>Slug</option>					
 					</select>
 					<select name="psortorder">
 						<option value="ASC"<?php if($wpdtreeopt['pgeopt']['sortorder'] == 'ASC'){ echo(' selected="selected"');}?>>Ascending</option>

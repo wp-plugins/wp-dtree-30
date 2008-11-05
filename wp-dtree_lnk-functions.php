@@ -6,14 +6,18 @@ function wp_dtree_get_links_arr(){
 	$sort_column = $wpdtreeopt['lnkopt']['sortby']; //ID, name, rating etc.
 	$sort_order = $wpdtreeopt['lnkopt']['sortorder']; //ASC or DESC
 	$cats_orderby = (!isset($wpdtreeopt['lnkopt']['catsorder']) ? 'name' : $wpdtreeopt['lnkopt']['catsorder']);
-	//$lnkexclude = $wpdtreeopt['lnkopt']['exclude'];
+	$exclude = '';//$wpdtreeopt['lnkopt']['exclude'];
+	$include = '';
+	$name_like = '';
 	if( !isset($idcount) ){ $idcount = 1; }		
 	
+	
+	
 	$cats = get_terms('link_category', array(
-		'name__like' => '', 
-		'include' => '', 
-		'exclude' => '', 
-		'orderby' => $cats_orderby, //catsorder: 'name', 'slug', 'id', 'count',
+		'name__like' => $name_like, 
+		'include' => $include, 
+		'exclude' => $exclude, 
+		'orderby' => $cats_orderby, //Can be name, count, or nothing (will use term_id).
 		'order' => $sort_order, 
 		'hierarchical' => 0)
 	);
@@ -27,15 +31,15 @@ function wp_dtree_get_links_arr(){
 		);
 		$idcount++;
 		$lnkresults = get_bookmarks(array(
-			'orderby' => $sort_column, 
+			'orderby' => $sort_column, //catsorder: 'name', 'slug', 'id', 'count',
 			'order' => $sort_order,
 			'limit' => -1, 
 			'category' => $cat->term_id,
 			'category_name' => $cat->name, 
 			'hide_invisible' => 1,
 			'show_updated' => 0, 
-			'include' => '',
-			'exclude' => '')
+			'include' => $include,
+			'exclude' => $exclude)
 		);						
 		foreach( $lnkresults as $lnkresult ){		
 			if( !$hide_empty || $lnkresult->lnkegory_count ){			
