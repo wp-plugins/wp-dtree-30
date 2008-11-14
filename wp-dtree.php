@@ -247,8 +247,8 @@
 		if(!$this_plugin){
 			$this_plugin = plugin_basename(__FILE__);
 		}	
-		if($file == $this_plugin){			
-			$settings_link = $settings_link = '<a href="themes.php?page=wp-dtree-30/wp-dtree.php">' . __('Settings') . '</a>';
+		if($file == $this_plugin){				
+			$settings_link = $settings_link = '<a href="options-general.php?page=wp-dtree.php">' . __('Settings') . '</a>';
 			array_unshift( $links, $settings_link );	
 		}
 		return $links;		
