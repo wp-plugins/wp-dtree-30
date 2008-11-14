@@ -17,7 +17,10 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
-	Changes in v3.5 (2008-11-02)
+	Changes in v3.5 (2008-11-14)
+	improved admin screen interface
+	excluding posts from the category tree
+	moved config screen from 'design' to 'settings'
 	I18N
 	Sorting posts archive tree
 	Sorting posts in category tree
@@ -25,7 +28,7 @@
 	List empty category bugs
 	Quotes "" in post names messes with alt-text
 	Link tree keeps target attribute.
-	TODO: test for WP 2.7
+	Tested for WP 2.7	
 	
 	Changes in v3.4.2 (2008-10-19)
 	Bug: incorrect WP version detection. (thanks: StMD)
@@ -251,9 +254,9 @@
 		return $links;		
 	}
 								
-	function wp_dtree_add_option_page(){
+	function wp_dtree_add_option_page(){		
 		if(function_exists('add_options_page')){
-			 add_submenu_page('themes.php', 'WP-dTree Settings', 'WP-dTree', 8, __FILE__, 'wp_dtree_option_page');
+			 add_options_page('WP-dTree Settings', 'WP-dTree', 8, basename(__FILE__), 'wp_dtree_option_page');			
 			 add_filter('plugin_action_links', 'wp_dtree_add_plugin_actions', 10, 2 );
 		}
 	}
@@ -284,9 +287,7 @@
 		delete_option('wp_dtree_options');
 	}
 	
-	function wp_dtree_set_options(){
-		$oldwpdtreeopt = get_option('wp_dtree_options');		 
-				
+	function wp_dtree_set_options(){				
 		$lnkoptions = array(
 			'sortby' => 'name',
 			'sortorder' => 'ASC',		
@@ -327,6 +328,7 @@
 			'cpsortorder' => 'DESC',			
 			'hideempty' => '1',
 			'exclude' => '1',
+			'postexclude' => '',
 			'listpost' => '1',			
 			'oclink' => '1',
 			'uselines' => '1',
@@ -372,46 +374,33 @@
 			'sfontdecor' => 'underline'
 		);
 	
-		$genoptions = array(
-			'truncate' => '16', //unused as of 3.4.3
+		$genoptions = array(			
 			'openlink' => __('open all'),
-			'closelink' => __('close all'),
-			'exclude' => '' //unused as of 3.4.3							
+			'closelink' => __('close all'),			
 		);				
 		
-		/*$newwpdtreeopt = array(
-			'arcopt' => (!isset($oldwpdtreeopt['arcopt']) ? $arcoptions : $oldwpdtreeopt['arcopt']),
-			'catopt' => (!isset($oldwpdtreeopt['catopt']) ? $catoptions : $oldwpdtreeopt['catopt']),
-			'pgeopt' => (!isset($oldwpdtreeopt['pgeopt']) ? $pgeoptions : $oldwpdtreeopt['pgeopt']),
-			'effopt' => (!isset($oldwpdtreeopt['effopt']) ? $effoptions : $oldwpdtreeopt['effopt']),
-			'cssopt' => (!isset($oldwpdtreeopt['cssopt']) ? $cssoptions : $oldwpdtreeopt['cssopt']),
-			'genopt' => (!isset($oldwpdtreeopt['genopt']) ? $genoptions : $oldwpdtreeopt['genopt']),
-			'lnkopt' => (!isset($oldwpdtreeopt['lnkopt']) ? $lnkoptions : $oldwpdtreeopt['lnkopt'])
-		);*/			
-		
-		$newwpdtreeopt = array(
-			'arcopt' => wp_dtree_merge_arrays($oldwpdtreeopt['arcopt'], $arcoptions),
-			'catopt' => wp_dtree_merge_arrays($oldwpdtreeopt['catopt'], $catoptions),
-			'pgeopt' => wp_dtree_merge_arrays($oldwpdtreeopt['pgeopt'], $pgeoptions),
-			'effopt' => wp_dtree_merge_arrays($oldwpdtreeopt['effopt'], $effoptions),
-			'cssopt' => wp_dtree_merge_arrays($oldwpdtreeopt['cssopt'], $cssoptions),
-			'genopt' => wp_dtree_merge_arrays($oldwpdtreeopt['genopt'], $genoptions),
-			'lnkopt' => wp_dtree_merge_arrays($oldwpdtreeopt['lnkopt'], $lnkoptions)
-		);			
-		update_option('wp_dtree_options', $newwpdtreeopt);		
+		$old = get_option('wp_dtree_options');		
+		$new = array(
+			'arcopt' => wp_dtree_merge_arrays($old['arcopt'], $arcoptions),
+			'catopt' => wp_dtree_merge_arrays($old['catopt'], $catoptions),
+			'pgeopt' => wp_dtree_merge_arrays($old['pgeopt'], $pgeoptions),
+			'effopt' => wp_dtree_merge_arrays($old['effopt'], $effoptions),
+			'cssopt' => wp_dtree_merge_arrays($old['cssopt'], $cssoptions),
+			'genopt' => wp_dtree_merge_arrays($old['genopt'], $genoptions),
+			'lnkopt' => wp_dtree_merge_arrays($old['lnkopt'], $lnkoptions)
+		);							
+		update_option('wp_dtree_options', $new);		
 	}
-
-	//takes an old (a) and a new (b) array of settings. 
-	//preserves the old values and incorporates the new ones.
-	function wp_dtree_merge_arrays($a, $b){
-		if(!isset($a)){return $b;}
-		foreach($b as $key => $newval){			
-			if(!isset($a[$key])){	
-				//print_r("Merging: ".$key." = ".$newval."<br>");			
-				$a[$key] = $newval;
+	
+	function wp_dtree_merge_arrays($old, $new){
+		if(!empty($old)) {
+			foreach($new as $key => $option){
+				if(isset($old[$key])){
+					$new[$key] = $old[$key];
+				}
 			}
-		}
-		return $a;		
+		}	
+		return $new;		
 	}
 	
 	function wp_dtree_option_page(){
@@ -419,6 +408,9 @@
 			die(__('Cheatin&#8217; uh?'));
 		}
 		add_action('in_admin_footer', 'wp_dtree_add_admin_footer');
+		$catexc_default = 'Cat IDs';
+		$catpostexc_default = 'Post IDs';
+		
 		$wpdtreeopt = get_option('wp_dtree_options');		
 		if( isset($_POST['submit'])){	
 			( !isset($_POST['lsortby']))	 	? $lsortby = 'name' : $lsortby = $_POST['lsortby'];
@@ -450,7 +442,8 @@
 			( !isset($_POST['cpsortorder']))	? $cpsortorder = 'DESC' : $cpsortorder = $_POST['cpsortorder'];
 			( !isset($_POST['csortorder']))		? $csortorder = 'ASC' : $csortorder = $_POST['csortorder'];
 			( !isset($_POST['chideempty']))		? $chideempty = '0' : $chideempty = $_POST['chideempty'];
-			( !isset($_POST['cexclude']))		? $cexclude = '1' : $cexclude = $_POST['cexclude'];
+			( !isset($_POST['cexclude']) 	&& $_POST['cexclude'] != $catexc_default)			? $cexclude = '1' : $cexclude = $_POST['cexclude'];
+			( !isset($_POST['cpostexclude'])&& $_POST['cpostexclude'] != $catpostexc_default)	? $cpostexclude = '' : $cpostexclude = $_POST['cpostexclude'];
 			( !isset($_POST['clistpost']))		? $clistpost = '0' : $clistpost = $_POST['clistpost'];			
 			( !isset($_POST['coclink']))		? $coclink = '0' : $coclink = $_POST['coclink'];
 			( !isset($_POST['cuselines']))		? $cuselines = '0' : $cuselines = $_POST['cuselines'];
@@ -472,7 +465,7 @@
 			( !isset($_POST['puseselection']))	? $puseselection = '0' : $puseselection = $_POST['puseselection'];
 			( !isset($_POST['popentosel']))		? $popentosel = '0' : $popentosel = $_POST['popentosel'];
 			( !isset($_POST['ptopnode']))		? $ptopnode = 'Pages' : $ptopnode = $_POST['ptopnode'];	
-			( !isset($_POST['effon']))			? $effon = '0' :  $effon = $_POST['effon'];
+			( !isset($_POST['efftype']))		? $effon = '0' :  $effon = ($_POST['efftype'] != 'none') ? 1 : 0;
 			( !isset($_POST['efftype']))		? $efftype = 'blind' : $efftype = $_POST['efftype'];
 			( !isset($_POST['duration']))		? $duration = '0.5' : $duration = $_POST['duration'];			
 			( !isset($_POST['fontsize']))		? $fontsize = '11' : $fontsize = $_POST['fontsize'];
@@ -544,6 +537,7 @@
 				'cpsortorder' => $cpsortorder,
 				'hideempty' => $chideempty,
 				'exclude' => $cexclude,
+				'postexclude' => $cpostexclude,
 				'listpost' => $clistpost,				
 				'oclink' => $coclink,
 				'uselines' => $cuselines,
@@ -623,7 +617,7 @@
 			if($disable_cat){ echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
 			if($disable_lnk){ echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
 			if($disable_pge){ echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
-			if(!$effon){ echo '<font color="black">'.__('Scriptaculous Effects are active...').'</font><br />';}
+			if(!$effon){ echo '<font color="black">'.__('Scriptaculous Effects are ').'<font color="orange">disabled...</font></font><br />';}
 			echo '</p></div>';			
 			wp_dtree_update_cache(); //update cache when we edit plugin settings.
 			$alt = true;
@@ -667,7 +661,10 @@
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
 				<td>Exclude IDs<font color='blue'>*</font></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['arcopt']['exclude']; ?>" name="exclude_posts" size="10" /></td>
-				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['exclude']; ?>" name="cexclude" size="10" /></td>
+				<td>
+					<input type="text" value="<?php echo empty($wpdtreeopt['catopt']['exclude']) ? $catexc_default : $wpdtreeopt['catopt']['exclude']; ?>" name="cexclude" size="5" />
+					<input type="text" value="<?php echo empty($wpdtreeopt['catopt']['postexclude']) ? $catpostexc_default : $wpdtreeopt['catopt']['postexclude']; ?>" name="cpostexclude" size="10" />
+				</td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['exclude']; ?>" name="exclude_pages" size="10" /></td>
 				<td></td>
 			</tr>
@@ -859,28 +856,22 @@
 		<table class="optiontable">
 			<tr>
 				<td width="280">
-					<fieldset class="options">
-						<p>
-						<label><input type="checkbox" name="effon" value="true" <?php if($wpdtreeopt['effopt']['effon']){ echo "checked";} ?> /> Enable scriptaculous effects.</label>
-						</p>
-						<p>
-						<select name="efftype">
-							<option value="blind"<?php if($wpdtreeopt['effopt']['efftype'] == 'blind'){ echo(' selected="selected"');}?>>Default (Blind)</option>
-							<option value="slide"<?php if($wpdtreeopt['effopt']['efftype'] == 'slide'){ echo(' selected="selected"');}?>>Slide</option>
-							<option value="appear"<?php if($wpdtreeopt['effopt']['efftype'] == 'appear'){ echo(' selected="selected"');}?>>Appear</option>
-							<option value="grow"<?php if($wpdtreeopt['effopt']['efftype'] == 'grow'){ echo(' selected="selected"');}?>>Grow</option>
-						</select>
-						Effect type
-						</p>
-						<p>
-						<input type="text" value="<?php echo $wpdtreeopt['effopt']['duration']; ?>" name="duration" size="10" />
-						Duration (sec)
-						</p>
+					<fieldset class="options">					
+						<tr><td>						
+							<select name="efftype">
+								<option value="none"<?php if($wpdtreeopt['effopt']['efftype'] == 'none'){ echo(' selected="selected"');}?>>None (disable)</option>							
+								<option value="blind"<?php if($wpdtreeopt['effopt']['efftype'] == 'blind'){ echo(' selected="selected"');}?>>Default (Blind)</option>
+								<option value="slide"<?php if($wpdtreeopt['effopt']['efftype'] == 'slide'){ echo(' selected="selected"');}?>>Slide</option>
+								<option value="appear"<?php if($wpdtreeopt['effopt']['efftype'] == 'appear'){ echo(' selected="selected"');}?>>Appear</option>
+								<option value="grow"<?php if($wpdtreeopt['effopt']['efftype'] == 'grow'){ echo(' selected="selected"');}?>>Grow</option>
+							</select>
+							<label>Effect type</label>
+						</td><td>
+							<input type="text" value="<?php echo $wpdtreeopt['effopt']['duration']; ?>" name="duration" size="10" />
+							<label>Duration (sec)</label>
+						</td></tr>
 					</fieldset>
-				</td>
-				<td>
-					<p>Click the checkbox to enable effects, then select the effect from the drop down menu.</p>					
-				</td>
+				</td>				
 			</tr>
 			<tr>
 			<td colspan="3"></td>

@@ -131,30 +131,11 @@ function wp_dtree_get_archives(){
 	if(!strlen($arcresults)){return;}		
  	echo $arcresults;	
  	if($wpdtreeopt['arcopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
-		echo wp_dtree_open_arc_to($arcresults);
+		echo wp_dtree_open_tree_to('arc', $arcresults);
  	}	
 	echo "//-->\n";
 	echo "</script>\n";
 	echo "</span>\n";	
 	
-}
-
-function wp_dtree_open_arc_to($arcstring){
-	$ruri = $_SERVER['REQUEST_URI']; 
-	$path = str_replace(get_bloginfo('url'), "", $ruri);	
-	$path = ltrim($path, '/');
-	$ruri = ltrim($ruri, '/');	
-	if($path == '/' || empty($path) || empty($ruri)){
-		return ''; 
-	}
-	$strings = explode(";", $arcstring); //lots of arc.a('','','',''); statements
-	foreach ($strings as $string){
-		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
-			$params = explode(",", $string); //split it at parameter seperators 
-			$number = str_replace('a.a(', "", $params[0]); //remove the leading arc.a( to find the number.		
-			return 'a.openTo(' . $number . ', true);';			
-		}
-	}
-	return '';	
 }
 ?>

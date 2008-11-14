@@ -12,7 +12,7 @@ function wp_dtree_get_categories_arr(){
 	$listchildpost = $wpdtreeopt['catopt']['listpost']; //show posts under category
 	$countSubCatsPost = true;
 	$allowDupes = true; //wether posts are allowed to show up under more than one category.
-	$postexclude = $wpdtreeopt['arcopt']['exclude']; //excluded post's ID.
+	$postexclude = $wpdtreeopt['catopt']['postexclude']; //excluded post's ID.
 
 	if( !isset($idcount) ){ $idcount = 1; }	
 	( !empty($excludedcats) ) ? $catexclusions = $excludedcats : $catexclusions = '';	
@@ -118,30 +118,13 @@ function wp_dtree_get_categories(){
 	if(!strlen($catresults)){return;}
 	echo $catresults;	
 	if($wpdtreeopt['catopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
-		echo wp_dtree_open_cat_to($catresults);
+		echo wp_dtree_open_tree_to('cat', $catresults);
 	} 	
 	echo "//-->\n";		
 	echo "</script>\n";		
 	echo "</span>\n";	
 }
 
-function wp_dtree_open_cat_to($catstring){
-	$ruri = $_SERVER['REQUEST_URI']; 
-	$path = str_replace(get_bloginfo('url'), "", $ruri);	
-	$path = ltrim($path, '/');
-	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)){
-		return ""; 
-	}
-	$strings = explode(";", $catstring); //lots of cat.a('','','',''); statements
-	foreach ($strings as $string){
-		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
-			$params = explode(",", $string); //split it at parameter seperators 
-			$number = str_replace('c.a(', "", $params[0]); //remove the leading cat.a( to find the number.		
-			return 'c.openTo('.$number.', true);';			
-		}
-	}
-	return '';	
-}
+
 
 ?>

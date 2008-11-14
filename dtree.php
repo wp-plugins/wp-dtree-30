@@ -55,8 +55,8 @@ global $withEff;
 global $effStyle;
 global $duration;
 $curdir = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']); //fix contributed by Zarquod: http://wordpress.org/support/topic/136547
-$effStyle = "blind";
-$withEff = 1;
+$effStyle = "none";
+$withEff = 0;
 $duration = 0.5;
 if( isset($_REQUEST['eff']) ){
 	$effStyle = $_REQUEST['eff'];

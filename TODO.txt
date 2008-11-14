@@ -7,10 +7,13 @@ There's two things you can do to help out:
 Thank you!
 
 //Ulf Benjaminsson
-2008-11-04
+2008-11-14
 
 
 NEW:
+* exclude posts from category tree
+* more robust 'open to selection'
+* moved config screen to "settings"-secton of admin
 * Per-tree truncation setting
 * More CSS options avaliable from the admin
 * More robust CSS styling (!important-property on images)
@@ -31,6 +34,7 @@ REQUESTS (* == done):
 
 
 TODO:
+Clean up the settings page "backend" (eg. the huge _POST-check)
 Make the caching behaviour more obvious OR more transparent. 
  	- prominent button for "refresh cache?
 	- inline documentation? 

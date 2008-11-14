@@ -45,29 +45,11 @@ function wp_dtree_get_pages(){
 	if(!strlen($pgeresults)){return;}	
 	echo $pgeresults;	
 	if($wpdtreeopt['pgeopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){	
-		echo wp_dtree_open_pages_to($pgeresults);	
+		echo wp_dtree_open_tree_to('pge',$pgeresults);	
 	} 		
 	echo "//-->\n";	
 	echo "</script>\n";	
 	echo "</span>\n";				
 }
 
-function wp_dtree_open_pages_to($pgestring){
-	$ruri = $_SERVER['REQUEST_URI']; 
-	$path = str_replace(get_bloginfo('url'), "", $ruri);	
-	$path = ltrim($path, '/');
-	$ruri = ltrim($ruri, '/');	
-	if($path == "/" || empty($path) || empty($ruri)){
-		return ""; 
-	}
-	$strings = explode(";", $pgestring); //lots of cat.a('','','',''); statements
-	foreach ($strings as $string){
-		if(substr_count ($string, $path)){ //we know that this line holds the node id of our request.
-			$params = explode(",", $string); //split it at parameter seperators 
-			$number = str_replace('p.a(', "", $params[0]); //remove the leading arc.a( to find the number.		
-			return 'p.openTo(' . $number . ', true);';			
-		}
-	}
-	return '';	
-}
 ?>
