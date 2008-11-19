@@ -4,7 +4,8 @@
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
 	Version: 3.4.3
-	Author: <a href="http://www.ulfben.com/">Ulf Benjaminsson</a>
+	Author: Ulf Benjaminsson
+	Author URI: http://www.ulfben.com
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
 	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
