@@ -19,6 +19,10 @@
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
 	Changes in v3.5 (2008-11-14)
+	Fixed the issue with RSS-icons not showing in IE if post count is on
+	Replaced p for span in widgets - still XHTML compliant, but fixes some ugly padding
+	Clean up on the admin screen backend
+	updated the css to be more robust. 
 	improved admin screen interface
 	excluding posts from the category tree
 	moved config screen from 'design' to 'settings'
@@ -185,52 +189,52 @@
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  	    	
 	        echo $before_widget; 
-	        echo $before_title . __($wpdtreeopt['lnkopt']['topnode']). $after_title . "<p>";
+	        echo $before_title . __($wpdtreeopt['lnkopt']['topnode']). $after_title . "<span>";
 	        if(function_exists('wp_dtree_get_links')){				
 			    wp_dtree_get_links();
 			}else{
 				wp_list_bookmarks(); 
 			} 
-	        echo "</p>" . $after_widget;	
+	        echo "</span>" . $after_widget;	
 		}
 		
 		function widget_wp_dtree_get_archives($args){
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  		    	
 	        echo $before_widget; 
-	        echo $before_title . __($wpdtreeopt['arcopt']['topnode']) . $after_title . "<p>";
+	        echo $before_title . __($wpdtreeopt['arcopt']['topnode']) . $after_title . "<span>";
 	        if(function_exists('wp_dtree_get_archives')){				
 			    wp_dtree_get_archives();
 			}else{
 				wp_get_archives('type=monthly'); 
 			} 
-	        echo "</p>" . $after_widget;	
+	        echo "</span>" . $after_widget;	
 		}
 		
 		function widget_wp_dtree_get_categories($args){
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  		    	
 	        echo $before_widget; 
-	        echo $before_title . __($wpdtreeopt['catopt']['topnode']) . $after_title . "<p>";
+	        echo $before_title . __($wpdtreeopt['catopt']['topnode']) . $after_title . "<span>";
 			if(function_exists('wp_dtree_get_categories')){
 				wp_dtree_get_categories();
 			} else{
 				wp_list_categories('show_count=1');
 			} 
-	        echo "</p>" . $after_widget;	
+	        echo "</span>" . $after_widget;	
 		}
 		
 		function widget_wp_dtree_get_pages($args){
 	    	extract($args);
 	    	$wpdtreeopt = get_option('wp_dtree_options');  	    	
 	        echo $before_widget; 
-	        echo $before_title . __($wpdtreeopt['pgeopt']['topnode']) . $after_title . "<p>";
+	        echo $before_title . __($wpdtreeopt['pgeopt']['topnode']) . $after_title . "<span>";
 	        if(function_exists('wp_dtree_get_pages')){
 				wp_dtree_get_pages();
 			} else{
 				wp_list_pages();				
 			} 
-	        echo "</p>" . $after_widget;	
+	        echo "</span>" . $after_widget;	
 		}		
 		register_sidebar_widget('WP-dTree Links', 'widget_wp_dtree_get_links');
 		register_sidebar_widget('WP-dTree Pages', 'widget_wp_dtree_get_pages');
@@ -263,12 +267,13 @@
 	}
 	
 	function wp_dtree_add2head(){
+		$wpurl = get_bloginfo('wpurl');
 		$wpdtreeopt = get_option('wp_dtree_options');		
-		$rssicon = urlencode(get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png');	//normal
-		$rssicon2 = urlencode(get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png'); //higlight				
-		$cd = '<script type="text/javascript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/wp-dtree-30/dtree.php?witheff='.$wpdtreeopt['effopt']['effon'].'&amp;eff='.$wpdtreeopt['effopt']['efftype'].'&amp;effdur='.$wpdtreeopt['effopt']['duration'].'"></script>';
+		$rssicon = urlencode($wpurl . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png');	//normal
+		$rssicon2 = urlencode($wpurl . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png'); //higlight				
+		$cd = '<script type="text/javascript" src="'.$wpurl.'/wp-content/plugins/wp-dtree-30/dtree.php?witheff='.$wpdtreeopt['effopt']['effon'].'&amp;eff='.$wpdtreeopt['effopt']['efftype'].'&amp;effdur='.$wpdtreeopt['effopt']['duration'].'"></script>'."\n";
 		$cd .= '<link rel="stylesheet" href="' 
-		. get_bloginfo('wpurl') 
+		. $wpurl 
 		. '/wp-content/plugins/wp-dtree-30/style.php?'
 		.'fontsize='.$wpdtreeopt['cssopt']['fontsize']
 		.'&amp;fontf='.$wpdtreeopt['cssopt']['fontf']
@@ -290,6 +295,7 @@
 	
 	function wp_dtree_set_options(){				
 		$lnkoptions = array(
+			'isdisabled' => 0,
 			'sortby' => 'name',
 			'sortorder' => 'ASC',		
 			'oclink' => '1',
@@ -305,6 +311,7 @@
 		);			
 		
 		$arcoptions = array(
+			'isdisabled' => 0,
 			'sortby' => 'post_date',
 			'sortorder' => 'DESC',
 			'arctype' => 'monthly',
@@ -323,6 +330,7 @@
 		);
 	
 		$catoptions = array(
+			'isdisabled' => 0,
 			'sortby' => 'ID',
 			'sortorder' => 'ASC',
 			'cpsortby' => 'post_date',
@@ -345,6 +353,8 @@
 		);
 	
 		$pgeoptions = array(
+			'exclude' => '',
+			'isdisabled' => 0,
 			'sortby' => 'ID',
 			'sortorder' => 'ASC',		
 			'oclink' => '1',
@@ -355,7 +365,7 @@
 			'useselection' => '0',
 			'opentosel' => '0',
 			'topnode' => __('Pages'),
-			'truncate' => '16'
+			'truncate' => '16' 
 		);
 	
 		$effoptions = array(
@@ -377,7 +387,8 @@
 	
 		$genoptions = array(			
 			'openlink' => __('open all'),
-			'closelink' => __('close all'),			
+			'closelink' => __('close all'),	
+			'version' => wp_dtree_get_version()		
 		);				
 		
 		$old = get_option('wp_dtree_options');		
@@ -402,196 +413,112 @@
 			}
 		}	
 		return $new;		
-	}
-	
+	}	
+
 	function wp_dtree_option_page(){
 		if(function_exists('current_user_can') && !current_user_can('manage_options') ){
 			die(__('Cheatin&#8217; uh?'));
 		}
-		add_action('in_admin_footer', 'wp_dtree_add_admin_footer');
-		$catexc_default = 'Cat IDs';
-		$catpostexc_default = 'Post IDs';
-		
+		add_action('in_admin_footer', 'wp_dtree_add_admin_footer');		
+		$catexc_default = 'Cat IDs';		
+		$catpostexc_default = 'Post IDs';				
 		$wpdtreeopt = get_option('wp_dtree_options');		
-		if( isset($_POST['submit'])){	
-			( !isset($_POST['lsortby']))	 	? $lsortby = 'name' : $lsortby = $_POST['lsortby'];
-			( !isset($_POST['lsortorder']))		? $lsortorder = 'ASC' : $lsortorder = $_POST['lsortorder'];						
-			( !isset($_POST['loclink']))		? $loclink = '0' : $loclink = $_POST['loclink'];
-			( !isset($_POST['luselines']))		? $luselines = '0' : $luselines = $_POST['luselines'];
-			( !isset($_POST['luseicons']))		? $luseicons = '0' : $luseicons = $_POST['luseicons'];
-			( !isset($_POST['lcloselevels']))	? $lcloselevels = '0' : $lcloselevels = $_POST['lcloselevels'];
-			( !isset($_POST['lfolderlinks']))	? $lfolderlinks = '0' : $lfolderlinks = $_POST['lfolderlinks'];
-			( !isset($_POST['luseselection']))	? $luseselection = '0' : $luseselection = $_POST['luseselection'];			
-			( !isset($_POST['ltopnode']))		? $ltopnode = 'Links' : $ltopnode = $_POST['ltopnode'];
-			( !isset($_POST['lcatsorder']))		? $lcatsorder = 'name' : $lcatsorder = $_POST['lcatsorder'];						
-			( !isset($_POST['asortby']))	 	? $asortby = 'post_date' : $asortby = $_POST['asortby'];
-			( !isset($_POST['asortorder']))		? $asortorder = 'DESC' : $asortorder = $_POST['asortorder'];				
-			( !isset($_POST['arctype']))		? $arctype = 'monthly' : $arctype = $_POST['arctype'];
-			( !isset($_POST['alistpost']))		? $alistpost = '0' : $alistpost = $_POST['alistpost'];			
-			( !isset($_POST['aoclink']))		? $aoclink = '0' : $aoclink = $_POST['aoclink'];
-			( !isset($_POST['auselines']))		? $auselines = '0' : $auselines = $_POST['auselines'];
-			( !isset($_POST['auseicons']))		? $auseicons = '0' : $auseicons = $_POST['auseicons'];
-			( !isset($_POST['acloselevels']))	? $acloselevels = '0' : $acloselevels = $_POST['acloselevels'];
-			( !isset($_POST['afolderlinks']))	? $afolderlinks = '0' : $afolderlinks = $_POST['afolderlinks'];
-			( !isset($_POST['auseselection']))	? $auseselection = '0' : $auseselection = $_POST['auseselection'];
-			( !isset($_POST['aopentosel']) )	? $aopentosel = '0' : $aopentosel = $_POST['aopentosel'];
-			( !isset($_POST['atopnode']))		? $atopnode = 'Archives' : $atopnode = $_POST['atopnode'];
-			( !isset($_POST['ashowcount']))		? $ashowcount = '0' : $ashowcount = $_POST['ashowcount'];			
-			( !isset($_POST['ashowrss']))		? $ashowrss = '0' : $ashowrss = $_POST['ashowrss'];		
-			( !isset($_POST['csortby']))	 	? $csortby = 'ID' : $csortby = $_POST['csortby'];
-			( !isset($_POST['cpsortby']))	 	? $cpsortby = 'post_date' : $cpsortby = $_POST['cpsortby'];
-			( !isset($_POST['cpsortorder']))	? $cpsortorder = 'DESC' : $cpsortorder = $_POST['cpsortorder'];
-			( !isset($_POST['csortorder']))		? $csortorder = 'ASC' : $csortorder = $_POST['csortorder'];
-			( !isset($_POST['chideempty']))		? $chideempty = '0' : $chideempty = $_POST['chideempty'];
-			( !isset($_POST['cexclude']) 	&& $_POST['cexclude'] != $catexc_default)			? $cexclude = '1' : $cexclude = $_POST['cexclude'];
-			( !isset($_POST['cpostexclude'])&& $_POST['cpostexclude'] != $catpostexc_default)	? $cpostexclude = '' : $cpostexclude = $_POST['cpostexclude'];
-			( !isset($_POST['clistpost']))		? $clistpost = '0' : $clistpost = $_POST['clistpost'];			
-			( !isset($_POST['coclink']))		? $coclink = '0' : $coclink = $_POST['coclink'];
-			( !isset($_POST['cuselines']))		? $cuselines = '0' : $cuselines = $_POST['cuselines'];
-			( !isset($_POST['cuseicons']))		? $cuseicons = '0' : $cuseicons = $_POST['cuseicons'];
-			( !isset($_POST['ccloselevels']))	? $ccloselevels = '0' : $ccloselevels = $_POST['ccloselevels'];
-			( !isset($_POST['cfolderlinks']))	? $cfolderlinks = '0' : $cfolderlinks = $_POST['cfolderlinks'];
-			( !isset($_POST['cuseselection']))	? $cuseselection = '0' : $cuseselection = $_POST['cuseselection'];
-			( !isset($_POST['copentosel']))		? $copentosel = '0' : $copentosel = $_POST['copentosel'];
-			( !isset($_POST['ctopnode']))		? $ctopnode = 'Categories' : $ctopnode = $_POST['ctopnode'];			
-			( !isset($_POST['cshowcount']))		? $showcount = '0' : $showcount = $_POST['cshowcount'];			
-			( !isset($_POST['showrss']))		? $showrss = '0' : $showrss = $_POST['showrss'];	
-			( !isset($_POST['psortby']))		? $psortby = 'ID' : $psortby = $_POST['psortby'];
-			( !isset($_POST['psortorder']))		? $psortorder = 'ASC' : $psortorder = $_POST['psortorder'];			
-			( !isset($_POST['poclink']))		? $poclink = '0' : $poclink = $_POST['poclink'];
-			( !isset($_POST['puselines']))		? $puselines = '0' : $puselines = $_POST['puselines'];
-			( !isset($_POST['puseicons']))		? $puseicons = '0' : $puseicons = $_POST['puseicons'];
-			( !isset($_POST['pcloselevels']))	? $pcloselevels = '0' : $pcloselevels = $_POST['pcloselevels'];
-			( !isset($_POST['pfolderlinks']))	? $pfolderlinks = '0' : $pfolderlinks = $_POST['pfolderlinks'];
-			( !isset($_POST['puseselection']))	? $puseselection = '0' : $puseselection = $_POST['puseselection'];
-			( !isset($_POST['popentosel']))		? $popentosel = '0' : $popentosel = $_POST['popentosel'];
-			( !isset($_POST['ptopnode']))		? $ptopnode = 'Pages' : $ptopnode = $_POST['ptopnode'];	
-			( !isset($_POST['efftype']))		? $effon = '0' :  $effon = ($_POST['efftype'] != 'none') ? 1 : 0;
-			( !isset($_POST['efftype']))		? $efftype = 'blind' : $efftype = $_POST['efftype'];
-			( !isset($_POST['duration']))		? $duration = '0.5' : $duration = $_POST['duration'];			
-			( !isset($_POST['fontsize']))		? $fontsize = '11' : $fontsize = $_POST['fontsize'];
-			( !isset($_POST['fontf']))			? $fontf = urlencode('Verdana, Geneva, Arial, Helvetica, sans-serif') : $fontf = urlencode($_POST['fontf']);
-			( !isset($_POST['mfontcolor']))		? $mfontcolor = '000000' : $mfontcolor = $_POST['mfontcolor'];
-			( !isset($_POST['lfontcolor']))		? $lfontcolor = '999999' : $lfontcolor = $_POST['lfontcolor'];
-			( !isset($_POST['lfontdecor']))		? $lfontdecor = 'none' : $lfontdecor = $_POST['lfontdecor'];
-			( !isset($_POST['hfontcolor']))		? $hfontcolor = 'CCCCCC' : $hfontcolor = $_POST['hfontcolor'];
-			( !isset($_POST['hfontdecor']))		? $hfontdecor = 'underline' : $hfontdecor = $_POST['hfontdecor'];	
-			( !isset($_POST['sfontdecor']))		? $sfontdecor = 'underline' : $sfontdecor = $_POST['sfontdecor'];	
-			( !isset($_POST['openlink']))		? $openlink = 'open all' : $openlink = $_POST['openlink'];
-			( !isset($_POST['closelink']))		? $closelink = 'close all' : $closelink = $_POST['closelink'];
-			( !isset($_POST['truncate']))		? $truncate = '16' : $truncate = $_POST['truncate'];							
-			( !isset($_POST['exclude_pages']))	? $exclude_pages = '' : $exclude_pages = $_POST['exclude_pages'];
-			( !isset($_POST['exclude_posts']))	? $exclude_posts = '' : $exclude_posts = $_POST['exclude_posts']; 
-			
-			( !isset($_POST['arc_isdisabled']))	? $disable_arc = false : $disable_arc = $_POST['arc_isdisabled']; 
-			( !isset($_POST['cat_isdisabled']))	? $disable_cat = false : $disable_cat = $_POST['cat_isdisabled']; 
-			( !isset($_POST['lnk_isdisabled']))	? $disable_lnk = false : $disable_lnk = $_POST['lnk_isdisabled']; 
-			( !isset($_POST['pge_isdisabled']))	? $disable_pge = false : $disable_pge = $_POST['pge_isdisabled']; 
-			
-			( !isset($_POST['arctruncate']))	? $arctruncate = '16' : $arctruncate = $_POST['arctruncate']; 
-			( !isset($_POST['cattruncate']))	? $cattruncate = '16' : $cattruncate = $_POST['cattruncate']; 
-			( !isset($_POST['lnktruncate']))	? $lnktruncate = '16' : $lnktruncate = $_POST['lnktruncate']; 
-			( !isset($_POST['pgetruncate']))	? $pgetruncate = '16' : $pgetruncate = $_POST['pgetruncate']; 			
-			
+		if(!isset($wpdtreeopt['version']) || $wpdtreeopt['version'] != wp_dtree_get_version()){
+			wp_dtree_set_options(); //update options if the user forgot to disable the plugin prior to upgrading.
+			$wpdtreeopt = get_option('wp_dtree_options');			
+		}				
+		if(isset($_POST['submit'])){						
 			$lnkoptions = array(
-				'isdisabled' => $disable_lnk,
-				'truncate' => $lnktruncate,
-				'sortby' => $lsortby,
-				'sortorder' => $lsortorder,		
-				'oclink' => $loclink,
-				'uselines' => $luselines,
-				'useicons' => $luseicons,
-				'closelevels' => $lcloselevels,
-				'folderlinks' => $lfolderlinks,
-				'useselection' => $luseselection,			
-				'topnode' => __($ltopnode),			
+				'isdisabled' => $_POST['lnk_isdisabled'],
+				'truncate' => $_POST['lnktruncate'],
+				'sortby' => $_POST['lsortby'],
+				'sortorder' => $_POST['lsortorder'],		
+				'oclink' => $_POST['loclink'],
+				'uselines' => (isset($_POST['luselines'])) ? 1 : 0,
+				'useicons' => (isset($_POST['luseicons'])) ? 1 : 0,
+				'closelevels' => (isset($_POST['lcloselevels'])) ? 1 : 0,
+				'folderlinks' => (isset($_POST['lfolderlinks'])) ? 1 : 0,
+				'useselection' => (isset($_POST['luseselection'])) ? 1 : 0,			
+				'topnode' => __($_POST['ltopnode']),			
 				'show_updated' => 0,
-				'catsorder' => $lcatsorder
-			);		
-			
+				'catsorder' => $_POST['lcatsorder']
+			);						
 			$arcoptions = array(
-				'isdisabled' => $disable_arc,
-				'truncate' => $arctruncate,
-				'sortby' => $asortby,
-				'sortorder' => $asortorder,	
-				'arctype' => $arctype,
-				'listpost' => $alistpost,				
-				'oclink' => $aoclink,
-				'exclude' => $exclude_posts,
-				'uselines' => $auselines,
-				'useicons' => $auseicons,
-				'closelevels' => $acloselevels,
-				'folderlinks' => $afolderlinks,
-				'useselection' => $auseselection,
-				'opentosel' => $aopentosel,
-				'topnode' => __($atopnode),
-				'showcount' => $ashowcount,
-				'showrss' => $ashowrss
-			);
-	
+				'isdisabled' => $_POST['arc_isdisabled'],
+				'truncate' => $_POST['arctruncate'],
+				'sortby' => $_POST['asortby'],
+				'sortorder' => $_POST['asortorder'],	
+				'arctype' => $_POST['arctype'],
+				'listpost' => $_POST['alistpost'],				
+				'oclink' => $_POST['aoclink'],
+				'exclude' => $_POST['exclude_posts'],
+				'uselines' => (isset($_POST['auselines'])) ? 1 : 0,
+				'useicons' => (isset($_POST['auseicons'])) ? 1 : 0,
+				'closelevels' => (isset($_POST['acloselevels'])) ? 1 : 0,
+				'folderlinks' => (isset($_POST['afolderlinks'])) ? 1 : 0,
+				'useselection' => (isset($_POST['auseselection'])) ? 1 : 0,
+				'opentosel' => $_POST['aopentosel'],
+				'topnode' => __($_POST['atopnode']),
+				'showcount' => $_POST['ashowcount'],
+				'showrss' => $_POST['ashowrss']
+			);				
 			$catoptions = array(
-				'isdisabled' => $disable_cat,
-				'truncate' => $cattruncate,
-				'sortby' => $csortby,				
-				'sortorder' => $csortorder,
-				'cpsortby' => $cpsortby,
-				'cpsortorder' => $cpsortorder,
-				'hideempty' => $chideempty,
-				'exclude' => $cexclude,
-				'postexclude' => $cpostexclude,
-				'listpost' => $clistpost,				
-				'oclink' => $coclink,
-				'uselines' => $cuselines,
-				'useicons' => $cuseicons,
-				'closelevels' => $ccloselevels,
-				'folderlinks' => $cfolderlinks,
-				'useselection' => $cuseselection,
-				'opentosel' => $copentosel,
-				'topnode' => __($ctopnode),
-				'showcount' => $showcount,
-				'showrss' => $showrss
-			);
-	
+				'isdisabled' => $_POST['cat_isdisabled'],
+				'truncate' => $_POST['cattruncate'],
+				'sortby' => $_POST['csortby'],				
+				'sortorder' => $_POST['csortorder'],
+				'cpsortby' => $_POST['cpsortby'], 
+				'cpsortorder' => $_POST['cpsortorder'],
+				'hideempty' => $_POST['chideempty'],
+				'exclude' => $_POST['cexclude'],
+				'postexclude' => $_POST['cpostexclude'],
+				'listpost' => $_POST['clistpost'],				
+				'oclink' => $_POST['coclink'],
+				'uselines' => (isset($_POST['cuselines'])) ? 1 : 0,
+				'useicons' => (isset($_POST['cuseicons'])) ? 1 : 0,
+				'closelevels' => (isset($_POST['ccloselevels'])) ? 1 : 0,
+				'folderlinks' => (isset($_POST['cfolderlinks'])) ? 1 : 0,
+				'useselection' => (isset($_POST['cuseselection'])) ? 1 : 0,
+				'opentosel' => $_POST['copentosel'],
+				'topnode' => __($_POST['ctopnode']),
+				'showcount' => $_POST['cshowcount'],
+				'showrss' => $_POST['showrss']
+			);			
 			$pgeoptions = array(
-				'isdisabled' => $disable_pge,
-				'truncate' => $pgetruncate,
-				'sortby' => $psortby,
-				'sortorder' => $psortorder,				
-				'oclink' => $poclink,
-				'exclude' => $exclude_pages,
-				'uselines' => $puselines,
-				'useicons' => $puseicons,
-				'closelevels' => $pcloselevels,
-				'folderlinks' => $pfolderlinks,
-				'useselection' => $puseselection,
-				'opentosel' => $popentosel,
-				'topnode' => __($ptopnode)
-			);
-	
+				'isdisabled' => $_POST['pge_isdisabled'],
+				'truncate' => $_POST['pgetruncate'],
+				'sortby' => $_POST['psortby'],
+				'sortorder' => $_POST['psortorder'],				
+				'oclink' => $_POST['poclink'],
+				'exclude' => $_POST['exclude_pages'],
+				'uselines' => (isset($_POST['puselines'])) ? 1 : 0,
+				'useicons' => (isset($_POST['puseicons'])) ? 1 : 0,
+				'closelevels' => (isset($_POST['pcloselevels'])) ? 1 : 0,
+				'folderlinks' => (isset($_POST['pfolderlinks'])) ? 1 : 0,
+				'useselection' => (isset($_POST['puseselection'])) ? 1 : 0,
+				'opentosel' => $_POST['popentosel'],
+				'topnode' => __($_POST['ptopnode'])
+			);			
 			$effoptions = array(
-				'effon' => $effon,
-				'efftype' => $efftype,
-				'duration' => $duration
+				'effon' => ($_POST['efftype'] != 'none') ? 1 : 0,
+				'efftype' => $_POST['efftype'],
+				'duration' => $_POST['duration']
 			);
-	
 			$cssoptions = array(
-				'fontsize' 	 => $fontsize,
-				'fontf'		 => $fontf,
-				'mfontcolor' => $mfontcolor,
-				'lfontcolor' => $lfontcolor,
-				'lfontdecor' => $lfontdecor,
-				'hfontcolor' => $hfontcolor,
-				'hfontdecor' => $hfontdecor,
-				'sfontdecor' => $sfontdecor
+				'fontsize' 	 => $_POST['fontsize'],
+				'fontf'		 => urlencode($_POST['fontf']),
+				'mfontcolor' => $_POST['mfontcolor'],
+				'lfontcolor' => $_POST['lfontcolor'],
+				'lfontdecor' => $_POST['lfontdecor'],
+				'hfontcolor' => $_POST['hfontcolor'],
+				'hfontdecor' => $_POST['hfontdecor'],
+				'sfontdecor' => $_POST['sfontdecor']
 			);
-		
-			$genoptions = array(
-				'truncate' => $truncate,
-				'openlink' => __($openlink),
-				'closelink' => $closelink,
-				'exclude' => $exclude,							
-			);
-	
+			$genoptions = array(				
+				'openlink' => __($_POST['openlink']),
+				'closelink' => __($_POST['closelink']),				
+				'version' => wp_dtree_get_version()							
+			);	
 			$wpdtreeopt = array(
 				'catopt' => $catoptions,
 				'arcopt' => $arcoptions,
@@ -600,29 +527,33 @@
 				'cssopt' => $cssoptions,
 				'genopt' => $genoptions,
 				'lnkopt' => $lnkoptions
-			);
-						
+			);						
 			//removes any number signs from the colours, or our GET-query for style.php will break.
-			$wpdtreeopt['cssopt']['fontsize'] 	= str_replace("#", '', $wpdtreeopt['cssopt']['fontsize']); 
-			$wpdtreeopt['cssopt']['mfontcolor'] = str_replace("#", '', $wpdtreeopt['cssopt']['mfontcolor']);
-			$wpdtreeopt['cssopt']['lfontcolor'] = str_replace("#", '', $wpdtreeopt['cssopt']['lfontcolor']);
-			$wpdtreeopt['cssopt']['hfontcolor'] = str_replace("#", '', $wpdtreeopt['cssopt']['hfontcolor']);
+			$wpdtreeopt['cssopt']['fontsize'] 	= str_replace('#', '', $wpdtreeopt['cssopt']['fontsize']); 
+			$wpdtreeopt['cssopt']['mfontcolor'] = str_replace('#', '', $wpdtreeopt['cssopt']['mfontcolor']);
+			$wpdtreeopt['cssopt']['lfontcolor'] = str_replace('#', '', $wpdtreeopt['cssopt']['lfontcolor']);
+			$wpdtreeopt['cssopt']['hfontcolor'] = str_replace('#', '', $wpdtreeopt['cssopt']['hfontcolor']);
 			if(!is_numeric($wpdtreeopt['effopt']['duration']) || ($wpdtreeopt['effopt']['duration'] <= 0)){
 				$wpdtreeopt['effopt']['duration'] = 0.5;
-			}						
-			
+			}
+			if($wpdtreeopt['catopt']['exclude'] == $catexc_default){ //make sure we don't save the default-texts.
+				$wpdtreeopt['catopt']['exclude'] = '';
+			}
+			if($wpdtreeopt['catopt']['postexclude'] == $catpostexc_default){
+				$wpdtreeopt['catopt']['postexclude'] = '';
+			}			
 			update_option('wp_dtree_options', $wpdtreeopt);
 			echo '<div id="message" class="updated fade"><p>';
 			echo '<font color="black">'.__('WP-dTree settings updated...').'</font><br />';
-			if($disable_arc){ echo '<font color="black">'.__('The archive tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($disable_cat){ echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($disable_lnk){ echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($disable_pge){ echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
-			if(!$effon){ echo '<font color="black">'.__('Scriptaculous Effects are ').'<font color="orange">disabled...</font></font><br />';}
+			if($wpdtreeopt['arcopt']['isdisabled']){ echo '<font color="black">'.__('The archive tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['catopt']['isdisabled']){ echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['lnkopt']['isdisabled']){ echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['pgeopt']['isdisabled']){ echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
+			if(!$wpdtreeopt['effopt']['effon']){ echo '<font color="black">'.__('Scriptaculous Effects are ').'<font color="orange">disabled...</font></font><br />';}
 			echo '</p></div>';			
-			wp_dtree_update_cache(); //update cache when we edit plugin settings.
-			$alt = true;
+			wp_dtree_update_cache(); //update cache when we edit plugin settings.			
 		}
+		$alt = true;
 	?>
 	
 	<form method="post">	

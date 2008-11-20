@@ -1,16 +1,23 @@
 This is an informal changelog/todo for the development version of WP-dTree.
 
-There's two things you can do to help out: 
+There's three things you can do to help out: 
 	1. run this version on your blog and report any issues.
 	2. check something off the TODO-list. :)
+	3. buy me a (used) book. 
 
 Thank you!
 
 //Ulf Benjaminsson
-2008-11-14
+2008-11-20
+
+Book wishlist: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N 
 
 
 NEW:
+* Fixed: RSS icons are not displayed in IE if count is on.
+* cleanup on the admin screen backend. (please report any issues!)
+* replaced <p> for <span> in widget, fixes some padding issues
+* !important property on text-align
 * exclude posts from category tree
 * more robust 'open to selection'
 * moved config screen to "settings"-secton of admin
@@ -22,6 +29,8 @@ NEW:
 
 
 REQUESTS (* == done): 
+* Text justification breaks tree: http://wordpress.org/support/topic/211644
+* Unwanted space in IE: http://wordpress.org/support/topic/216569
 * "Close same level" is broken: http://wordpress.org/support/topic/208837
 * Include private posts in trees: http://wordpress.org/support/topic/204424
 * Quotes "" in post names fucks alt-texts: http://wordpress.org/support/topic/203570
@@ -34,7 +43,7 @@ REQUESTS (* == done):
 
 
 TODO:
-Clean up the settings page "backend" (eg. the huge _POST-check)
+Find out how to use the new variable hooks, update the hooks used.
 Make the caching behaviour more obvious OR more transparent. 
  	- prominent button for "refresh cache?
 	- inline documentation? 
@@ -45,9 +54,7 @@ Display information message on first run. (tell user to activate widgets, and wh
 
 
 KNOWN ISSUES:
-Settings are not initialized correctly. (you must visit the settings page after upgrading!)
-Open To Selection breaks archive tree. Again.
-RSS icons are not displayed in IE if count is on.
+
 
 
 

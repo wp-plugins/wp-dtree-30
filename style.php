@@ -2,6 +2,20 @@
 header('Content-type: text/css');
 ?>
 /*
+*	WP-dTree 3.5 | Ulf Benjaminsson | 20081120
+*		Added a few '!important' attributes to avoid inheriting some common settings from themes, that'll break the tree layout
+*		Added variables for: 
+*			selected node / mouse over decorations
+*			font-family
+*		Explicitly sets line height (to fontsize) to avoid breakage.
+*		Fixed the issue of RSS icons not showing in IE if postcounts are on.			
+*
+*		PLEASE NOTE: I do not do style, layout or design support!
+*			If you think the tree looks wierd or broken, run the plugin in the default WP theme (Kubric) to make sure it's not your theme that breaks it.
+*			If you do find a problem with my code or CSS, let me know so I can update the plugin.
+*/
+
+/*
 *	WP-dTree 3.2 | Ulf Benjaminsson | 20071015
 *		Added RSS-icons (normal and hover)
 *		Added postcount (default fontcolor = link fontcolor)
@@ -17,7 +31,7 @@ header('Content-type: text/css');
 
 /*
 *	dTree 2.05 | www.destroydrop.com/javascript/tree/ 
-*	Copyright (c) 2002-2003 Geir Landrï¿½ 
+*	Copyright (c) 2002-2003 Geir Landrö
 */
 
 <?php
@@ -78,6 +92,7 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 	font-size: <?php echo $fontsize; ?>px;
 	color: #<?php echo $mfontcolor; ?>;
 	white-space: nowrap;
+	text-align:left; !important
 }
 #dtreec img, #dtreea img, #dtreep img, #dtreel img {
 	border: 0px;
@@ -95,14 +110,16 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 }
 
 /*RSS icons for categories. Don't ask.*/
-a.dtreerss  {	
+#dtreec a.dtreerss, #dtreea a.dtreerss, #dtreep a.dtreerss, #dtreel a.dtreerss  {	
    padding-right: 25px; 
    background: url('<?php echo $rssicon; ?>') no-repeat center right;  
+   text-decoration: none;   
 }
 
-a.dtreerss:hover  {	
+#dtreec a.dtreerss:hover, #dtreea a.dtreerss:hover, #dtreep a.dtreerss:hover, #dtreel a.dtreerss:hover  {	
     padding-right: 25px; 
     background: url('<?php echo $rssicon2; ?>') no-repeat center right;
+    text-decoration: none;
 }
 
 #postcount {
