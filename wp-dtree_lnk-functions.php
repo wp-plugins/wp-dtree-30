@@ -5,7 +5,7 @@ function wp_dtree_get_links_arr(){
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$sort_column = $wpdtreeopt['lnkopt']['sortby']; //ID, name, rating etc.
 	$sort_order = $wpdtreeopt['lnkopt']['sortorder']; //ASC or DESC
-	$cats_orderby = (!isset($wpdtreeopt['lnkopt']['catsorder']) ? 'name' : $wpdtreeopt['lnkopt']['catsorder']);
+	$cats_orderby = (!isset($wpdtreeopt['lnkopt']['catsorder']) ? 'name' : $wpdtreeopt['lnkopt']['catsorder']);//Can be name, count, or nothing (will use term_id).
 	$exclude = '';//$wpdtreeopt['lnkopt']['exclude'];
 	$include = '';
 	$name_like = '';
@@ -17,7 +17,7 @@ function wp_dtree_get_links_arr(){
 		'name__like' => $name_like, 
 		'include' => $include, 
 		'exclude' => $exclude, 
-		'orderby' => $cats_orderby, //Can be name, count, or nothing (will use term_id).
+		'orderby' => $cats_orderby, 
 		'order' => $sort_order, 
 		'hierarchical' => 0)
 	);

@@ -107,7 +107,7 @@ function wp_dtree_get_rss($result, $treetype){
 function wp_dtree_get_count($nodedata, $treetype){	
 	global $wpdb;		
 	$idtranspose = wp_dtree_get_id_transpose();	
-	$count = "";
+	$count = '';
 	if($treetype == 'cat'){
 		$catid = $nodedata['id']-$idtranspose['cat']; //DONT put this calculation in the parameter list. http://wordpress.org/support/topic/148638?replies=3
 		$catobj = get_category($catid);
@@ -144,13 +144,13 @@ function wp_dtree_add_month($datestring, $nummonths='1'){
 
 //NOTE: since we save all permalinks without the blog url part, we must make sure any remnants of the blog url is cleaned from the incomming request.
 function wp_dtree_open_tree_to($treetype, $treestring){			
-	$path = ltrim($_SERVER['REQUEST_URI'], '/'); //REQUEST_URI should be '/blog/events/flippat/' or somesuch. Remove leading slash.
-												//NOTE: some servers (with userdir) gives us: '/~userdir/blog/events/flippat/'	
+	$path = ltrim($_SERVER['REQUEST_URI'], '/'); //REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.
+												//NOTE: some servers (with userdir) gives us: '/~userdir/blog/category/post/'	
 	if(empty($path)){return '';} //quick bail
 	$blogurl = get_bloginfo('url'); //http://blog.server.com, http://server.com/~userdir - you get the picture.									
 	if(strpos($path, $blogurl) === 0){//REQUEST_URI included http://server.com/ (happens on some hosts)			
 		$path = str_replace($blogurl, '', $path);//remove http://server.com/ from the request-path
-	} else { 	//some servers (with userdir) gives us: '~userdir/blog/events/flippat/'				
+	} else { 	//some servers (with userdir) gives us: '~userdir/blog/category/post/'				
 		$segments = explode('/', $path); //$segments[0] could be '~userdir' or 'blog' now
 		if(strpos($blogurl, $segments[0]) !== false){//REQUEST_URI gave us the userdir - this is included in the blog url, so lets remove it. 
 			$path = ltrim(str_replace($segments[0], '', $path), '/');

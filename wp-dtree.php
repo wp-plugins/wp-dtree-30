@@ -19,6 +19,8 @@
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
 	Changes in v3.5 (2008-11-14)
+	Added some path defines to support non-standard WP-installations
+	Added uninstall.php for nice WP 2.7 plugin cleanup.
 	Fixed the issue with RSS-icons not showing in IE if post count is on
 	Replaced p for span in widgets - still XHTML compliant, but fixes some ugly padding
 	Clean up on the admin screen backend
@@ -117,11 +119,17 @@
 	}
 	
 	function wp_dtree_get_version(){
-		if(function_exists('get_plugin_data')){
+		static $plugin_data;
+		if(!$plugin_data){
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			$plugin_data = get_plugin_data( __FILE__ );
+		}
+		return "".$plugin_data['Version'];
+		/*if(function_exists('get_plugin_data')){
 			$plugin_data = get_plugin_data(__FILE__);
 			return "".$plugin_data['Version'];
 		}
-		return "3.4.3";
+		return "3.4.3";*/
 	}
 	
 	require_once('wp-dtree_lnk-functions.php');
@@ -132,11 +140,11 @@
 	require_once('wp-dtree_cache.php'); 
 		
 	if(function_exists('register_activation_hook') && function_exists('register_deactivation_hook')){	
-		register_activation_hook(__FILE__, 'wp_dtree_install');	
-		register_deactivation_hook(__FILE__, 'wp_dtree_uninstall');
+		register_activation_hook(__FILE__, 'wp_dtree_activate');	
+		register_deactivation_hook(__FILE__, 'wp_dtree_deactivate');
 	} else{			
-		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_install', 5);		
-		add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_uninstall', 10); 
+		add_action('activate_wp-dtree-30/wp-dtree.php','wp_dtree_activate', 5);		
+		add_action('deactivate_wp-dtree-30/wp-dtree.php','wp_dtree_deactivate', 10); 
 	}
 	add_action('init', 				'wp_dtree_load_javascripts');		//load scriptacolous if we're using effects.
 	add_action('plugins_loaded', 	'wp_dtree_init_widgets');			//init widgets after the plugin has loaded.	
@@ -153,20 +161,52 @@
 	add_action('delete_link', 		'wp_dtree_update_links');
 	add_action('edit_link', 		'wp_dtree_update_links');
 	
+	if(!defined('WP_CONTENT_URL')){
+		define('WP_CONTENT_URL', get_option('siteurl').'/wp-content');
+	}
+	if(!defined('WP_CONTENT_DIR')){
+		define('WP_CONTENT_DIR', ABSPATH.'wp-content');
+	}
+	if(!defined('WP_PLUGIN_URL')){
+		define('WP_PLUGIN_URL', WP_CONTENT_URL.'/plugins');
+	}
+	if(!defined('WP_PLUGIN_DIR')){
+		define('WP_PLUGIN_DIR', WP_CONTENT_DIR.'/plugins');
+	}
+	
+	
 	//TODO: show this to first time users. 
 	function wp_dtree_first_run_notice(){
 		echo "<div id='wp-dtree-warning' class='updated fade'><p><strong>WP-dTree: remember to <a href='widgets.php'>activate the widgets!</strong></p></div>";
 	}
 	//add_action('admin_notices', 'wp_dtree_first_run_notice');
 	
-	function wp_dtree_install(){		
+	function wp_dtree_activate(){		
 		wp_dtree_set_options();
 		wp_dtree_install_cache();			
-	}
-	
-	function wp_dtree_uninstall(){
-		//wp_dtree_delete_options(); //uncomment if you want to clean your tables out
+	}	
+	function wp_dtree_deactivate(){
+		//delete_option('wp_dtree_options'); //options are cleared on plugin deletion. 
+		//wp_dtree_unregister_widget();
 		wp_dtree_uninstall_cache();
+	}
+		
+	function wp_dtree_unregister_widget($t = null){ //TODO. seems useless? still have to disable manually from the admin.
+		if(!function_exists('unregister_sidebar_widget')){
+			return;
+		}
+		if($t == null || $t == 'lnk'){
+			unregister_sidebar_widget('WP-dTree Links');
+		}
+		if($t == null || $t == 'pge'){
+			unregister_sidebar_widget('WP-dTree Pages');
+		}
+		if($t == null || $t == 'arc'){
+			unregister_sidebar_widget('WP-dTree Archives');
+		}
+		if($t == null || $t == 'cat'){			
+			unregister_sidebar_widget('WP-dTree Categories');
+		}		
 	}
 		
 	function wp_dtree_load_javascripts(){	
@@ -266,15 +306,13 @@
 		}
 	}
 	
-	function wp_dtree_add2head(){
-		$wpurl = get_bloginfo('wpurl');
+	function wp_dtree_add2head(){		
 		$wpdtreeopt = get_option('wp_dtree_options');		
-		$rssicon = urlencode($wpurl . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon.png');	//normal
-		$rssicon2 = urlencode($wpurl . '/wp-content/plugins/wp-dtree-30/dtree-img/feed-icon_h.png'); //higlight				
-		$cd = '<script type="text/javascript" src="'.$wpurl.'/wp-content/plugins/wp-dtree-30/dtree.php?witheff='.$wpdtreeopt['effopt']['effon'].'&amp;eff='.$wpdtreeopt['effopt']['efftype'].'&amp;effdur='.$wpdtreeopt['effopt']['duration'].'"></script>'."\n";
+		$rssicon = urlencode(WP_PLUGIN_URL.'/wp-dtree-30/dtree-img/feed-icon.png');	//normal
+		$rssicon2 = urlencode(WP_PLUGIN_URL.'/wp-dtree-30/dtree-img/feed-icon_h.png'); //higlight				
+		$cd = '<script type="text/javascript" src="'.WP_PLUGIN_URL.'/wp-dtree-30/dtree.php?witheff='.$wpdtreeopt['effopt']['effon'].'&amp;eff='.$wpdtreeopt['effopt']['efftype'].'&amp;effdur='.$wpdtreeopt['effopt']['duration'].'"></script>'."\n";
 		$cd .= '<link rel="stylesheet" href="' 
-		. $wpurl 
-		. '/wp-content/plugins/wp-dtree-30/style.php?'
+		.WP_PLUGIN_URL.'/wp-dtree-30/style.php?'
 		.'fontsize='.$wpdtreeopt['cssopt']['fontsize']
 		.'&amp;fontf='.$wpdtreeopt['cssopt']['fontf']
 		.'&amp;sfontdecor='.$wpdtreeopt['cssopt']['sfontdecor']
@@ -288,11 +326,7 @@
 		.'" type="text/css" media="screen" />';
 		echo $cd;
 	}
-	
-	function wp_dtree_delete_options(){
-		delete_option('wp_dtree_options');
-	}
-	
+
 	function wp_dtree_set_options(){				
 		$lnkoptions = array(
 			'isdisabled' => 0,
@@ -545,10 +579,10 @@
 			update_option('wp_dtree_options', $wpdtreeopt);
 			echo '<div id="message" class="updated fade"><p>';
 			echo '<font color="black">'.__('WP-dTree settings updated...').'</font><br />';
-			if($wpdtreeopt['arcopt']['isdisabled']){ echo '<font color="black">'.__('The archive tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($wpdtreeopt['catopt']['isdisabled']){ echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($wpdtreeopt['lnkopt']['isdisabled']){ echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($wpdtreeopt['pgeopt']['isdisabled']){ echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
+			if($wpdtreeopt['arcopt']['isdisabled']){ wp_dtree_unregister_widget('arc'); echo '<font color="black">'.__('The archive tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['catopt']['isdisabled']){ wp_dtree_unregister_widget('cat'); echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['lnkopt']['isdisabled']){ wp_dtree_unregister_widget('lnk'); echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['pgeopt']['isdisabled']){ wp_dtree_unregister_widget('pge'); echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
 			if(!$wpdtreeopt['effopt']['effon']){ echo '<font color="black">'.__('Scriptaculous Effects are ').'<font color="orange">disabled...</font></font><br />';}
 			echo '</p></div>';			
 			wp_dtree_update_cache(); //update cache when we edit plugin settings.			
