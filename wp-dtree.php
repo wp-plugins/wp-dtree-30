@@ -18,7 +18,7 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
-	Changes in v3.5 (2008-11-14)
+	Changes in v3.5 (2008-11-14)	
 	Added some path defines to support non-standard WP-installations
 	Added uninstall.php for nice WP 2.7 plugin cleanup.
 	Fixed the issue with RSS-icons not showing in IE if post count is on
@@ -187,7 +187,7 @@
 	}	
 	function wp_dtree_deactivate(){
 		//delete_option('wp_dtree_options'); //options are cleared on plugin deletion. 
-		//wp_dtree_unregister_widget();
+		wp_dtree_unregister_widget();
 		wp_dtree_uninstall_cache();
 	}
 		
@@ -453,6 +453,11 @@
 		if(function_exists('current_user_can') && !current_user_can('manage_options') ){
 			die(__('Cheatin&#8217; uh?'));
 		}
+		//function wp_dtree_ifsetor(&$var, $or = 0) { return isset($var) ? $var : $or; }
+		if(!function_exists('wp_dtree_issetbool')){
+			function wp_dtree_issetbool(&$var){return isset($var) ? 1 : 0;}
+		}
+		
 		add_action('in_admin_footer', 'wp_dtree_add_admin_footer');		
 		$catexc_default = 'Cat IDs';		
 		$catpostexc_default = 'Post IDs';				
@@ -463,74 +468,74 @@
 		}				
 		if(isset($_POST['submit'])){						
 			$lnkoptions = array(
-				'isdisabled' => $_POST['lnk_isdisabled'],
+				'isdisabled' => wp_dtree_issetbool($_POST['lnk_isdisabled']),
 				'truncate' => $_POST['lnktruncate'],
 				'sortby' => $_POST['lsortby'],
 				'sortorder' => $_POST['lsortorder'],		
-				'oclink' => $_POST['loclink'],
-				'uselines' => (isset($_POST['luselines'])) ? 1 : 0,
-				'useicons' => (isset($_POST['luseicons'])) ? 1 : 0,
-				'closelevels' => (isset($_POST['lcloselevels'])) ? 1 : 0,
-				'folderlinks' => (isset($_POST['lfolderlinks'])) ? 1 : 0,
-				'useselection' => (isset($_POST['luseselection'])) ? 1 : 0,			
+				'oclink' => wp_dtree_issetbool($_POST['loclink']),
+				'uselines' => wp_dtree_issetbool($_POST['luselines']),
+				'useicons' => wp_dtree_issetbool($_POST['luseicons']),
+				'closelevels' => wp_dtree_issetbool($_POST['lcloselevels']),
+				'folderlinks' => wp_dtree_issetbool($_POST['lfolderlinks']),
+				'useselection' => wp_dtree_issetbool($_POST['luseselection']),			
 				'topnode' => __($_POST['ltopnode']),			
 				'show_updated' => 0,
 				'catsorder' => $_POST['lcatsorder']
 			);						
 			$arcoptions = array(
-				'isdisabled' => $_POST['arc_isdisabled'],
+				'isdisabled' => wp_dtree_issetbool($_POST['arc_isdisabled']),
 				'truncate' => $_POST['arctruncate'],
 				'sortby' => $_POST['asortby'],
 				'sortorder' => $_POST['asortorder'],	
 				'arctype' => $_POST['arctype'],
-				'listpost' => $_POST['alistpost'],				
-				'oclink' => $_POST['aoclink'],
+				'listpost' => wp_dtree_issetbool($_POST['alistpost']),				
+				'oclink' => wp_dtree_issetbool($_POST['aoclink']),
 				'exclude' => $_POST['exclude_posts'],
-				'uselines' => (isset($_POST['auselines'])) ? 1 : 0,
-				'useicons' => (isset($_POST['auseicons'])) ? 1 : 0,
-				'closelevels' => (isset($_POST['acloselevels'])) ? 1 : 0,
-				'folderlinks' => (isset($_POST['afolderlinks'])) ? 1 : 0,
-				'useselection' => (isset($_POST['auseselection'])) ? 1 : 0,
-				'opentosel' => $_POST['aopentosel'],
+				'uselines' => wp_dtree_issetbool($_POST['auselines']),
+				'useicons' => wp_dtree_issetbool($_POST['auseicons']),
+				'closelevels' => wp_dtree_issetbool($_POST['acloselevels']),
+				'folderlinks' => wp_dtree_issetbool($_POST['afolderlinks']),
+				'useselection' => wp_dtree_issetbool($_POST['auseselection']),
+				'opentosel' => wp_dtree_issetbool($_POST['aopentosel']),
 				'topnode' => __($_POST['atopnode']),
-				'showcount' => $_POST['ashowcount'],
-				'showrss' => $_POST['ashowrss']
+				'showcount' =>  wp_dtree_issetbool($_POST['ashowcount']),
+				'showrss' => wp_dtree_issetbool($_POST['ashowrss'])
 			);				
 			$catoptions = array(
-				'isdisabled' => $_POST['cat_isdisabled'],
+				'isdisabled' => wp_dtree_issetbool($_POST['cat_isdisabled']),
 				'truncate' => $_POST['cattruncate'],
 				'sortby' => $_POST['csortby'],				
 				'sortorder' => $_POST['csortorder'],
 				'cpsortby' => $_POST['cpsortby'], 
 				'cpsortorder' => $_POST['cpsortorder'],
-				'hideempty' => $_POST['chideempty'],
+				'hideempty' => wp_dtree_issetbool($_POST['chideempty']),
 				'exclude' => $_POST['cexclude'],
 				'postexclude' => $_POST['cpostexclude'],
-				'listpost' => $_POST['clistpost'],				
-				'oclink' => $_POST['coclink'],
-				'uselines' => (isset($_POST['cuselines'])) ? 1 : 0,
-				'useicons' => (isset($_POST['cuseicons'])) ? 1 : 0,
-				'closelevels' => (isset($_POST['ccloselevels'])) ? 1 : 0,
-				'folderlinks' => (isset($_POST['cfolderlinks'])) ? 1 : 0,
-				'useselection' => (isset($_POST['cuseselection'])) ? 1 : 0,
-				'opentosel' => $_POST['copentosel'],
+				'listpost' => wp_dtree_issetbool($_POST['clistpost']),				
+				'oclink' => wp_dtree_issetbool($_POST['coclink']),
+				'uselines' => wp_dtree_issetbool($_POST['cuselines']),
+				'useicons' => wp_dtree_issetbool($_POST['cuseicons']),
+				'closelevels' => wp_dtree_issetbool($_POST['ccloselevels']),
+				'folderlinks' => wp_dtree_issetbool($_POST['cfolderlinks']),
+				'useselection' => wp_dtree_issetbool($_POST['cuseselection']),
+				'opentosel' => wp_dtree_issetbool($_POST['copentosel']),
 				'topnode' => __($_POST['ctopnode']),
-				'showcount' => $_POST['cshowcount'],
-				'showrss' => $_POST['showrss']
+				'showcount' => wp_dtree_issetbool($_POST['cshowcount']),
+				'showrss' => wp_dtree_issetbool($_POST['showrss'])
 			);			
 			$pgeoptions = array(
-				'isdisabled' => $_POST['pge_isdisabled'],
+				'isdisabled' => wp_dtree_issetbool($_POST['pge_isdisabled']),
 				'truncate' => $_POST['pgetruncate'],
 				'sortby' => $_POST['psortby'],
 				'sortorder' => $_POST['psortorder'],				
-				'oclink' => $_POST['poclink'],
+				'oclink' => wp_dtree_issetbool($_POST['poclink']),
 				'exclude' => $_POST['exclude_pages'],
-				'uselines' => (isset($_POST['puselines'])) ? 1 : 0,
-				'useicons' => (isset($_POST['puseicons'])) ? 1 : 0,
-				'closelevels' => (isset($_POST['pcloselevels'])) ? 1 : 0,
-				'folderlinks' => (isset($_POST['pfolderlinks'])) ? 1 : 0,
-				'useselection' => (isset($_POST['puseselection'])) ? 1 : 0,
-				'opentosel' => $_POST['popentosel'],
+				'uselines' => wp_dtree_issetbool($_POST['puselines']),
+				'useicons' => wp_dtree_issetbool($_POST['puseicons']),
+				'closelevels' => wp_dtree_issetbool($_POST['pcloselevels']),
+				'folderlinks' => wp_dtree_issetbool($_POST['pfolderlinks']),
+				'useselection' => wp_dtree_issetbool($_POST['puseselection']),
+				'opentosel' => wp_dtree_issetbool($_POST['popentosel']),
 				'topnode' => __($_POST['ptopnode'])
 			);			
 			$effoptions = array(
