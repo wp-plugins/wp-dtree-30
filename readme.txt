@@ -57,7 +57,7 @@ Thank you all, *very* much!
 1. Go to the 'WP-dTree' under 'Settings' to adjust your preferences
 1. Go to 'Presentation' -> 'Widgets' and drag-n-drop the widgets to the relevant section of your sidebar
 
-If you think that widgets are lame: edit the template file that you want the archives to show on and copy paste the relevant code:
+If you think that widgets are lame: edit the template file that you want the archives to show on:
 
 Displaying archives
 ---------
