@@ -14,6 +14,8 @@ Book wishlist: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N
 
 
 NEW:
+* Added "force open to"
+* Added a Widget preview to the admin area	
 * Fixed: RSS icons are not displayed in IE if count is on.
 * cleanup on the admin screen backend. (please report any issues!)
 * replaced <p> for <span> in widget, fixes some padding issues
