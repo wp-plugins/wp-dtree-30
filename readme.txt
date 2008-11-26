@@ -16,14 +16,6 @@ WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com
 
 The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but packs a lot of new features and modernizations to boot; WP 2.7 compability, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more.
 
-If you appreciate the work I put into WP-dTree and want to motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x), like *these* wonderful people did:
-
-* Bruce Hampton, USA
-* Shu Mei Chen, Taiwan
-* Kai Kniepkamp, Germany
-
-Thank you all, *very* much!
-
 **Changes in v3.5** (2008-11-26)
 
 * New option: "shut down unused trees" (performance!)
@@ -48,6 +40,14 @@ Thank you all, *very* much!
 * Misc: CSS should be a bit more robust now
 
 [Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
+
+If you appreciate the work I put into WP-dTree and want to motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x), like *these* wonderful people did:
+
+* Bruce Hampton, USA
+* Shu Mei Chen, Taiwan
+* Kai Kniepkamp, Germany
+
+Thank you all, *very* much!
 
 == Installation ==
 
