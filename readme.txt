@@ -47,7 +47,7 @@ Thank you all, *very* much!
 * Misc: Moved config screen to "settings"-section of admin
 * Misc: CSS should be a bit more robust now
 
-[Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/changelog/).
+[Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
 
 == Installation ==
 
