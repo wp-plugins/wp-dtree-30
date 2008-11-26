@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: A fork of <a href="http://www.silpstream.com/blog/wp-dtree/">Christopher Hwang's WP-dTree</a>, improving performance and adding useful features.
-	Version: 3.4.3
+	Version: 3.5
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	
@@ -19,24 +19,26 @@
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
 	Changes in v3.5 (2008-11-26)
-	Added "force open to"
-	Added a Widget preview to the admin area	
-	Added some path defines to support non-standard WP-installations
-	Added uninstall.php for nice WP 2.7 plugin cleanup.
-	Fixed the issue with RSS-icons not showing in IE if post count is on
-	Replaced p for span in widgets - still XHTML compliant, but fixes some ugly padding
-	Clean up on the admin screen backend
-	updated the css to be more robust. 
-	improved admin screen interface
-	excluding posts from the category tree
-	moved config screen from 'design' to 'settings'
-	I18N
-	Sorting posts archive tree
-	Sorting posts in category tree
-	Counting posts in sub categories
-	List empty category bugs
-	Quotes "" in post names messes with alt-text
-	Link tree keeps target attribute.
+	* New option: "shut down unused trees" (performance!)
+	* New option: "force open to"
+	* New option: per-tree truncation setting
+	* New option: custom sort order for archives
+	* New option: custom sort order for posts in categories
+	* New option: exclude posts from category tree
+	* New option: more CSS options avaliable from the admin
+	* Added: widget preview in the admin area
+	* Added: link target attributes in link tree
+	* Added: path defines to support non-standard WP-installations
+	* Added: uninstall.php for nice WP 2.7 plugin cleanup.
+	* Fixed: include sub-categories when counting posts
+	* Fixed: "close same level" 
+	* Fixed: Quotes "" in titles breaks alt-texts
+	* Fixed: Nestled cats get excluded if parent is empty
+	* Fixed: RSS-icons don't show in IE
+	* Fixed: Unwanted spacing in IE
+	* Misc: improved admin screen feng-shui.
+	* Misc: Moved config screen to "settings"-section of admin
+	* Misc: CSS should be a bit more robust now
 	Tested for WP 2.7	
 	
 	Changes in v3.4.2 (2008-10-19)
@@ -286,7 +288,8 @@
 	
 	function wp_dtree_add_admin_footer(){ //shows some plugin info at the footer of the config screen.
 		$plugin_data = get_plugin_data(__FILE__);
-		printf('%1$s plugin | Version %2$s | by %3$s<br />', $plugin_data['Title'], $plugin_data['Version'], $plugin_data['Author']);
+		printf('%1$s plugin | Version %2$s | by %3$s', $plugin_data['Title'], $plugin_data['Version'], $plugin_data['Author']);
+		echo ' (who <a href="http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17">appreciates books</a>) :)<br />';
 	}
 	
 	function wp_dtree_add_plugin_actions($links, $file){ //add's a "Settings"-link to the entry on the plugin screen

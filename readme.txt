@@ -3,87 +3,61 @@ Contributors: ulfben
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
 Requires at least: 2.3
-Tested up to: 2.6
-Stable tag: 3.4.2
+Tested up to: 2.7-beta3
+Stable tag: 3.5
 
 Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
 
 == Description ==
 
-This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages, links and categories. It uses Scriptaculous for awesome display effects (enable in admin panel).
+This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages, links and categories. It uses Scriptaculous for awesome display effects.
 
 WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin (as of version 3.x). 
 
-The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but it packs a lot of new features and modernizations to boot; WP 2.6 compability, widgets, out-of-the-box Scriptaculous support, link trees, displaying feed icons, post counts and more.
+The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but packs a lot of new features and modernizations to boot; WP 2.7 compability, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more.
 
-If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
+If you appreciate the work I put into WP-dTree and want to motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x), like *these* wonderful people did:
 
-**Changes in v3.4.2** (2008-10-19)
+* Bruce Hampton, USA
+* Shu Mei Chen, Taiwan
+* Kai Kniepkamp, Germany
 
-Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/211402))
+Thank you all, *very* much!
 
-**Changes in v3.4.1** (2008-07-20)
+**Changes in v3.5** (2008-11-26)
 
-Validates: both CSS and XHTML 1.0 Transitional ([thanks: ar-jar](http://wordpress.org/support/topic/189643))
+* New option: "shut down unused trees" (performance!)
+* New option: "force open to"
+* New option: per-tree truncation setting
+* New option: custom sort order for archives
+* New option: custom sort order for posts in categories
+* New option: exclude posts from category tree
+* New option: more CSS options avaliable from the admin
+* Added: widget preview in the admin area
+* Added: link target attributes in link tree
+* Added: path defines to support non-standard WP-installations
+* Added: uninstall.php for nice WP 2.7 plugin cleanup.
+* Fixed: include sub-categories when counting posts
+* Fixed: "close same level" 
+* Fixed: Quotes "" in titles breaks alt-texts
+* Fixed: Nestled cats get excluded if parent is empty
+* Fixed: RSS-icons don't show in IE
+* Fixed: Unwanted spacing in IE
+* Misc: improved admin screen feng-shui.
+* Misc: Moved config screen to "settings"-section of admin
+* Misc: CSS should be a bit more robust now
 
-**Changes in v3.4** (2008-07-12)
-
-1. Added support for link trees. (needs testing!)
-1. Fixed breakage in WP 2.5, 2.6
-1. Fixed invalid XHTML output. ([props: jberghem](http://wordpress.org/support/topic/150888))
-1. Fixed a CSS-issue. ([props: wenzlerm](http://wordpress.org/support/topic/186314))
-1. Renamed the dTree script to avoid collisions with plugins using an unmodified version.
-
-**Changes in v3.3.2** (2007-11-26)
-
-1. Fixed bug with excluding multiple categories.
-
-**Changes in v3.3.1** (2007-11-02)
-
-1. Removed redundant `li`-tags from widgets. (props: Alexey Zamulla) 
-1. Support for non-ascii characters. ([props: michuw](http://wordpress.org/support/topic/141554))
-1. Properly encoded ampersands (&) in javascript URLs.
-
-**Changes in v3.3** (2007-10-26)
-
-1. Optimized dtree, up to **40% less data** is stored and transfered! 
-1. New option: Show RSS icon for archives
-1. New option: Show post count for archives
-1. Fix: Open to requested node
-1. Fix: images URL not working on some servers ([props: Zarquod](http://wordpress.org/support/topic/136547))
-1. Fix: somewhat more IE compatible...
-
-*Known issues:* RSS icons wont show **in IE** if `post count` is on.
-
-**Changes in v3.2** (2007-10-15)
-
-1. Support for WP's bundled scriptacolous library! (turn effects on in the WP-dTree options page)
-1. New cache structure reduces cache size with ~33% compared to previous implementations.	 
-1. New option: Show RSS icon for categories
-1. New option: Show post count for categories
-1. New option: Effect duration
-
-*Regressions:* `open to selection` is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
-
-**Changes in v3.1:** (2007-10-06)
-
-1. Updated to comply with WordPress 2.3's new taxonomy tables for categories.
-1. Widgetized! You no longer need to edit your sidebar manually.
-1. Fixed "Open To Selection"-option.
-
-**Changes in v3.0:**
-
-1. Added caching to reduce the database load. 
+[Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/changelog/).
 
 == Installation ==
 
-Make sure to disable and remove any previous installation of WP-dTree **and wp-scriptaculous** first! As of v3.2, the code for showing the trees have changed. Make sure to update your sidebar accordingly if you are not using widgets to display your archive.
-
-1. Extract the files and transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
+1. If upgrading: disable the old version first
+1. Transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Go to the 'WP-dTree' option menu under 'Presentation' and set your preferences.
-1. Go to 'Presentation' -> 'Widgets' and drag-n-drop WP-dTree Archives / Categories / Pages to the relevant section of your sidebar. 
-1. If you think that widgets are lame: go to the template file that you want the archives to show on and copy paste the relevant code:
+1. Go to the 'WP-dTree' under 'Settings' to adjust your preferences
+1. Go to 'Presentation' -> 'Widgets' and drag-n-drop the widgets to the relevant section of your sidebar
+
+If you think that widgets are lame: edit the template file that you want the archives to show on and copy paste the relevant code:
 
 Displaying archives
 ---------
@@ -138,9 +112,96 @@ Displaying pages:
 			?>				
 		</ul>
 	</li>
+	
+Displaying links:
+---------
+	<li>
+	<h2>Links</h2>
+		<ul>
+			<?php 
+ 			if(function_exists('wp_dtree_get_links')){				
+			    wp_dtree_get_links();
+			}else{
+				wp_list_bookmarks(); 
+			}
+		</ul>
+	</li> 
+	
+== Changelog == 
 
+(Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
 
+**Changes in v3.4.2** (2008-10-19)
+
+* Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/211402))
+
+**Changes in v3.4.1** (2008-07-20)
+
+* Validates: both CSS and XHTML 1.0 Transitional ([thanks: ar-jar](http://wordpress.org/support/topic/189643))
+
+**Changes in v3.4** (2008-07-12)
+
+* Added support for link trees. (needs testing!)
+* Fixed breakage in WP 2.5, 2.6
+* Fixed invalid XHTML output. ([props: jberghem](http://wordpress.org/support/topic/150888))
+* Fixed a CSS-issue. ([props: wenzlerm](http://wordpress.org/support/topic/186314))
+* Renamed the dTree script to avoid collisions with plugins using an unmodified version.
+
+**Changes in v3.3.2** (2007-11-26)
+
+* Fixed bug with excluding multiple categories.
+
+**Changes in v3.3.1** (2007-11-02)
+
+* Removed redundant `li`-tags from widgets. (props: Alexey Zamulla) 
+* Support for non-ascii characters. ([props: michuw](http://wordpress.org/support/topic/141554))
+* Properly encoded ampersands (&) in javascript URLs.
+
+**Changes in v3.3** (2007-10-26)
+
+* Optimized dtree, up to **40% less data** is stored and transfered! 
+* New option: Show RSS icon for archives
+* New option: Show post count for archives
+* Fix: Open to requested node
+* Fix: images URL not working on some servers ([props: Zarquod](http://wordpress.org/support/topic/136547))
+* Fix: somewhat more IE compatible...
+
+*Known issues:* RSS icons wont show **in IE** if `post count` is on.
+
+**Changes in v3.2** (2007-10-15)
+
+* Support for WP's bundled scriptacolous library! (turn effects on in the WP-dTree options page)
+* New cache structure reduces cache size with ~33% compared to previous implementations.	 
+* New option: Show RSS icon for categories
+* New option: Show post count for categories
+* New option: Effect duration
+
+*Regressions:* `open to selection` is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
+
+**Changes in v3.1:** (2007-10-06)
+
+* Updated to comply with WordPress 2.3's new taxonomy tables for categories.
+* Widgetized! You no longer need to edit your sidebar manually.
+* Fixed "Open To Selection"-option.
+	
 == Frequently Asked Questions ==
+
+= WP-dTree looks horrible on my blog and I hate you for it! = 
+If you think the tree looks wierd or broken, run the plugin in the default WP theme (Kubric) to make sure it's not your theme that breaks it. If you do find a genuine problem with my code or CSS, pop me a mail so I can update the plugin.
+
+= Can I help you with anything? = 
+Yes please!
+
+We desperately need a proper overhaul of the admin interface. It's not standards compliant and it looks terrible in WP 2.7. If you (unlike me...) are a proper front-end developer - feel free to send me a patch.
+
+Same goes for CSS and styling - I really need someone to have a look at it and make it *proper*. Compliant, fail safe, robust, sane.
+
+For coders, I'd like help on optimizing what hooks WP-dTree uses and *how* they're used. I see a lot of potential in the "new" variable hooks, but they're poorly documented. The plugin should *always* fire when (relevant) content is edited, but we should *only* run the methods necessary. We shouldn't re-generate Links, Pages and Archive-trees when the user adds a new *category* to the database.
+
+Finally - if you've got more money than time - I always appreciate a [(used) book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17).
+ 
+= Why should I disable unused trees? = 
+Even if you never display the tree, WP-dTree will create and store it every time you add or edit content on your blog. By disabling unused trees you can save your server from going through that effort. If you've got a large(ish) number of posts, this will speed up posting and editing quite noticeably.
 
 = How does the 3.x fork improve performance of WP-dTree? =
 Instead of generating all the trees *on every visit*, 3.x employs caching - building the trees *only when you add or alter content on your blog*. The result is a tremendous load reduction from previous versions; the devsite (~360 posts, Kubrik theme) went from 411 to 18 queries (!) to display the main page.
