@@ -45,7 +45,7 @@ function wp_dtree_get_pages(){
 	if(!strlen($pgeresults)){return;}	
 	echo $pgeresults;	
 	if($wpdtreeopt['pgeopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){	
-		echo wp_dtree_open_tree_to('pge',$pgeresults);	
+		echo wp_dtree_open_tree_to($_SERVER['REQUEST_URI'],'pge',$pgeresults);	
 	} 		
 	echo "//-->\n";	
 	echo "</script>\n";	

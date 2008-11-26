@@ -38,7 +38,10 @@ function wp_dtree_build_tree($results, $treetype){
 			$nodedata['url'] = str_replace($blogpath, '', $nodedata['url']);										
 			$tree .= wp_dtree_build_node($treetype, $nodedata);
 		}		
-		$tree .= "document.write(" . $t . ");\n";		
+		$tree .= "document.write(" . $t . ");\n";
+		if(strlen($wpdtreeopt[$opttype]['opento'])){
+			$tree .= wp_dtree_force_open_to($wpdtreeopt[$opttype]['opento'], $treetype, $tree);			
+		}	
 	}
 	return $tree; 
 }
@@ -50,9 +53,9 @@ function wp_dtree_build_node($treetype, $nodedata){
 	$wpdtreeopt = get_option('wp_dtree_options');
 	$opttype = $treetype.'opt';
 	$t = $treetype{0};	
-	$count = "";
-	$target = "";
-	$rsspath = "";	
+	$count = '';
+	$target = '';
+	$rsspath = '';	
 	
 	if($wpdtreeopt[$opttype]['showcount']){				
 		$count = wp_dtree_get_count($nodedata, $treetype);		
@@ -142,9 +145,24 @@ function wp_dtree_add_month($datestring, $nummonths='1'){
 	return $newdatestring;
 }
 
+
+//deal with the "force open to"-field
+function wp_dtree_force_open_to($opento, $treetype, $treestring){ 
+	$result = '';
+	if(trim($opento) == 'all'){
+		$result = $treetype{0}.".openAll();\n";
+	} else {
+		$requests = explode(',', $opento);		
+		foreach($requests as $request){
+			$result .= wp_dtree_open_tree_to($request, $treetype, $treestring);
+		}					
+	}
+	return $result;				
+}
+
 //NOTE: since we save all permalinks without the blog url part, we must make sure any remnants of the blog url is cleaned from the incomming request.
-function wp_dtree_open_tree_to($treetype, $treestring){			
-	$path = ltrim($_SERVER['REQUEST_URI'], '/'); //REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.
+function wp_dtree_open_tree_to($request, $treetype, $treestring){			
+	$path = ltrim($request, '/'); //REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.
 												//NOTE: some servers (with userdir) gives us: '/~userdir/blog/category/post/'	
 	if(empty($path)){return '';} //quick bail
 	$blogurl = get_bloginfo('url'); //http://blog.server.com, http://server.com/~userdir - you get the picture.									
@@ -161,8 +179,8 @@ function wp_dtree_open_tree_to($treetype, $treestring){
 	foreach($strings as $string){
 		if(substr_count($string, $path)){ //we know that this line holds the node id of our request.
 			$params = explode(',', $string); //split it at parameter seperators 
-			$number = str_replace($t.'.a(', '', $params[0]); //remove the leading c.a( to find the number.		
-			return $t.'.openTo('.$number.', true);';						
+			$number = trim(str_replace("$t.a(", '', $params[0])); //remove the leading c.a( to find the number.		
+			return "$t.openTo('$number', true);\n";						
 		}
 	}	
 	return '//WP-dTree: request was '.$path;	

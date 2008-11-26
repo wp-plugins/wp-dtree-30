@@ -118,7 +118,7 @@ function wp_dtree_get_categories(){
 	if(!strlen($catresults)){return;}
 	echo $catresults;	
 	if($wpdtreeopt['catopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
-		echo wp_dtree_open_tree_to('cat', $catresults);
+		echo wp_dtree_open_tree_to($_SERVER['REQUEST_URI'], 'cat', $catresults);
 	} 	
 	echo "//-->\n";		
 	echo "</script>\n";		

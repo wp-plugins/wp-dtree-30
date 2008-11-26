@@ -18,7 +18,9 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as
 	a plugin. He handled all development of WP-dTree up to version 2.2.
 
-	Changes in v3.5 (2008-11-14)	
+	Changes in v3.5 (2008-11-26)
+	Added "force open to"
+	Added a Widget preview to the admin area	
 	Added some path defines to support non-standard WP-installations
 	Added uninstall.php for nice WP 2.7 plugin cleanup.
 	Fixed the issue with RSS-icons not showing in IE if post count is on
@@ -148,7 +150,7 @@
 	}
 	add_action('init', 				'wp_dtree_load_javascripts');		//load scriptacolous if we're using effects.
 	add_action('plugins_loaded', 	'wp_dtree_init_widgets');			//init widgets after the plugin has loaded.	
-	add_action('wp_head', 			'wp_dtree_add2head');
+	add_action('wp_head', 			'wp_dtree_add2head');		
 	add_action('admin_menu', 		'wp_dtree_add_option_page');	
 	add_action('deleted_post', 		'wp_dtree_update_cache'); 
 	add_action('publish_post', 		'wp_dtree_update_cache'); //should use ${new_status}_$post->post_type since WP 2.3. How? 
@@ -210,7 +212,7 @@
 	}
 		
 	function wp_dtree_load_javascripts(){	
-		if(!function_exists('wp_enqueue_script') || is_admin()){
+		if(!function_exists('wp_enqueue_script') /*|| is_admin()*/){
 			return;
 		}
 		$wpdtreeopt = get_option('wp_dtree_options');
@@ -329,6 +331,7 @@
 
 	function wp_dtree_set_options(){				
 		$lnkoptions = array(
+			'opento' => '',
 			'isdisabled' => 0,
 			'sortby' => 'name',
 			'sortorder' => 'ASC',		
@@ -345,6 +348,7 @@
 		);			
 		
 		$arcoptions = array(
+			'opento' => '',
 			'isdisabled' => 0,
 			'sortby' => 'post_date',
 			'sortorder' => 'DESC',
@@ -364,6 +368,7 @@
 		);
 	
 		$catoptions = array(
+			'opento' => '',
 			'isdisabled' => 0,
 			'sortby' => 'ID',
 			'sortorder' => 'ASC',
@@ -387,6 +392,7 @@
 		);
 	
 		$pgeoptions = array(
+			'opento' => '',
 			'exclude' => '',
 			'isdisabled' => 0,
 			'sortby' => 'ID',
@@ -421,7 +427,8 @@
 	
 		$genoptions = array(			
 			'openlink' => __('open all'),
-			'closelink' => __('close all'),	
+			'closelink' => __('close all'),
+			'enable_preview' => 1,	
 			'version' => wp_dtree_get_version()		
 		);				
 		
@@ -452,7 +459,7 @@
 	function wp_dtree_option_page(){
 		if(function_exists('current_user_can') && !current_user_can('manage_options') ){
 			die(__('Cheatin&#8217; uh?'));
-		}
+		}		
 		//function wp_dtree_ifsetor(&$var, $or = 0) { return isset($var) ? $var : $or; }
 		if(!function_exists('wp_dtree_issetbool')){
 			function wp_dtree_issetbool(&$var){return isset($var) ? 1 : 0;}
@@ -468,6 +475,7 @@
 		}				
 		if(isset($_POST['submit'])){						
 			$lnkoptions = array(
+				'opento' => $_POST['lopento'],
 				'isdisabled' => wp_dtree_issetbool($_POST['lnk_isdisabled']),
 				'truncate' => $_POST['lnktruncate'],
 				'sortby' => $_POST['lsortby'],
@@ -481,8 +489,9 @@
 				'topnode' => __($_POST['ltopnode']),			
 				'show_updated' => 0,
 				'catsorder' => $_POST['lcatsorder']
-			);						
+			);								
 			$arcoptions = array(
+				'opento' => $_POST['aopento'],
 				'isdisabled' => wp_dtree_issetbool($_POST['arc_isdisabled']),
 				'truncate' => $_POST['arctruncate'],
 				'sortby' => $_POST['asortby'],
@@ -500,8 +509,9 @@
 				'topnode' => __($_POST['atopnode']),
 				'showcount' =>  wp_dtree_issetbool($_POST['ashowcount']),
 				'showrss' => wp_dtree_issetbool($_POST['ashowrss'])
-			);				
+			);					
 			$catoptions = array(
+				'opento' => $_POST['copento'],
 				'isdisabled' => wp_dtree_issetbool($_POST['cat_isdisabled']),
 				'truncate' => $_POST['cattruncate'],
 				'sortby' => $_POST['csortby'],				
@@ -524,6 +534,7 @@
 				'showrss' => wp_dtree_issetbool($_POST['showrss'])
 			);			
 			$pgeoptions = array(
+				'opento' => $_POST['popento'],
 				'isdisabled' => wp_dtree_issetbool($_POST['pge_isdisabled']),
 				'truncate' => $_POST['pgetruncate'],
 				'sortby' => $_POST['psortby'],
@@ -555,7 +566,8 @@
 			);
 			$genoptions = array(				
 				'openlink' => __($_POST['openlink']),
-				'closelink' => __($_POST['closelink']),				
+				'closelink' => __($_POST['closelink']),
+				'enable_preview' => wp_dtree_issetbool($_POST['enable_preview']),				
 				'version' => wp_dtree_get_version()							
 			);	
 			$wpdtreeopt = array(
@@ -584,14 +596,18 @@
 			update_option('wp_dtree_options', $wpdtreeopt);
 			echo '<div id="message" class="updated fade"><p>';
 			echo '<font color="black">'.__('WP-dTree settings updated...').'</font><br />';
-			if($wpdtreeopt['arcopt']['isdisabled']){ wp_dtree_unregister_widget('arc'); echo '<font color="black">'.__('The archive tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($wpdtreeopt['catopt']['isdisabled']){ wp_dtree_unregister_widget('cat'); echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($wpdtreeopt['lnkopt']['isdisabled']){ wp_dtree_unregister_widget('lnk'); echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
-			if($wpdtreeopt['pgeopt']['isdisabled']){ wp_dtree_unregister_widget('pge'); echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
+			if($wpdtreeopt['arcopt']['isdisabled']){ /*wp_dtree_unregister_widget('arc');*/ echo '<font color="black">'.__('The archive tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['catopt']['isdisabled']){ /*wp_dtree_unregister_widget('cat');*/ echo '<font color="black">'.__('The category tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['lnkopt']['isdisabled']){ /*wp_dtree_unregister_widget('lnk');*/ echo '<font color="black">'.__('The link tree is ').'<font color="orange">disabled.</font></font><br />';}
+			if($wpdtreeopt['pgeopt']['isdisabled']){ /*wp_dtree_unregister_widget('pge');*/ echo '<font color="black">'.__('The page tree is ').'<font color="orange">disabled.</font></font><br />';}			
 			if(!$wpdtreeopt['effopt']['effon']){ echo '<font color="black">'.__('Scriptaculous Effects are ').'<font color="orange">disabled...</font></font><br />';}
 			echo '</p></div>';			
-			wp_dtree_update_cache(); //update cache when we edit plugin settings.			
+			wp_dtree_update_cache(); //update cache when we edit plugin settings.						
 		}
+		if($wpdtreeopt['genopt']['enable_preview']){
+			wp_dtree_load_javascripts(); //add scriptacolous
+			wp_dtree_add2head(); //add the dtree script so we can preview the tree
+		}		
 		$alt = true;
 	?>
 	
@@ -601,24 +617,24 @@
 		<table class="optiontable">		
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
 				<td></td>
-				<td><strong>Archive</strong></td>
-				<td><strong>Category</strong></td>
-				<td><strong>Page</strong></td>
-				<td><strong>Link</strong></td>
+				<th><strong>Archives</strong></th>
+				<th><strong>Categories</strong></th>
+				<th><strong>Pages</strong></th>
+				<th><strong>Links</strong></th>				
 			</tr>
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
 				<td>Disable tree<font color='orange'>*</font></td>
 				<td><input type="checkbox" name="arc_isdisabled" value="1" <?php if($wpdtreeopt['arcopt']['isdisabled']){ echo "checked";} ?> /></td>
 				<td><input type="checkbox" name="cat_isdisabled" value="1" <?php if($wpdtreeopt['catopt']['isdisabled']){ echo "checked";} ?> /></td>				
 				<td><input type="checkbox" name="pge_isdisabled" value="1" <?php if($wpdtreeopt['pgeopt']['isdisabled']){ echo "checked";} ?> /></td>
-				<td><input type="checkbox" name="lnk_isdisabled" value="1" <?php if($wpdtreeopt['lnkopt']['isdisabled']){ echo "checked";} ?> /></td>				
+				<td><input type="checkbox" name="lnk_isdisabled" value="1" <?php if($wpdtreeopt['lnkopt']['isdisabled']){ echo "checked";} ?> /></td>								
 			</tr>	
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
 				<td>Top node name</td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['arcopt']['topnode']; ?>" name="atopnode" size="10" /></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['topnode']; ?>" name="ctopnode" size="10" /></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['topnode']; ?>" name="ptopnode" size="10" /></td>
-				<td><input type="text" value="<?php echo $wpdtreeopt['lnkopt']['topnode']; ?>" name="ltopnode" size="10" /></td>
+				<td><input type="text" value="<?php echo $wpdtreeopt['lnkopt']['topnode']; ?>" name="ltopnode" size="10" /></td>				
 			</tr>		
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>				
 				<td>					
@@ -627,7 +643,7 @@
 				<td><input type="text" value="<?php echo $wpdtreeopt['arcopt']['truncate']; ?>" name="arctruncate" size="5" /></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['truncate']; ?>" name="cattruncate" size="5" /></td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['truncate']; ?>" name="pgetruncate" size="5" /></td>
-				<td><input type="text" value="<?php echo $wpdtreeopt['lnkopt']['truncate']; ?>" name="lnktruncate" size="5" /></td>
+				<td><input type="text" value="<?php echo $wpdtreeopt['lnkopt']['truncate']; ?>" name="lnktruncate" size="5" /></td>				
 			</tr>	
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
 				<td>Exclude IDs<font color='blue'>*</font></td>
@@ -638,6 +654,13 @@
 				</td>
 				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['exclude']; ?>" name="exclude_pages" size="10" /></td>
 				<td></td>
+			</tr>
+			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
+				<td>Force open to<font color='green'>*</font></td>
+				<td><input type="text" value="<?php echo $wpdtreeopt['arcopt']['opento']; ?>" name="aopento" size="15" /></td>
+				<td><input type="text" value="<?php echo $wpdtreeopt['catopt']['opento']; ?>" name="copento" size="15" /></td>
+				<td><input type="text" value="<?php echo $wpdtreeopt['pgeopt']['opento']; ?>" name="popento" size="15" /></td>
+				<td><input type="text" value="<?php echo $wpdtreeopt['lnkopt']['opento']; ?>" name="lopento" size="15" /></td>
 			</tr>
 			<?php echo ($alt = !$alt) ? '<tr class="alternate">' : '<tr>'; ?>
 				<td>Sort by</td>
@@ -799,7 +822,8 @@
 				</select>
 				<label> Sort categories by</label>
 			</td>
-			</tr>				
+			</tr>
+						
 		</table>
 		
 		<table class="optiontable">
@@ -817,37 +841,36 @@
 				</td>				
 			</tr>			
 			<tr>
-			<td colspan="3"><font color='blue'>*</font> Enter the page/post IDs to exclude as a comma-separated list, like so: "1,2,3". The ID can be seen in the URL when you edit your posts/pages.<br>
-							<font color='orange'>*</font> Disable trees you're not using; it is a huge performance gain.</td>
-			</tr>
+				<td colspan="3">			
+					<font color='green'>*</font> Comma-separated list of node titles, IDs <em>or</em> request URLs ('<code>/2007/09/post1/<font color='green'>,</font>/2008/10/post2</code>'). <span style='font-size:xx-small;'>(don't do stupid stuff, like openTo the same parent node twice)</span><br />
+					<font color='green'>*</font> Enter '<font color='green'><code>all</code></font>' to open the entire tree. <br />
+					<font color='blue'>*</font> Enter the page/post IDs to exclude as a comma-separated list, like so: "1,2,3". The ID can be seen in the URL when you edit your posts/pages.<br />							
+					<font color='orange'>*</font> Disable trees you're not using; it is a huge performance gain.
+				</td>
+			</tr>			
 		</table>
+		<span style="text-align:right;"><p><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></span>
 	</div>	
 	<div class="wrap">
 		<h2>Scriptaculous Effects</h2>
-		<table class="optiontable">
-			<tr>
-				<td width="280">
-					<fieldset class="options">					
-						<tr><td>						
-							<select name="efftype">
-								<option value="none"<?php if($wpdtreeopt['effopt']['efftype'] == 'none'){ echo(' selected="selected"');}?>>None (disable)</option>							
-								<option value="blind"<?php if($wpdtreeopt['effopt']['efftype'] == 'blind'){ echo(' selected="selected"');}?>>Default (Blind)</option>
-								<option value="slide"<?php if($wpdtreeopt['effopt']['efftype'] == 'slide'){ echo(' selected="selected"');}?>>Slide</option>
-								<option value="appear"<?php if($wpdtreeopt['effopt']['efftype'] == 'appear'){ echo(' selected="selected"');}?>>Appear</option>
-								<option value="grow"<?php if($wpdtreeopt['effopt']['efftype'] == 'grow'){ echo(' selected="selected"');}?>>Grow</option>
-							</select>
-							<label>Effect type</label>
-						</td><td>
-							<input type="text" value="<?php echo $wpdtreeopt['effopt']['duration']; ?>" name="duration" size="10" />
-							<label>Duration (sec)</label>
-						</td></tr>
-					</fieldset>
-				</td>				
-			</tr>
-			<tr>
-			<td colspan="3"></td>
-			<tr>
+		<table class="optiontable">			
+			<fieldset class="options">					
+				<tr><td>						
+					<select name="efftype">
+						<option value="none"<?php if($wpdtreeopt['effopt']['efftype'] == 'none'){ echo(' selected="selected"');}?>>None (disable)</option>							
+						<option value="blind"<?php if($wpdtreeopt['effopt']['efftype'] == 'blind'){ echo(' selected="selected"');}?>>Default (Blind)</option>
+						<option value="slide"<?php if($wpdtreeopt['effopt']['efftype'] == 'slide'){ echo(' selected="selected"');}?>>Slide</option>
+						<option value="appear"<?php if($wpdtreeopt['effopt']['efftype'] == 'appear'){ echo(' selected="selected"');}?>>Appear</option>
+						<option value="grow"<?php if($wpdtreeopt['effopt']['efftype'] == 'grow'){ echo(' selected="selected"');}?>>Grow</option>
+					</select>
+					<label>Effect type</label>
+				</td><td>
+					<input type="text" value="<?php echo $wpdtreeopt['effopt']['duration']; ?>" name="duration" size="10" />
+					<label>Duration (sec)</label>
+				</td></tr>
+			</fieldset>						
 		</table>
+		<span style="text-align:right;"><p><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></span>
 	</div>
 	<div class="wrap">
 		<h2>CSS Properties</h2>
@@ -903,13 +926,41 @@
 					</fieldset>
 				</td>
 				<td>
-					<p>This area sets the CSS properties for the links that are displayed in your tree.</p>
+					<p>This area sets the CSS properties for your trees.</p>
 				</td>
-			</tr>
-			<tr>
-			<td colspan="3"><p class="submit"><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></td>
-			</tr>
+			</tr>						
 		</table>
+		<span style="text-align:right;"><p><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></span>
+	</div>	
+	<div class="wrap">
+		<h2>Widget preview:</h2>
+		<table class="optiontable" width="100%">
+		<tr>
+			<td><label>Enable widget preview: <input type="checkbox" name="enable_preview" value="1" <?php if($wpdtreeopt['genopt']['enable_preview']){ echo "checked";} ?> /></label</td>			
+		</tr>
+		<?php if($wpdtreeopt['genopt']['enable_preview']) : ?>
+		<tr class="alternate">
+			<th>Archive widget</th>
+			<th>Categories widget</th>
+			<th>Pages widget</th>
+			<th>Links widget</th>
+		</tr>		
+		<tr>
+			<?php $args = array('name'=>'top_sidebar',
+        						'before_widget' => '<li style="list-style-type: none; list-style-image: none>"',
+        						'after_widget' => '</li>',
+						        'before_title' => '<span><strong>',
+						        'after_title' => '</strong></span><br />'
+						        );
+			?>
+			<td style="vertical-align:top;margin-top:0;" width="25%"><?php widget_wp_dtree_get_archives($args);?></td>
+			<td style="vertical-align:top;margin-top:0;" width="25%"><?php widget_wp_dtree_get_categories($args);?></td>
+			<td style="vertical-align:top;margin-top:0;" width="25%"><?php widget_wp_dtree_get_pages($args);?></td>
+			<td style="vertical-align:top;margin-top:0;" width="25%"><?php widget_wp_dtree_get_links($args);?></td>								
+		</tr>	
+		<?php endif; ?>		
+		</table>
+		<span style="text-align:right;"><p><input type="submit" name="submit" value="<?php _e('Update Settings &raquo;') ?>" /></p></span>		
 	</div>
 	</form>
 	<?php

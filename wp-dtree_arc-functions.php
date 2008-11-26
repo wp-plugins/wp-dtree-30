@@ -127,11 +127,12 @@ function wp_dtree_get_archives(){
 	$wp_dtree_cache = wp_dtree_get_table_name();	
 	$wpdtreeopt = get_option('wp_dtree_options');	
 	$arcresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'arc' ORDER BY id");		 	
-	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", arc tree: " . strlen($arcresults) . " chars. -->");
-	if(!strlen($arcresults)){return;}		
- 	echo $arcresults;	
+	$length = strlen($arcresults);
+	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", arc tree: " . $length . " chars. -->");
+	if(!$length){return;}		
+ 	echo $arcresults;	 
  	if($wpdtreeopt['arcopt']['opentosel'] && isset($_SERVER['REQUEST_URI'])){
-		echo wp_dtree_open_tree_to('arc', $arcresults);
+		echo wp_dtree_open_tree_to($_SERVER['REQUEST_URI'],'arc', $arcresults);
  	}	
 	echo "//-->\n";
 	echo "</script>\n";
