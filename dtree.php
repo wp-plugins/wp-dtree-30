@@ -42,7 +42,7 @@ WP-wp_dTree 3.2 (ulfben 2007-10-08)
 /*--------------------------------------------------|
 | wp_dTree 2.05 | www.destroydrop.com/javascript/tree/ |
 |---------------------------------------------------|
-| Copyright (c) 2002-2003 Geir Landr�               |
+| Copyright (c) 2002-2003 Geir Landr?               |
 |                                                   |
 | This script can be used freely as long as all     |
 | copyright messages are intact.                    |
@@ -177,7 +177,7 @@ wp_dTree.prototype.truncate = function(str, length){
  };
  
 wp_dTree.prototype.htmlEntities = function(str) {
-	str=str.replace(/\&/g,'\&amp;');
+	//str=str.replace(/\&/g,'\&amp;');
 	str=str.replace(/\"/g,'\&quot;');
 	str=str.replace(/\</g,'\&lt;');
 	str=str.replace(/\>/g,'\&gt;'); 		
