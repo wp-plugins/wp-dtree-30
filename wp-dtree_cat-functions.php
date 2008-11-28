@@ -111,8 +111,7 @@ function wp_dtree_get_categories(){
 		return;
 	}
 	global $wpdb;
-	$wp_dtree_cache = wp_dtree_get_table_name();		
-	$wpdtreeopt = get_option('wp_dtree_options');
+	$wp_dtree_cache = wp_dtree_get_table_name();			
 	$catresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'cat' ORDER BY id");	
 	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", cat tree: " . strlen($catresults) . " chars. -->");	
 	if(!strlen($catresults)){return;}

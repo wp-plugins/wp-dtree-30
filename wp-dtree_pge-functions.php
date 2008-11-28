@@ -38,8 +38,7 @@ function wp_dtree_get_pages(){
 		return;
 	}
 	global $wpdb;
-	$wp_dtree_cache = wp_dtree_get_table_name(); 
-	$wpdtreeopt = get_option('wp_dtree_options');  		
+	$wp_dtree_cache = wp_dtree_get_table_name(); 	
 	$pgeresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'pge' ORDER BY id");	
 	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", pge tree: " . strlen($pgeresults) . " chars. -->");
 	if(!strlen($pgeresults)){return;}	

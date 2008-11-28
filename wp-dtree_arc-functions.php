@@ -124,8 +124,7 @@ function wp_dtree_get_archives(){
 		return;
 	}	
 	global $wpdb;
-	$wp_dtree_cache = wp_dtree_get_table_name();	
-	$wpdtreeopt = get_option('wp_dtree_options');	
+	$wp_dtree_cache = wp_dtree_get_table_name();		
 	$arcresults = $wpdb->get_var("SELECT content FROM ". $wp_dtree_cache . " WHERE treetype = 'arc' ORDER BY id");		 	
 	$length = strlen($arcresults);
 	print("\n<!-- WP-dTree ". wp_dtree_get_version() .", arc tree: " . $length . " chars. -->");

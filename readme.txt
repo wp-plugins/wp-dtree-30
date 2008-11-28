@@ -65,12 +65,9 @@ Displaying archives
 	<h2>Archives</h2>
 	<ul>
 		<?php 	
-			if (function_exists('wp_dtree_get_archives'))		
-			{				
+			if (function_exists('wp_dtree_get_archives')){				
 		   	    wp_dtree_get_archives();
-			}
-			else
-			{
+			}else{
 				wp_get_archives('type=monthly'); 
 			} 
 		?>				
@@ -83,12 +80,9 @@ Displaying categories:
 	<h2>Categories</h2>
 		<ul>
 			<?php 
-				if (function_exists('wp_dtree_get_categories')) 
-				{
+				if (function_exists('wp_dtree_get_categories')){
 					wp_dtree_get_categories();
-				}
-				else
-				{
+				}else{
 					wp_list_categories('show_count=1');
 				} 
 			?>				
@@ -101,12 +95,9 @@ Displaying pages:
 	<h2>Pages</h2>
 		<ul>
 			<?php 
-				if (function_exists('wp_dtree_get_pages')) 
-				{
+				if (function_exists('wp_dtree_get_pages')){
 					wp_dtree_get_pages();
-				}
-				else
-				{
+				}else{
 					wp_list_pages();				
 				} 
 			?>				
@@ -186,8 +177,20 @@ Displaying links:
 	
 == Frequently Asked Questions ==
 
-= WP-dTree looks horrible on my blog and I hate you for it! = 
-If you think the tree looks wierd or broken, run the plugin in the default WP theme (Kubric) to make sure it's not your theme that breaks it. If you do find a genuine problem with my code or CSS, pop me a mail so I can update the plugin.
+= How do I ask for help? =
+1. Search [the forums](http://wordpress.org/tags/wp-dtree-30) and post in a relevant thread if one exists.
+1. Always tag your post with `WP-dTree 3.0`
+1. State your problem succintly, *provide a link*!
+1. If it broke after you changed a setting, let us know this!
+1. If it's a *style* problem, read on...
+
+= Why does WP-dTree look horrible on my blog? = 
+If the tree looks wierd or broken, run the plugin in the default WP theme (Kubric) to make sure it's not *your* theme that breaks it. If you do find a genuine problem with *my* code or CSS, pop me a mail so I can update the plugin.
+
+= Why does it dTree timeout on Internet Explorer? =
+This is not an error with WP-dTree but an inherent limitation with the IE Javascript engine. dTree does a lot of string juggling, and a large-ish amount of data *will* take a while to get through. 
+
+There is no hard limit, but my experience suggest that IE chokes around 110-120K (WP-dTree prints the size in your blog source). In practice this is rarely a problem, but if you hit the limits it's probably with a category tree and `list posts` on. Keeping posts in single categories (use tags!) will help keep your category tree slim. 
 
 = Can I help you with anything? = 
 Yes please!
