@@ -59,7 +59,7 @@ function wp_dtree_build_node($treetype, $nodedata){
 	
 	if($wpdtreeopt[$opttype]['showcount']){				
 		$count = wp_dtree_get_count($nodedata, $treetype);		
-		if($count != ''){		
+		if(is_numeric($count)){		
 			$count = ",'".$count."'";
 		}
 	} 
@@ -124,7 +124,7 @@ function wp_dtree_get_count($nodedata, $treetype){
 			$count += $child->category_count;
 		}				
 	} else if($treetype == 'arc'){
-		$count .= $nodedata['post_count'];	
+		$count = $nodedata['post_count'];	
 	}
 	return $count; 
 }
