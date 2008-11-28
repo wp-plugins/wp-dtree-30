@@ -158,7 +158,7 @@ wp_dTree.prototype.a = function(id, pid, title, path, link_target, count, rsspat
 	if(typeof(rsspath) != "undefined" && rsspath != ""){
 		rsspath = "<a class='dtreerss' style='padding-right:15px' href='" + this._url + rsspath + "'>&nbsp;</a>";	
 	}	
-	name = this.htmlEntities(this.truncate(title, this._truncate));	
+	name = this.truncate(title, this._truncate);	
 	path += "";	//remove this and the next line breaks down for some reason.
 	var url = path; //default value.
   	if(!path.indexOf('http://') == 0){		//if the path doesn't start with "http://" (eg. home path)

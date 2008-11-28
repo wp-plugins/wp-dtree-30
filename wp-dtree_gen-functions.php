@@ -21,12 +21,12 @@ function wp_dtree_build_tree($results, $treetype){
 	
 	$t = $treetype{0}; //get the first char of the treetype.		
 	$tree .= "\n<span id=\"dtree" . $treetype . "wrapper\">\n";
-	if( $oclink ){
+	if($oclink){
 		$tree .= "<span class=\"oclink\"><a href=\"javascript: " . $t . ".openAll();\">" . $openlink . "</a> | <a href=\"javascript: " . $t . ".closeAll();\">" . $closelink . "</a></span>\n";			
 	}
 	$tree .= "<script type=\"text/javascript\">\n";
 	$tree .= "<!--\n"; //closed in the "gettreetype" functions, in case we need to add to the JS.	
-	if( $results ){
+	if($results){
 		$tree .= "var " . $t . " = new wp_dTree('" . $t . "', '".$blogpath."','".$truncate."');\n";
 		$tree .= $t . ".config.useLines=" . $useLines . ";\n";
 		$tree .= $t . ".config.useIcons=" . $useIcons . ";\n";
@@ -73,16 +73,16 @@ function wp_dtree_build_node($treetype, $nodedata){
 		$target = ",'".$nodedata['target']."'"; //only keep a target attribute if we're building a link tree.
 	}	
 	
-	if(($count != "" || $rsspath != "") && $target == ""){
+	if(($count != '' || $rsspath != '') && $target == ''){
 		$target = ",''"; //keep track of empty parameters so we don't break the JS. 
 	}	
-	if($rsspath != "" && $count == ""){
+	if($rsspath != '' && $count == ''){
 		$count = ",''"; 
 	}	
 	$node = 	 $t.".a("
 				.$nodedata['id'].","
 				.$nodedata['pid'].","
-				."'".addslashes(strip_tags($nodedata['title']))."',"
+				."'".addslashes($nodedata['title'])."'," //$nodedata['title']) htmlspecialchars($nodedata['title']) str_replace('\'', '&#039;', htmlspecialchars($nodedata['title']))
 				."'".$nodedata['url']."'"
 				.$target 
 				.$count 
@@ -95,13 +95,13 @@ function wp_dtree_build_node($treetype, $nodedata){
 function wp_dtree_get_rss($result, $treetype){	
 	$idtranspose = wp_dtree_get_id_transpose();	
 	$rsslink = '';
-	$feedtype = "rss2";		
+	$feedtype = 'rss2';		
 	if($result['id'] > $idtranspose[$treetype] && $result['id'] < $idtranspose[$treetype.'post'] ){					 		
 		if(get_option('permalink_structure') == '' ){
-			$rsslink = "?feed=".$feedtype."&".$treetype."=".($result['id']-$idtranspose[$treetype]);	 		
+			$rsslink = '?feed='.$feedtype.'&'.$treetype.'='.($result['id']-$idtranspose[$treetype]);	 		
 		} else{				
-			$path = str_replace(trailingslashit(get_bloginfo('url')), "", $result['url']);			
-			$rsslink = trailingslashit($path)."feed";			
+			$path = str_replace(trailingslashit(get_bloginfo('url')), '', $result['url']);			
+			$rsslink = trailingslashit($path).'feed';			
 		}		
 	}
 	return $rsslink;
@@ -116,18 +116,8 @@ function wp_dtree_get_count($nodedata, $treetype){
 		$catobj = get_category($catid);
 		$count = $catobj->category_count;
 		$children = get_categories( //a roundabout way to get the padded count of this category...
-			array(
-				'type' => 'post', 
-				'child_of' => $catid, 
-				'orderby' => 'ID', 
-				'order' => 'DESC', 
-				'hide_empty' => false, 
-				'include_last_update_time' => false,
-				'hierarchical' => 1, 
-				'exclude' => '', 
-				'include' => '', 
-				'number' => '', 
-				'pad_counts' => 1
+			array('type' => 'post', 'child_of' => $catid, 'orderby' => 'ID', 'order' => 'DESC', 'hide_empty' => false, 'include_last_update_time' => false,
+				'hierarchical' => 1, 'exclude' => '', 'include' => '', 'number' => '', 'pad_counts' => 1
 			)
 		);										
 		foreach($children as $child){
@@ -155,8 +145,9 @@ function wp_dtree_force_open_to($opento, $treetype, $treestring){
 		$requests = explode(',', $opento);		
 		foreach($requests as $request){
 			$result .= wp_dtree_open_tree_to($request, $treetype, $treestring);
-		}					
-	}
+		}
+		$result .= "\n/*WP-dTree: force open to: ".$opento."*/\n";					
+	}	
 	return $result;				
 }
 
@@ -180,10 +171,12 @@ function wp_dtree_open_tree_to($request, $treetype, $treestring){
 		if(substr_count($string, $path)){ //we know that this line holds the node id of our request.
 			$params = explode(',', $string); //split it at parameter seperators 
 			$number = trim(str_replace("$t.a(", '', $params[0])); //remove the leading c.a( to find the number.		
-			return "$t.openTo('$number', true);\n";						
+			if(is_numeric($number)){			
+				return "$t.openTo('$number', true);\n";
+			}						
 		}
 	}	
-	return '//WP-dTree: request was '.$path;	
+	return "\n/*WP-dTree: request was ".$path."*/\n";	
 }
 
 ?>
