@@ -187,21 +187,10 @@ Displaying links:
 = Why does WP-dTree look horrible on my blog? = 
 If the tree looks wierd or broken, run the plugin in the default WP theme (Kubric) to make sure it's not *your* theme that breaks it. If you do find a genuine problem with *my* code or CSS, pop me a mail so I can update the plugin.
 
-= Why does it dTree timeout on Internet Explorer? =
+= Why does dTree timeout on Internet Explorer? =
 This is not an error with WP-dTree but an inherent limitation with the IE Javascript engine. dTree does a lot of string juggling, and a large-ish amount of data *will* take a while to get through. 
 
 There is no hard limit, but my experience suggest that IE chokes around 110-120K (WP-dTree prints the size in your blog source). In practice this is rarely a problem, but if you hit the limits it's probably with a category tree and `list posts` on. Keeping posts in single categories (use tags!) will help keep your category tree slim. 
-
-= Can I help you with anything? = 
-Yes please!
-
-We desperately need a proper overhaul of the admin interface. It's not standards compliant and it looks terrible in WP 2.7. If you (unlike me...) are a proper front-end developer - feel free to send me a patch.
-
-Same goes for CSS and styling - I really need someone to have a look at it and make it *proper*. Compliant, fail safe, robust, sane.
-
-For coders, I'd like help on optimizing what hooks WP-dTree uses and *how* they're used. I see a lot of potential in the "new" variable hooks, but they're poorly documented. The plugin should *always* fire when (relevant) content is edited, but we should *only* run the methods necessary. We shouldn't re-generate Links, Pages and Archive-trees when the user adds a new *category* to the database.
-
-Finally - if you've got more money than time - I always appreciate a [(used) book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17).
  
 = Why should I disable unused trees? = 
 Even if you never display the tree, WP-dTree will create and store it every time you add or edit content on your blog. By disabling unused trees you can save your server from going through that effort. If you've got a large(ish) number of posts, this will speed up posting and editing quite noticeably.
@@ -215,7 +204,18 @@ Version 3.3 brought optimizations to [the dtree javascript](http://www.destroydr
 
 = Can I change the images used by WP-dTree? =
 
-The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same, or you'll break the script.
+The images are all stored in the 'wp-dtree-30/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same, or you'll break the script.
+
+= Can I help you with anything? = 
+Yes please!
+
+We desperately need a proper overhaul of the admin interface. It's not standards compliant and it looks terrible in WP 2.7. If you (unlike me...) are a proper front-end developer - feel free to send me a patch.
+
+Same goes for CSS and styling - I really need someone to have a look at it and make it *proper*. Compliant, fail safe, robust, sane.
+
+For coders, I'd like help on optimizing what hooks WP-dTree uses and *how* they're used. I see a lot of potential in the "new" variable hooks, but they're poorly documented. The plugin should *always* fire when (relevant) content is edited, but we should *only* run the methods necessary. We shouldn't re-generate Links, Pages and Archive-trees when the user adds a new *category* to the database.
+
+Finally - if you've got more money than time - I always appreciate a [(used) book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17).
 
 == Screenshots ==
 
