@@ -298,7 +298,7 @@
 			$this_plugin = plugin_basename(__FILE__);
 		}	
 		if($file == $this_plugin){				
-			$settings_link = $settings_link = '<a href="options-general.php?page=wp-dtree.php">' . __('Settings') . '</a>';
+			$settings_link = $settings_link = '<a href="options-general.php?page='.$this_plugin.'">' . __('Settings') . '</a>';
 			array_unshift( $links, $settings_link );	
 		}
 		return $links;		
@@ -306,7 +306,7 @@
 								
 	function wp_dtree_add_option_page(){		
 		if(function_exists('add_options_page')){
-			 add_options_page('WP-dTree Settings', 'WP-dTree', 8, basename(__FILE__), 'wp_dtree_option_page');			
+			 add_options_page('WP-dTree Settings', 'WP-dTree', 8, plugin_basename(__FILE__), 'wp_dtree_option_page');			
 			 add_filter('plugin_action_links', 'wp_dtree_add_plugin_actions', 10, 2 );
 		}
 	}
