@@ -185,12 +185,17 @@ Displaying links:
 1. If it's a *style* problem, read on...
 
 = Why does WP-dTree look horrible on my blog? = 
-If the tree looks wierd or broken, run the plugin in the default WP theme (Kubric) to make sure it's not *your* theme that breaks it. If you do find a genuine problem with *my* code or CSS, follow the steps above so I can update the plugin.
+99% of the time, it's *your theme* that breaks the layout. Run the default WP theme (Kubric) to quickly confirm this. Then follow these simple steps (in your theme) to find the cause.
+
+1. Get the [Web Developer Plugin](https://addons.mozilla.org/firefox/addon/60) for firefox.
+1. Right-click anywhere on your blog, select `Web Developer -> CSS -> Edit CSS` and fiddle around with anything related to the sidebar, images, lists or links. Changes are applied in realtime so you'll know when you've struck gold.
+
+If the fix is something that *can* and *should* be supplied by WP-dTree itself, please *post the fix* on the forums.
 
 = Why does dTree timeout on Internet Explorer? =
-This is not an error with WP-dTree but an inherent limitation with the IE Javascript engine. dTree does a lot of string juggling, and a large-ish amount of data *will* take a while to get through. 
+It's an inherent limitation with the IE Javascript engine. dTree does a lot of string juggling, and any large-ish amount of data *will* take a while to get through. 
 
-There is no hard limit, but my experience suggest that IE chokes around 110-120K (WP-dTree prints its size in your blog source). In practice this is rarely a problem, but if you hit the limits it's probably with a category tree and `list posts` on. Keeping posts in single categories (use tags!) will help keep your category tree slim. 
+There is no hard limit, but my experience suggest that IE chokes around 110-120K (WP-dTree prints its size in your blog source). In practice this is rarely a problem, but if you hit the limits it's probably with a category tree and `list posts` on. Keep each post in *a single category* (use tags instead!) to keep your category tree slim. 
  
 = Why should I disable unused trees? = 
 Even if you never display the tree, WP-dTree will create and store it every time you add or edit content on your blog. By disabling unused trees you can save your server from going through that effort. If you've got a large(ish) number of posts, this will speed up posting and editing quite noticeably.
