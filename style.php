@@ -98,6 +98,7 @@ if ( isset($_REQUEST['rssgfxh']) ) {
 	border: 0px;
 	vertical-align: middle;		
 	float: none; 
+	display:inline;
 	margin: 0 0px 0px 0;
 	padding: 0px !important;
 	line-height: <?php echo $fontsize; ?>px !important;
