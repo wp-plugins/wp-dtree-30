@@ -115,6 +115,8 @@ function wp_dtree_get_count($nodedata, $treetype){
 		$catid = $nodedata['id']-$idtranspose['cat']; //DONT put this calculation in the parameter list. http://wordpress.org/support/topic/148638?replies=3
 		$catobj = get_category($catid);
 		$count = $catobj->category_count;
+		/*
+		if category has no posts of it own, count the childrens posts
 		$children = get_categories( //a roundabout way to get the padded count of this category...
 			array('type' => 'post', 'child_of' => $catid, 'orderby' => 'ID', 'order' => 'DESC', 'hide_empty' => false, 'include_last_update_time' => false,
 				'hierarchical' => 1, 'exclude' => '', 'include' => '', 'number' => '', 'pad_counts' => 1
@@ -122,7 +124,7 @@ function wp_dtree_get_count($nodedata, $treetype){
 		);										
 		foreach($children as $child){
 			$count += $child->category_count;
-		}				
+		}	*/			
 	} else if($treetype == 'arc'){
 		$count = $nodedata['post_count'];	
 	}
