@@ -12,6 +12,27 @@ Thank you!
 
 Book wishlist: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N 
 
+TODO:
+lägg till cdata-kommentar
+Show error message if table is missing
+Cache finished dom-manipulation and don't do any JS construction client side?
+Allow bypassing cache. Helps with translations. Allows javascript fallback
+no-Javascript friendly tree (href="nojs.php", print safe tree/archive, save cookie for future reference)
+Måste olika träds noder ha olika dispose? Om inte - kan du fråga wordpress om hur många entries vi har och dynamiskt välja
+en dispose för trädet? Ifs kan vi korta ner alla femsiffriga nummer.
+
+Home-link node (set URL)
+
+
+Find out how to use the new variable hooks, update the hooks used.
+Make the caching behaviour more obvious OR more transparent. 
+ 	- prominent button for "refresh cache?
+	- inline documentation? 
+	- or find every possibly related WP hook to run cache updates on. 
+
+Filter category tree content, so multi-cat posts are included only once. (see wp-dtree_cat-functions.php -> $allowDupes)
+Display information message on first run. (tell user to activate widgets, and where the settings are)
+
 
 NEW:
 * Added "force open to"
@@ -42,17 +63,6 @@ REQUESTS (* == done):
 * Custom sort order for archives: http://wordpress.org/support/topic/202502
 * Custom sort order for posts in categories: http://wordpress.org/support/topic/205163
 * I18N: http://wordpress.org/support/topic/213147
-
-
-TODO:
-Find out how to use the new variable hooks, update the hooks used.
-Make the caching behaviour more obvious OR more transparent. 
- 	- prominent button for "refresh cache?
-	- inline documentation? 
-	- or find every possibly related WP hook to run cache updates on. 
-
-Filter category tree content, so multi-cat posts are included only once. (see wp-dtree_cat-functions.php -> $allowDupes)
-Display information message on first run. (tell user to activate widgets, and where the settings are)
 
 
 KNOWN ISSUES:

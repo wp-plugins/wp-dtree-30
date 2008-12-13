@@ -167,6 +167,7 @@ function wp_dtree_open_tree_to($request, $treetype, $treestring){
 			$path = ltrim(str_replace($segments[0], '', $path), '/');
 		}		
 	}
+	if(empty($path)){return '';} //fix for issue: http://wordpress.org/support/topic/206632?replies=3	
 	$t = $treetype{0};	//first letter, from 'arc', 'cat', 'pge' or 'lnk'	
 	$strings = explode(';', $treestring); //lots of cat.a('','','',''); statements
 	foreach($strings as $string){
