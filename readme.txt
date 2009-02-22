@@ -115,6 +115,7 @@ Displaying links:
 			}else{
 				wp_list_bookmarks(); 
 			}
+?>
 		</ul>
 	</li> 
 	
