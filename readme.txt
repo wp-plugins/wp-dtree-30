@@ -4,7 +4,7 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
 Requires at least: 3.0.1
 Tested up to: 3.0.1
-Stable tag: trunk
+Stable tag: 4.0
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
 
