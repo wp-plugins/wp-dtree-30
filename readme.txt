@@ -6,17 +6,13 @@ Requires at least: 3.0.1
 Tested up to: 3.0.1
 Stable tag: trunk
 
-<a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives-, categories-, pages- and link lists.
+<a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
 
 == Description ==
 
-This plugin generates [navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the WordPress standard archives-, categories-, pages- and link lists. It provides you with widgets so you can use [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) without editing any code. But it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) if you want to get your hands dirty.
-
-First: to all of you who used previous versions of WP-dTree - *sorry for keeping you waiting!*
+This plugin generates [navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the WordPress standard archives, categories, pages and link lists. It provides you with widgets so you can use [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) without editing any code. But it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) if you want to get your hands dirty.
 
 WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3.x API. The overhaul has made WP-dTree significantly more sane and robust; handling "foreign" characters gracefully, being more in tune with your theme, playing nice with translators and offering proper fallbacks for those who surf without JavaScript.
-
-There is so much new functionality and so many new features that I consider WP-dTree 4.0 to be an entirely new plugin. This means I've had very little formal testing done (see `known issues` below). You might want to hang back for a week and let the early adopters work out the kinks with me.
 
 For those brave enough to try a .0 release - please explore and play with all the settings. And [let me know](http://wordpress.org/tags/wp-dtree-30) when something breaks (provide links!).
 
@@ -82,10 +78,11 @@ If you want the tree returned instead of printed, make sure you send in `'echo=0
 
 You can get default `$args`-arrays from these functions:
 
-* wpdt_get_archives_defaults(); //returns associative arrays with all default settings
-* wpdt_get_categories_defaults(); 
-* wpdt_get_pages_defaults();
-* wpdt_get_links_defaults();
+`//returns assoc. arrays with all default settings`
+* `wpdt_get_archives_defaults();` 
+* `wpdt_get_categories_defaults();` 
+* `wpdt_get_pages_defaults();`
+* `wpdt_get_links_defaults();`
 
 Use them to find what arguments you have to play with. Or cheat and read [wpdt_get_defaults](http://pastebin.com/Szsyqtnu).
 
