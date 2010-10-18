@@ -1,20 +1,138 @@
 === WP-dTree ===
 Contributors: ulfben
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
-Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
-Requires at least: 2.3
-Tested up to: 2.7-beta3
-Stable tag: 3.5
+Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
+Requires at least: 3.0.1
+Tested up to: 3.0.1
+Stable tag: trunk
 
-Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
+<a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives-, categories-, pages- and link lists.
 
 == Description ==
 
-This plugin can generate [navigation trees](http://www.destroydrop.com/javascripts/tree/) for your posts, pages, links and categories. It uses Scriptaculous for awesome display effects.
+This plugin generates [navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the WordPress standard archives-, categories-, pages- and link lists. It provides you with widgets so you can use [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) without editing any code. But it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) if you want to get your hands dirty.
 
-WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin (as of version 3.x). 
+First: to all of you who used previous versions of WP-dTree - *sorry for keeping you waiting!*
 
-The fork is focused on [performance improvements](http://wordpress.org/extend/plugins/wp-dtree-30/faq/), but packs a lot of new features and modernizations to boot; WP 2.7 compability, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more.
+WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3.x API. The overhaul has made WP-dTree significantly more sane and robust; handling "foreign" characters gracefully, being more in tune with your theme, playing nice with translators and offering proper fallbacks for those who surf without JavaScript.
+
+There is so much new functionality and so many new features that I consider WP-dTree 4.0 to be an entirely new plugin. This means I've had very little formal testing done (see `known issues` below). You might want to hang back for a week and let the early adopters work out the kinks with me.
+
+For those brave enough to try a .0 release - please explore and play with all the settings. And [let me know](http://wordpress.org/tags/wp-dtree-30) when something breaks (provide links!).
+
+If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please help me out by [signing up with DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk)! It's a cross-plattform application to sync your files online and across computers. 2GB account is *free* and my refferal earns you a 250MB bonus! 
+
+Or if you want to spend money, feel free to [send me a book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x), like *these* wonderful people did:
+
+* Bruce Hampton, USA
+* Shu Mei Chen, Taiwan
+* Kai Kniepkamp, Germany
+
+Thank you all, *very* much!
+
+**Changes in v4.0** (2010-10-17)
+
+* Completely recoded the plugin from the ground up for a much needed code overhaul.
+* Added support for multiple tree instances
+* Added support for per-tree settings (incl. caching)
+* Added translation support
+* Added (optional) noscript-fallback for JS-disabled visitors.
+* Added setting for type of JS-hiding (XML, HTML or none) to ease page validation
+* Added support for links title attribute and category descriptions
+* Replaced Scriptacolous with jQuery
+* Made animation JS optional (not even included on page if disabled)
+* Minified JS and CSS (9KB vs. 16KB!)
+* Made truncation optional (titles can be as long as you want!)
+* Cache is created once when blog is visited, instead of everytime you add content.
+* Removed support for WP <2.3	
+* Removed all CSS-options from admin area (style your theme instead)
+* Removed animation effects
+* Removed all non-essential CSS-styling (inhering from your theme instead)
+* **all previous settings will be lost!** Write them down before upgrading.
+
+**Known issues:** 
+
+* Only tested in Chrome with TwentyTen (default theme). 
+* opentoselection doesn't handle paging
+
+[Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/changelog/).
+
+== Installation ==
+
+**Note:** You will lose all your settings when upgrading from 3.5 to 4.0.
+
+1. If upgrading: *disable the old version first*!
+1. Transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
+1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Go to the 'WP-dTree' under 'Settings' to adjust your preferences
+1. Go to 'Presentation' -> 'Widgets' and drag-n-drop the widgets to the relevant section of your sidebar(s)
+
+To style the widgets, please read the [FAQ](http://wordpress.org/extend/plugins/wp-dtree-30/faq/).
+
+For developers, WP-dTree exposes the following [template tag functions](http://codex.wordpress.org/Template_Tags):
+
+* `wpdt_list_archives();` 			
+* `wpdt_list_categories();` 	
+* `wpdt_list_pages();`
+* `wpdt_list_links();`	
+* `wpdt_list_bookmarks();   //same as wpdt_list_links`
+
+They all take an optional `$args` - a [query-string or associative array](http://codex.wordpress.org/How_to_Pass_Tag_Parameters#Tags_with_query-string-style_parameters).
+If you want the tree returned instead of printed, make sure you send in `'echo=0'`.
+
+You can get default `$args`-arrays from these functions:
+
+* wpdt_get_archives_defaults(); //returns associative arrays with all default settings
+* wpdt_get_categories_defaults(); 
+* wpdt_get_pages_defaults();
+* wpdt_get_links_defaults();
+
+Use them to find what arguments you have to play with. Or cheat and read [wpdt_get_defaults](http://pastebin.com/Szsyqtnu).
+
+**Here's an example:**
+
+`	<div class="dtree">			
+		<?php 	
+			if(function_exists('wpdt_list_archives')){								
+		   	    wpdt_list_archives('type=yearly&useicons=1');
+			}			
+		?>					
+	</div>`
+
+== Upgrade Notice ==
+
+= 4.0 =
+
+Complete rewrite! Read the docs before upgrading! 
+
+== Changelog == 
+
+(Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
+
+**Changes in v4.0** (2010-10-17)
+
+* Completely recoded the plugin from the ground up for a much needed code overhaul.
+* Added support for multiple tree instances
+* Added support for per-tree settings (incl. caching)
+* Added translation support
+* Added (optional) noscript-fallback for JS-disabled visitors.
+* Added setting for type of JS-hiding (XML, HTML or none) to ease page validation
+* Added support for links title attribute and category descriptions
+* Replaced Scriptacolous with jQuery
+* Made animation JS optional (not even included on page if disabled)
+* Minified JS and CSS (9KB vs. 16KB!)
+* Made truncation optional (titles can be as long as you want!)
+* Cache is created once when blog is visited, instead of everytime you add content.
+* Removed support for WP <2.3	
+* Removed all CSS-options from admin area (style your theme instead)
+* Removed animation effects
+* Removed all non-essential CSS-styling (inhering from your theme instead)
+* **all previous settings will be lost!** Write them down before upgrading.
+
+**Known issues:** 
+
+* Only tested in Chrome with TwentyTen (default theme). 
+* opentoselection doesn't handle paging
 
 **Changes in v3.5** (2008-11-26)
 
@@ -38,90 +156,6 @@ The fork is focused on [performance improvements](http://wordpress.org/extend/pl
 * Misc: improved admin screen feng-shui.
 * Misc: Moved config screen to "settings"-section of admin
 * Misc: CSS should be a bit more robust now
-
-[Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
-
-If you appreciate the work I put into WP-dTree and want to motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x), like *these* wonderful people did:
-
-* Bruce Hampton, USA
-* Shu Mei Chen, Taiwan
-* Kai Kniepkamp, Germany
-
-Thank you all, *very* much!
-
-== Installation ==
-
-1. If upgrading: disable the old version first
-1. Transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Go to the 'WP-dTree' under 'Settings' to adjust your preferences
-1. Go to 'Presentation' -> 'Widgets' and drag-n-drop the widgets to the relevant section of your sidebar
-
-If you think that widgets are lame: edit the template file that you want the archives to show on:
-
-Displaying archives
----------
-	<li>
-	<h2>Archives</h2>
-	<ul>
-		<?php 	
-			if (function_exists('wp_dtree_get_archives')){				
-		   	    wp_dtree_get_archives();
-			}else{
-				wp_get_archives('type=monthly'); 
-			} 
-		?>				
-	</ul>
-	</li>
-
-Displaying categories:
----------
-	<li>
-	<h2>Categories</h2>
-		<ul>
-			<?php 
-				if (function_exists('wp_dtree_get_categories')){
-					wp_dtree_get_categories();
-				}else{
-					wp_list_categories('show_count=1');
-				} 
-			?>				
-		</ul>
-	</li>
-
-Displaying pages:
----------
-	<li>
-	<h2>Pages</h2>
-		<ul>
-			<?php 
-				if (function_exists('wp_dtree_get_pages')){
-					wp_dtree_get_pages();
-				}else{
-					wp_list_pages();				
-				} 
-			?>				
-		</ul>
-	</li>
-	
-Displaying links:
----------
-	<li>
-	<h2>Links</h2>
-		<ul>
-			<?php 
- 			if(function_exists('wp_dtree_get_links')){				
-			    wp_dtree_get_links();
-			}else{
-				wp_list_bookmarks(); 
-			}
-?>
-		</ul>
-	</li> 
-	
-== Changelog == 
-
-(Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
 
 **Changes in v3.4.2** (2008-10-19)
 
@@ -178,60 +212,38 @@ Displaying links:
 	
 == Frequently Asked Questions ==
 
-= How do I ask for help? =
-1. Search [the forums](http://wordpress.org/tags/wp-dtree-30) and post in a relevant thread if one exists.
-1. Always tag your post with `WP-dTree 3.0`
-1. State your problem succintly, *provide a link*!
-1. If it broke after you changed a setting, let us know this!
-1. If it's a *style* problem, read on...
+= WP-dTree looks horrible on my blog and I hate you for it! = 
+WP-dTree 4.0 has almost no styles of its own. You should apply your own CSS-styling to it. Luckily it's quite simple: open `wp-dtree.css` and copy all the selectors into your theme's stylesheet. 
+Now disable the plugins default CSS (from the Settings-panel) and hack away at your own file to make it pretty.
 
-= Why does WP-dTree look horrible on my blog? = 
-99% of the time, it's *your theme* that breaks the layout. Run the default WP theme (Kubric) to quickly confirm this. Then follow these simple steps (in your theme) to find the cause.
+Remember - do not edit `wp-dtree.css`, as this will be replaced on every update of the plugin.
 
-1. Get the [Web Developer Plugin](https://addons.mozilla.org/firefox/addon/60) for firefox.
-1. Right-click anywhere on your blog, select `Web Developer -> CSS -> Edit CSS` and fiddle around with anything related to the sidebar, images, lists or links. Changes are applied in realtime so you'll know when you've struck gold.
+= Can I help you in any way? =
+Uh... yes? Please. :) If you [sign up with DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) on my refferal, I get 1GB (much needed!) extra space. DropBox a cross-plattform application to sync your files online and across computers, and a 2GB account is *free*. Also - my refferal earns you a 250MB bonus! 
 
-If the fix is something that *can* and *should* be supplied by WP-dTree itself, please *post the fix* on the forums.
-
-= Why does dTree timeout on Internet Explorer? =
-It's an inherent limitation with the IE Javascript engine. dTree does a lot of string juggling, and any large-ish amount of data *will* take a while to get through. 
-
-There is no hard limit, but my experience suggest that IE chokes around 110-120K (WP-dTree prints its size in your blog source). In practice this is rarely a problem, but if you hit the limits it's probably with a category tree and `list posts` on. Keep each post in *a single category* (use tags instead!) to keep your category tree slim. 
- 
-= Why should I disable unused trees? = 
-Even if you never display the tree, WP-dTree will create and store it every time you add or edit content on your blog. By disabling unused trees you can save your server from going through that effort. If you've got a large(ish) number of posts, this will speed up posting and editing quite noticeably.
-
-= How does the 3.x fork improve performance of WP-dTree? =
-Instead of generating all the trees *on every visit*, 3.x employs caching - building the trees *only when you add or alter content on your blog*. The result is a tremendous load reduction from previous versions; the devsite (~360 posts, Kubrik theme) went from 411 to 18 queries (!) to display the main page.
-
-Of course, caching also yelds a *significant* reduction in how much processing is needed for each visit. Unless you activate `Open to requested node`, all WP-dTree does is to print a static string.
-
-Version 3.3 brought optimizations to [the dtree javascript](http://www.destroydrop.com/javascripts/tree/) itself too, further reducing the amount of data to store and transmit to create the trees.
+If you've got more money than time then please [send me a book or two](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x). (used are fine!) 
 
 = Can I change the images used by WP-dTree? =
 
-The images are all stored in the 'wp-dtree-30/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same, or you'll break the script.
-
-= Can I help you with anything? = 
-Yes please!
-
-We desperately need a proper overhaul of the admin interface. It's not standards compliant and it looks terrible in WP 2.7. If you (unlike me...) are a proper front-end developer - feel free to send me a patch.
-
-Same goes for CSS and styling - I really need someone to have a look at it and make it *proper*. Compliant, fail safe, robust, sane.
-
-For coders, I'd like help on optimizing what hooks WP-dTree uses and *how* they're used. I see a lot of potential in the "new" variable hooks, but they're poorly documented. The plugin should *always* fire when (relevant) content is edited, but we should *only* run the methods necessary. We shouldn't re-generate Links, Pages and Archive-trees when the user adds a new *category* to the database.
-
-Finally - if you've got more money than time - I always appreciate a [(used) book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17).
+The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same or they won't appear.
 
 == Screenshots ==
 
-1. The archive navigation tree in action.
-2. The admin configuration screen.
+1. The archive tree in action.
+2. The category tree in action. 
+2. The archive widget configuration.
 
 == Other Notes ==
-Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben dot com).
 
-Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
+The original WP-dTree was created by [Christopher Hwang](http://www.silpstream.com/blog/) in 2005. Since Mr. Hwang went MIA, [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin (as of version 3) in 2007, but kept the name. 
+
+The fork was focused on performance improvements, but soon expanded to add a lot of new features and modernizations; WP 2.7, 2.8, 2.9 compability, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more. For version 4.0 the entire plugin has been rewritten from scratch by Ulf, bringing it in to line with the much matured WP 3.x API and generally being less of a hack. :P
+
+>> [WP-dTree-plugin](http://wordpress.org/extend/plugins/wp-dtree-30/) (v. 3 and up) is Copyright (C) 2007-2010 Ulf Benjaminsson (email: ulf at ulfben dot com)
+
+>> WP-dTree-plugin (v. 3 and lower) Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
+
+>> [dTree 2.05](www.destroydrop.com/javascript/tree/)-script is Copyright (c) 2002-2003 Geir Landrö
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

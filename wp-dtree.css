@@ -1,0 +1,49 @@
+/*This file is provided for you to see what selectors applies to WP-dTree's various widgets.
+Copy these selectors to your own theme's stylesheet, and edit that. 
+This file is unused and will be replaced every time the plugin updates.*/
+.dtree {
+	white-space: nowrap !important;
+}
+.dtree img {
+	border: 0px !important;
+	vertical-align: middle !important;
+}
+.oclinks { /*the open/close links*/
+	display:none; /*to be revealed only if javascript is on!*/
+}
+.dtree a.nodeSel { /*the currently selected node, if "Highlight selection" is on*/
+	text-decoration: underline;  !important; 
+}
+.dtree .clip {
+	overflow: hidden;
+}
+.dtree-rss{/*feed icons*/
+   padding-right: 15px; 
+   background: url('dtree-img/feed-icon.png') no-repeat center right;  
+   text-decoration: none;   
+}
+.dtree-rss:hover{	
+    padding-right: 15px; 
+    background: url('dtree-img/feed-icon_h.png') no-repeat center right;  
+    text-decoration: none;
+}
+
+.dtree a {}
+.dtree a.node{}
+.dtree a.node:hover, .dtree a.nodeSel:hover {}
+.dtNode{}
+.dtree_arc{ /* _any_ archive tree*/
+ /* dtree_cat for categories, 
+	dtree_pge for pages, 
+	dtree_lnk for links
+  */
+}
+#dtree_arc1{ /*the _first_ archive tree*/	
+ /*	dtree_arc2 for second archive tree
+	dtree_cat5 for the fifth cateogory tree
+	etc.
+ */
+}
+#dtree_arc1 a.node{ /*style _nodes_ in the _first archive_ tree*/	
+}
+#oclinks_arc1{}/*open/close links for the _first archive_ tree*/
