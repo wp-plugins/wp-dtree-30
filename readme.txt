@@ -78,8 +78,7 @@ If you want the tree returned instead of printed, make sure you send in `'echo=0
 
 You can get default `$args`-arrays from these functions:
 
-`//returns assoc. arrays with all default settings`
-* `wpdt_get_archives_defaults();` 
+* `wpdt_get_archives_defaults(); //returns assoc. arrays` 
 * `wpdt_get_categories_defaults();` 
 * `wpdt_get_pages_defaults();`
 * `wpdt_get_links_defaults();`
