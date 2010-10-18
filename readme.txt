@@ -66,7 +66,7 @@ WP-dTree exposes the following [template tag functions](http://codex.wordpress.o
 * `wpdt_list_categories();`
 * `wpdt_list_pages();`
 * `wpdt_list_links();`
-* `wpdt_list_bookmarks();`
+* `wpdt_list_bookmarks(); //alias for wpdt_list_links`
 
 They function a lot like WordPress own wp_list_* functions:
 
