@@ -228,7 +228,7 @@ The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change
 
 1. The archive tree in action.
 2. The category tree in action. 
-2. The archive widget configuration.
+3. The archive widget configuration.
 
 == Other Notes ==
 
