@@ -72,7 +72,7 @@ They function a lot like WordPress own wp_list_* functions:
 
 * They take an (optional) [query-string or associative array](http://codex.wordpress.org/How_to_Pass_Tag_Parameters#Tags_with_query-string-style_parameters) with arguments
 * They print by default, but if passed 'echo=0' they return the string of markup
-* Most them use the WordPress namesake for generating noscript-content
+* Most of them use the WordPress namesake for generating noscript-content
 
 **Here's an example:**
 
@@ -249,12 +249,14 @@ The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change
 
 The original 'WP-dTree' was created by [Christopher Hwang](http://www.silpstream.com/blog/) in ~2005. Mr. Hwang seemed to have dropped of the internet in 2007 so [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin in and named it 'WP-dTree 3.0' (note to self: having a release number in the title is *stupid*).
 
-Ulf's fork was focused on performance improvements (mainly caching, but soon expanded to add a lot of new features and modernizations; compatibility with WP 2.7, 2.8, 2.9, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more. 
+Ulf's fork was focused on performance improvements - mainly caching - but soon expanded to add a lot of new features and modernizations; compatibility with WP 2.7, 2.8, 2.9, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more. 
 
 For version 4.0 the entire plugin has been rewritten from scratch by Ulf, bringing it in line with the much matured WP 3.x API and generally being less of a hack. :P
 
 *WP-dTree (3.0 and up) is Copyright (C) 2007-2010 Ulf Benjaminsson (email: ulf at ulfben dot com)
+
 *WP-dTree (3.x and lower) Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
+
 *[dTree](www.destroydrop.com/javascript/tree/)-JavaScript is Copyright (c) 2002-2003 Geir Landrö
 
 This program is free software; you can redistribute it and/or modify
