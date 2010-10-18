@@ -10,7 +10,7 @@ Stable tag: 4.0
 
 == Description ==
 
-This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the standard archives, categories, pages and link lists. They're widgets so you can setup [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) with drag & drop ease, but it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) for developers.
+This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the standard archives, categories, pages and link lists. They're widgets so you can setup [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) with drag & drop ease, but it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/) for developers.
 
 WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
 
@@ -22,7 +22,7 @@ If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want 
 *    **All previous settings will be lost!** Write them down before upgrading.
 * Added: support for multiple tree instances
 * Added: support for per-tree configurations 
-* Added: [template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) for theme developers
+* Added: [template tags](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/) for theme developers
 * Added: (optional) noscript for JS-disabled visitors
 * Added: uses category descriptions for link titles
 * Added: translation support
@@ -55,6 +55,8 @@ If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want 
 1. Go to 'Presentation' -> 'Widgets' and drag-n-drop the widgets to the relevant section of your sidebar(s)
 1. Configure the active Widget to your liking
 1. [Styling is done through CSS](http://wordpress.org/extend/plugins/wp-dtree-30/faq/)
+
+[Developers goes here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
 
 == For developers ==
 
@@ -110,7 +112,7 @@ Complete rewrite! Read the docs before upgrading!
 *    **All previous settings will be lost!** Write them down before upgrading.
 * Added: support for multiple tree instances
 * Added: support for per-tree configurations 
-* Added: [template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) for theme developers
+* Added: [template tags](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/) for theme developers
 * Added: (optional) noscript for JS-disabled visitors
 * Added: uses category descriptions for link titles
 * Added: translation support
