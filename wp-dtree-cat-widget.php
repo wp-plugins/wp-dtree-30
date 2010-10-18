@@ -72,8 +72,7 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 			 ?>
 			</select>
 		</p><p>			
-			<label for="<?php echo $this->get_field_id('parent'); ?>" title="Display only categories that are direct descendants (i.e. children only) of the category. This does NOT work like the 'child_of' parameter."><?php _e('Only *direct* children of:', 'wpdtree'); ?></label> 
-			<?php echo 'poo'.$settings['parent']; ?>
+			<label for="<?php echo $this->get_field_id('parent'); ?>" title="Display only categories that are direct descendants (i.e. children only) of the category. This does NOT work like the 'child_of' parameter."><?php _e('Only *direct* children of:', 'wpdtree'); ?></label> 			
 			<select id="<?php echo $this->get_field_id('parent'); ?>" name="<?php echo $this->get_field_name('parent'); ?>" class="widefat" style="width:100%;">				
 				<option value="none" <?php selected('',$settings['parent']); ?>><?php echo attribute_escape(__('Don\'t filter on parents')); ?></option> 
 				<option value="0" <?php selected(0,$settings['parent']); ?>><?php echo attribute_escape(__('Root (0)')); ?></option>

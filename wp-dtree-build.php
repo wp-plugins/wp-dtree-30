@@ -83,7 +83,7 @@ function wpdt_force_open_to($opento, $tree_id, $treestring){
 }
 
 /* 	This function is hairy. It helps if you take a look at the JS-source in the HTML first. Here's one typical line:
-		arc1.a(4695,2,"Post Title","",'2010/10/post-title/','','');
+		arc1.a(4695,2,'Post Title','','2010/10/post-title/','','');
 	We're trying to find the node-ID (4695 in this case) corresponding to the requested URL. */
 function wpdt_open_tree_to($request, $tree_id, $treestring){	
 	if(strlen($treestring) < 1){return '';}
