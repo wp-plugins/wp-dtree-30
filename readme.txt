@@ -10,7 +10,7 @@ Stable tag: trunk
 
 == Description ==
 
-This plugin generates [navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the WordPress standard archives, categories, pages and link lists. It provides you with widgets so you can use [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) without editing any code. But it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) if you want to get your hands dirty.
+This plugin generates [navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace WordPress standard archives, categories, pages and link lists. It provides you with widgets so you can use [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) without editing any code. But it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/installation/) if you want to get your hands dirty.
 
 WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3.x API. The overhaul has made WP-dTree significantly more sane and robust; handling "foreign" characters gracefully, being more in tune with your theme, playing nice with translators and offering proper fallbacks for those who surf without JavaScript.
 
