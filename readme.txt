@@ -14,7 +14,7 @@ This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javas
 
 WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
 
-If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please help me out by [signing up with DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) on my refferal. It is a cross-plattform application to sync your files online and across computers. A 2GB account is *free* and my refferal earns you a 250MB bonus!
+*If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please **help me out** by [downloading and installing DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) from my refferal link. It's a cross-plattform application to sync your files online and across computers. A 2GB account is free and my refferal earns you a 250MB bonus!*
 
 **Changes in v4.0** (2010-10-17)
 
