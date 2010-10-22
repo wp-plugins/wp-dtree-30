@@ -6,7 +6,10 @@
 	Version: 4.0
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
-	
+	License: GPL2
+	Text Domain: wpdtree
+	Domain Path: /lang
+
 	WP-dTree - Creates a JS navigation tree for your blog archives	
 	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
 	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	
@@ -26,12 +29,13 @@
 	}
 	if(!defined('WP_PLUGIN_DIR')){
 		define('WP_PLUGIN_DIR', WP_CONTENT_DIR.'/plugins');
-	}
+	}	
 	define('WPDT_DONATE_URL', 'http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17');
 	define('WPDT_BASENAME', plugin_basename( __FILE__ ));
 	define('WPDT_URL', WP_PLUGIN_URL.'/wp-dtree-30/');
 	define('WPDT_SCRIPT_URL', WPDT_URL.'wp-dtree.min.js');	
 	define('WPDT_STYLE_URL', WPDT_URL.'wp-dtree.min.css');	
+	load_plugin_textdomain('wpdtree', WP_PLUGIN_DIR.'/wp-dtree-30/lang/');
 	global $wpdt_tree_ids;
 	$wpdt_tree_id = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0);//used to create unique instance names for the javascript trees.
 	
@@ -251,7 +255,8 @@
 				'listposts' => 1,				
 				'showrss' 	=> 0,
 				'type' 		=> 'monthly',
-				'showcount' => 1		//show_post_count 
+				'showcount' => 1,		//show_post_count 
+				'number_of_posts'=> 0
 			));
 		}else if($treetype == 'cat'){
 			return array_merge($common, array(
@@ -271,13 +276,15 @@
 				'pad_counts' 	=> 1,
 				'hierarchical' 	=> 0,
 				'number' 		=> 0,
+				'limit_posts'	=> 0,
+				'more_link' 	=> "Show more (%excluded%)...", //if number of posts-limit is hit, show link to full category listing
 				'include_last_update_time' => 0
 			));		
 		}else if($treetype == 'pge'){
 			return array_merge($common, array(
 				'title' => __('Pages', 'wpdtree'),
 				'folderlinks' 	=> 1,
-				'sort_column' 	=> '', //handle inconsistent argument names in WordPress API. Other functions use 'sortby'.
+				//'sort_column' 	=> '', //handle inconsistent argument names in WordPress API. Other functions use 'sortby'.
 				'meta_key' 		=> '',
 				'meta_value' 	=> '',
 				'authors' 		=> '',
@@ -299,8 +306,8 @@
 				'catssort_order'=> 'ASC',
 				'folderlinks' 	=> 0,			
 				'sortby' 		=> 'name',
-				'orderby'       => 'name', //inconsistent argument names in WordPress API. All others use 'sortby'.				
-				'order'         => 'ASC', //other uses 'sort_order'								
+				//'orderby'       => 'name', //inconsistent argument names in WordPress API. All others use 'sortby'.				
+				//'order'         => 'ASC', //other uses 'sort_order'								
 				'category'      => '', //Comma separated list of bookmark category ID's.
 				'category_name' => '', //Category name of a catgeory of bookmarks to retrieve. Overrides category parameter.
 				'hide_invisible'=> 1,

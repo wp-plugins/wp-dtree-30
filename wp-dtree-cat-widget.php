@@ -24,6 +24,8 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 		$settings['child_of'] 	= intval($new_settings['child_of']);
 		$settings['parent'] 	= (is_numeric($new_settings['parent']) && intval($new_settings['parent']) >= 0) ? intval($new_settings['parent']) : 'none';
 		$settings['number'] 	= intval($new_settings['number']);
+		$settings['limit_posts'] = intval($new_settings['limit_posts']);
+		$settings['more_link'] = strip_tags($new_settings['more_link'] );
 		$settings['treetype'] 		= 'cat';
 		$settings['title_li'] 	= ''; //the widget already prints a title. (this is only for the the noscript output, which is from wp_list_categories()
 		if(is_numeric($settings['parent'])){$settings['child_of'] = 0;}
@@ -60,6 +62,12 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 		</p><p>
 			<label for="<?php echo $this->get_field_id('number'); ?>" title="Number of categories to display. (0 to display all)"><?php _e('Limit:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" value="<?php echo $settings['number']; ?>" style="width:3em;" />
+		</p><p>
+			<label for="<?php echo $this->get_field_id('limit_posts'); ?>" title="Number of categories to display. (0 to display all)"><?php _e('Limit posts:', 'wpdtree'); ?></label>
+			<input id="<?php echo $this->get_field_id('limit_posts'); ?>" name="<?php echo $this->get_field_name('limit_posts'); ?>" value="<?php echo $settings['limit_posts']; ?>" style="width:3em;" />		
+		</p><p>	
+			<label for="<?php echo $this->get_field_id('more_link'); ?>" title="<?php esc_attr_e('Show link to additional category content.') ?>"><?php esc_html_e('Show more link:', 'wpdtree'); ?></label>
+			<input id="<?php echo $this->get_field_id('more_link'); ?>" name="<?php echo $this->get_field_name('more_link'); ?>" value="<?php echo $settings['more_link']; ?>" style="width:95%;"/>
 		</p><p>			
 			<label for="<?php echo $this->get_field_id('child_of'); ?>" title="Display all categories that are descendants (i.e. children & grandchildren) of the category."><?php _e('Show descendands of:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('child_of'); ?>" name="<?php echo $this->get_field_name('child_of'); ?>" class="widefat" style="width:100%;">

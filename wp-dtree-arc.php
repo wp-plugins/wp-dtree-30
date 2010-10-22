@@ -32,8 +32,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 					'pid' => 0,						 
 					'url' => get_year_link($arcresult->year), 
 					'name' => ($showcount) ? $arcresult->year ."&nbsp;($postcount)" : $arcresult->year,
-					'title' => '',					
-					'post_count' => $postcount //redundant. to be removed.
+					'title' => ''									
 				);					
 				$mpidcount = -$idcount;
 				$idcount++;
@@ -45,8 +44,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 			'pid' => $mpidcount,				 
 			'url' => get_month_link($arcresult->year, $arcresult->month), 
 			'name' => sprintf(__('%1$s %2$d'), $wp_locale->get_month($arcresult->month), $arcresult->year),
-			'title' => '',
-			'post_count' => $arcresult->posts //redundant. to be removed
+			'title' => ''
 		);		
 		if($showcount){
 			$nodelist[$idcount]['name'] .= "&nbsp;({$arcresult->posts})";
