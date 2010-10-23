@@ -75,19 +75,19 @@ function wpdt_get_category_nodelist($args){
 			'title' => ''
 		);
 		$idcount++;	
-	}	
+	}		
 	if($limit_posts > 0){ //add the "Show more"-links, if we've limited the tree length
 		$show_more = ($more_link) ? $more_link : "Show more (%excluded%)...";
 		foreach($catids as $catid => $count){
 			$excluded = $count['count']-$count['posts_returned'];
 			if($excluded > 0){				
 				$nodelist[$idcount++] = array(
-					'id' => $idcount, 
+					'id' => "'{$idcount}'", //a string, to avoid ID-trampling.
 					'pid' => -$catid, 
 					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdt'), //add category count? 
 					'url' => get_category_link($catid), 
 					'title' => esc_attr__('Browse all posts in '.get_cat_name($catid), 'wpdt')
-				);
+				);				
 			}
 		}	
 	}	

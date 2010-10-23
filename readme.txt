@@ -4,7 +4,7 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
 Requires at least: 3.0.1
 Tested up to: 3.0.1
-Stable tag: 4.0
+Stable tag: 4.1
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
 
@@ -16,8 +16,13 @@ WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the mu
 
 *If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please **help me out** by [downloading and installing DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) from my refferal link. It's a cross-plattform application to sync your files online and across computers. A 2GB account is free and my refferal earns you a 250MB bonus!*
 
-**Changes in v4.0** (2010-10-17)
+= Changes in v4.1 (2010-10-23) =
+* Improved installation to fix [database error for some users](http://tinyurl.com/37352en)
+* Added: ["limit posts" for categories and archives](http://wordpress.org/support/topic/plugin-wp-dtree-limit-posts-under-categories?replies=2)
+* Added: error catching - dtree can't blow up you other scripts
+* Building archives is MUCH faster (2 queries total, from 1 per month)
 
+= Changes in v4.0 (2010-10-17) =
 * Completely recoded from the ground up for a much needed code overhaul.
 *    **All previous settings will be lost!** Write them down before upgrading.
 * Added: support for multiple tree instances
@@ -26,7 +31,7 @@ WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the mu
 * Added: (optional) noscript for JS-disabled visitors
 * Added: uses category descriptions for link titles
 * Added: translation support
-* Added: configurable JS-escaping (XML, HTML or none) to ease page validation
+* Added: optional JS-escape (XHTML, HTML or none) to ease validation
 * Added: caching is optional (per instance, to boot)
 * Fixed: should properly encode quotes and HTML-entities
 * Replaced Scriptacolous with jQuery
@@ -56,7 +61,7 @@ WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the mu
 1. Configure the active Widget to your liking
 1. [Styling is done through CSS](http://wordpress.org/extend/plugins/wp-dtree-30/faq/)
 
-[Developers goes here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
+[Developers and widget resistance goes here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
 
 == For developers ==
 
@@ -94,20 +99,27 @@ So, to find out what arguments are definetly available grab the default `$args`:
 * `wpdt_get_pages_defaults();`
 * `wpdt_get_links_defaults();`
 
-They all return associative arrays whith all arguments defaulted. Or you can cheat and read [wpdt_get_defaults](http://pastebin.com/Szsyqtnu).
+They all return associative arrays whith all arguments defaulted.
 
 == Upgrade Notice ==
 
-= 4.0 =
+= 4.1 =
+Safer installation, better performance. 
 
+= 4.0 =
 Complete rewrite! Read the docs before upgrading! 
 
 == Changelog == 
 
 (Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
 
-**Changes in v4.0** (2010-10-17)
+= Changes in v4.1 (2010-10-23) =
+* Improved installation to fix [database error for some users](http://tinyurl.com/37352en)
+* Added: ["limit posts" for categories and archives](http://wordpress.org/support/topic/plugin-wp-dtree-limit-posts-under-categories?replies=2)
+* Added: error catching - dtree can't blow up you other scripts
+* Building archives is MUCH faster (2 queries total, from 1 per month)
 
+= Changes in v4.0 (2010-10-17) =
 * Completely recoded from the ground up for a much needed code overhaul.
 *    **All previous settings will be lost!** Write them down before upgrading.
 * Added: support for multiple tree instances
@@ -116,7 +128,7 @@ Complete rewrite! Read the docs before upgrading!
 * Added: (optional) noscript for JS-disabled visitors
 * Added: uses category descriptions for link titles
 * Added: translation support
-* Added: configurable JS-escaping (XML, HTML or none) to ease page validation
+* Added: optional JS-escape (XHTML, HTML or none) to ease validation
 * Added: caching is optional (per instance, to boot)
 * Fixed: should properly encode quotes and HTML-entities
 * Replaced Scriptacolous with jQuery
@@ -134,7 +146,7 @@ Complete rewrite! Read the docs before upgrading!
 * Only tested in Chrome
 * `opentoselection` doesn't handle paging
 
-**Changes in v3.5** (2008-11-26)
+= Changes in v3.5 (2008-11-26) =
 
 * New option: "shut down unused trees" (performance!)
 * New option: "force open to"
@@ -157,34 +169,28 @@ Complete rewrite! Read the docs before upgrading!
 * Misc: Moved config screen to "settings"-section of admin
 * Misc: CSS should be a bit more robust now
 
-**Changes in v3.4.2** (2008-10-19)
-
+= Changes in v3.4.2 (2008-10-19) =
 * Bug: incorrect WP version detection. ([thanks: StMD](http://wordpress.org/support/topic/211402))
 
-**Changes in v3.4.1** (2008-07-20)
-
+= Changes in v3.4.1 (2008-07-20) =
 * Validates: both CSS and XHTML 1.0 Transitional ([thanks: ar-jar](http://wordpress.org/support/topic/189643))
 
-**Changes in v3.4** (2008-07-12)
-
+= Changes in v3.4 (2008-07-12) =
 * Added support for link trees. (needs testing!)
 * Fixed breakage in WP 2.5, 2.6
 * Fixed invalid XHTML output. ([props: jberghem](http://wordpress.org/support/topic/150888))
 * Fixed a CSS-issue. ([props: wenzlerm](http://wordpress.org/support/topic/186314))
 * Renamed the dTree script to avoid collisions with plugins using an unmodified version.
 
-**Changes in v3.3.2** (2007-11-26)
-
+= Changes in v3.3.2 (2007-11-26) =
 * Fixed bug with excluding multiple categories.
 
-**Changes in v3.3.1** (2007-11-02)
-
+= Changes in v3.3.1 (2007-11-02) =
 * Removed redundant `li`-tags from widgets. (props: Alexey Zamulla) 
 * Support for non-ascii characters. ([props: michuw](http://wordpress.org/support/topic/141554))
 * Properly encoded ampersands (&) in javascript URLs.
 
-**Changes in v3.3** (2007-10-26)
-
+= Changes in v3.3 (2007-10-26) =
 * Optimized the dtree script, up to **40% less data** required to feed the script. Using dTree now generates less markup than normal HTML.
 * New option: Show RSS icon for archives
 * New option: Show post count for archives
@@ -194,8 +200,7 @@ Complete rewrite! Read the docs before upgrading!
 
 *Known issues:* RSS icons wont show **in IE** if `post count` is on.
 
-**Changes in v3.2** (2007-10-15)
-
+= Changes in v3.2 (2007-10-15) =
 * Support for WP's bundled scriptacolous library! (turn effects on in the WP-dTree options page)
 * New cache structure reduces cache size with ~33% compared to previous implementations.	 
 * New option: Show RSS icon for categories
@@ -204,14 +209,12 @@ Complete rewrite! Read the docs before upgrading!
 
 *Regressions:* `open to selection` is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
 
-**Changes in v3.1:** (2007-10-06)
-
+= Changes in v3.1: (2007-10-06) =
 * Updated to comply with WordPress 2.3's new taxonomy tables for categories.
 * Widgetized! You no longer need to edit your sidebar manually.
 * Fixed "Open To Selection"-option.
 		
-**Changes in v3.0:** (2007-08-17)
-
+= Changes in v3.0: (2007-08-17) =
 * Forked from the dead [WP-dTree 2.0](http://www.silpstream.com/blog/wp-dtree/)
 * Added caching. The plugin creates the trees (only) when blog content changes, instead of creating them on every visit. Displaying the front page on the dev site went from 411 queries to 18. :)
 	
@@ -235,8 +238,12 @@ If you've had any commercial applications for my plugins, please consider [sendi
 
 ...[for the books](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x)
 
-= Can I change the images used by WP-dTree? =
+= Why is there no "Show more"-link for Archives? =
+First: a simple workaround is to use 'Folders are links' and 'Show post count'. This way a visitor can easily see that a folder has more content than is on display, and clicking the folder name will bring her to it.
 
+The reason there's no "Show more"-link for Archives is this: [limit posts in categories](http://wordpress.org/support/topic/plugin-wp-dtree-limit-posts-under-categories?replies=2) was a *paid* request and I added that feature to archives too because it was reasonably simple and actually helped me optimize the code slightly. The "show more"-link was a simple addon for the Category generation code, but not so for Archives - it simply requires a lot of data to be available where it currently is **not**. So until someone feels strongly enough to pay me for the inconvenience, I won't bother bloating the code for this rather narrow feature.
+
+= Can I change the images used by WP-dTree? =
 The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same or they won't appear.
 
 == Screenshots ==
@@ -247,7 +254,7 @@ The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change
 
 == Other Notes ==
 
-The original 'WP-dTree' was created by [Christopher Hwang](http://www.silpstream.com/blog/) in ~2005. Mr. Hwang seemed to have dropped of the internet in 2007 so [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin in and named it 'WP-dTree 3.0' (note to self: having a release number in the title is *stupid*).
+The original 'WP-dTree' was created by [Christopher Hwang](http://www.silpstream.com/blog/) in ~2005. By 2007 Mr. Hwang seemed to have dropped of the internet for good so [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin in and named it 'WP-dTree 3.0' (note to self: having a release number in the title is *stupid*).
 
 Ulf's fork was focused on performance improvements - mainly caching - but soon expanded to add a lot of new features and modernizations; compatibility with WP 2.7, 2.8, 2.9, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more. 
 

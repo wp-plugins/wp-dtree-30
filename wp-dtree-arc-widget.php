@@ -17,7 +17,8 @@ class WPDT_Archives_Widget extends WPDT_Widget {
 		$settings['listposts'] 	= isset($new_settings['listposts']) ? 1 : 0;	
 		$settings['showcount'] 	= isset($new_settings['showcount']) ? 1 : 0;	
 		$settings['showrss'] 	= isset($new_settings['showrss']) ? 1 : 0;	
-		$settings['include'] 	= '';
+		$settings['limit_posts'] = intval($new_settings['limit_posts']);
+		$settings['include'] 	= '';		
 		$settings['treetype']	= 'arc';
 		return $settings;
 	}
@@ -44,6 +45,9 @@ class WPDT_Archives_Widget extends WPDT_Widget {
 				<option <?php selected('yearly', $settings['type']);?>>yearly</option>
 				<option <?php selected('monthly',$settings['type']);?>>monthly</option>
 			</select>
+		</p><p>
+			<label for="<?php echo $this->get_field_id('limit_posts'); ?>" title="Number of posts to display under each year / month (0 to display all)"><?php _e('Limit posts:', 'wpdtree'); ?></label>
+			<input id="<?php echo $this->get_field_id('limit_posts'); ?>" name="<?php echo $this->get_field_name('limit_posts'); ?>" value="<?php echo $settings['limit_posts']; ?>" style="width:3em;" />		
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['listposts'], true); ?> id="<?php echo $this->get_field_id('listposts'); ?>" name="<?php echo $this->get_field_name('listposts'); ?>" /> 
 			<label for="<?php echo $this->get_field_id('listposts'); ?>"><?php _e('List posts', 'wpdtree'); ?></label>
