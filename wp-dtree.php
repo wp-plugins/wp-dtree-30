@@ -3,10 +3,13 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a> widgets to replace the standard archives-, categories-, pages- and link lists.
-	Version: 4.0
+	Version: 4.1
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
-	
+	License: GPL2
+	Text Domain: wpdtree
+	Domain Path: /lang
+
 	WP-dTree - Creates a JS navigation tree for your blog archives	
 	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
 	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	
@@ -26,12 +29,13 @@
 	}
 	if(!defined('WP_PLUGIN_DIR')){
 		define('WP_PLUGIN_DIR', WP_CONTENT_DIR.'/plugins');
-	}
+	}	
 	define('WPDT_DONATE_URL', 'http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17');
 	define('WPDT_BASENAME', plugin_basename( __FILE__ ));
 	define('WPDT_URL', WP_PLUGIN_URL.'/wp-dtree-30/');
 	define('WPDT_SCRIPT_URL', WPDT_URL.'wp-dtree.min.js');	
 	define('WPDT_STYLE_URL', WPDT_URL.'wp-dtree.min.css');	
+	load_plugin_textdomain('wpdt', WP_PLUGIN_DIR.'/wp-dtree-30/lang/');
 	global $wpdt_tree_ids;
 	$wpdt_tree_id = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0);//used to create unique instance names for the javascript trees.
 	
@@ -63,9 +67,10 @@
 	add_action('wp_print_styles', 	'wpdt_css');	
 	add_action('wp_print_scripts', 	'wpdt_js');
 	
-	function wpdt_activate(){		
+	function wpdt_activate(){
+		delete_option("wpdt_db_version");		
+		wpdt_install_cache();		
 		wpdt_install_options();		
-		wpdt_install_cache();			
 	}	
 	function wpdt_deactivate(){
 		//options are only cleared on plugin uninstall (ie. delete from admin panel)		
@@ -118,7 +123,8 @@
 	/*These are convenience-functions for theme developers. They work kind of like the WordPress-function they replace. 
 		They all accept template tag arguments (query string or assoc. array) - http://codex.wordpress.org/How_to_Pass_Tag_Parameters#Tags_with_query-string-style_parameters
 		They accept empty parameter lists and gives reasonable defaults	
-	Give array('echo' => 0) to get a very long string in return.*/		
+	Give array('echo' => 0) to get a very long string in return.
+	More info: http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/ */		
 	function wpdt_list_archives($args = array()){ 	//similar to wp_get_archives		
 		$args = wp_parse_args($args, wpdt_get_defaults('arc'));
 		return wpdt_list_($args);
@@ -225,7 +231,7 @@
 					$tree .= "\n<noscript>\n".wp_list_bookmarks($args)."\n</noscript>\n";								
 				}					
 			}else{//user error. no type given. 
-				return '<!-- wpdt_get_tree: user error, no treetype given. -->';
+				return false;// '<!-- wpdt_get_tree: user error, no treetype given. -->';
 			}			
 		}		
 		if($args['cache'] && !$was_cached){
@@ -251,7 +257,9 @@
 				'listposts' => 1,				
 				'showrss' 	=> 0,
 				'type' 		=> 'monthly',
-				'showcount' => 1		//show_post_count 
+				'showcount' => 1,		//show_post_count 
+				'limit_posts'=> 0,
+				'number_of_posts'=> 0
 			));
 		}else if($treetype == 'cat'){
 			return array_merge($common, array(
@@ -271,13 +279,15 @@
 				'pad_counts' 	=> 1,
 				'hierarchical' 	=> 0,
 				'number' 		=> 0,
+				'limit_posts'	=> 0,
+				'more_link' 	=> "Show more (%excluded%)...", //if number of posts-limit is hit, show link to full category listing
 				'include_last_update_time' => 0
 			));		
 		}else if($treetype == 'pge'){
 			return array_merge($common, array(
 				'title' => __('Pages', 'wpdtree'),
 				'folderlinks' 	=> 1,
-				'sort_column' 	=> '', //handle inconsistent argument names in WordPress API. Other functions use 'sortby'.
+				//'sort_column' 	=> '', //handle inconsistent argument names in WordPress API. Other functions use 'sortby'.
 				'meta_key' 		=> '',
 				'meta_value' 	=> '',
 				'authors' 		=> '',
@@ -299,8 +309,8 @@
 				'catssort_order'=> 'ASC',
 				'folderlinks' 	=> 0,			
 				'sortby' 		=> 'name',
-				'orderby'       => 'name', //inconsistent argument names in WordPress API. All others use 'sortby'.				
-				'order'         => 'ASC', //other uses 'sort_order'								
+				//'orderby'       => 'name', //inconsistent argument names in WordPress API. All others use 'sortby'.				
+				//'order'         => 'ASC', //other uses 'sort_order'								
 				'category'      => '', //Comma separated list of bookmark category ID's.
 				'category_name' => '', //Category name of a catgeory of bookmarks to retrieve. Overrides category parameter.
 				'hide_invisible'=> 1,
@@ -311,8 +321,8 @@
 			return array(
 				'openlink' 	=> __('open all', 'wpdtree'),
 				'closelink' => __('close all', 'wpdtree'),
-				'openscript'=> "\n<script type='text/javascript'>\n/* <![CDATA[ */\n",
-				'closescript'=> "/* ]]> */\n</script>\n",
+				'openscript'=> "\n<script type='text/javascript'>\n/* <![CDATA[ */\ntry{\n",
+				'closescript'=> "}catch(e){} /* ]]> */\n</script>\n",
 				'addnoscript'=> 0,
 				'version' 	=> wpdt_get_version(),
 				'animate' 	=> 1, 
@@ -339,12 +349,12 @@
 			die(__('Cheatin&#8217; uh?'));
 		}				
 		add_action('in_admin_footer', 'wpdt_add_admin_footer');
-		$oplain	= "\n<script type='text/javascript'>\n";	
-		$cplain = "</script>\n";
-		$ohtml = "\n<script type='text/javascript'>\n<!--\n";
-		$oxml = "\n<script type='text/javascript'>\n/* <![CDATA[ */\n";
-		$chtml = "//-->\n</script>\n";
-		$cxml = "/* ]]> */\n</script>\n";
+		$oplain	= "\n<script type='text/javascript'>\ntry{\n";	
+		$cplain = "}catch(e){}</script>\n";
+		$ohtml = "\n<script type='text/javascript'>\n<!--\ntry{\n";
+		$chtml = "}catch(e){} //-->\n</script>\n";
+		$oxml = "\n<script type='text/javascript'>\n/* <![CDATA[ */\ntry{\n";		
+		$cxml = "}catch(e){} /* ]]> */\n</script>\n";
 		$opt = get_option('wpdt_options');		
 		if($opt['version'] != wpdt_get_version()){
 			wpdt_install_options(); //update options if the user forgot to disable the plugin prior to upgrading.
@@ -416,7 +426,7 @@
 			</td><td valign="top">
 			<div id="about"> 
 				<h3 align='center'>From the author</h3> 				
-				<p>My name is <a href="http://profiles.wordpress.org/users/ulfben/">Ulf Benjaminsson</a> and I've developed WP-dTree <a href="http://wordpress.org/extend/plugins/wp-dtree-30/changelog/">since 2007</a>. Nice to meet you! :)<p>
+				<p>Hi! My name is <a href="http://profiles.wordpress.org/users/ulfben/">Ulf Benjaminsson</a> and I've developed WP-dTree <a href="http://wordpress.org/extend/plugins/wp-dtree-30/changelog/">since 2007</a>. Nice to meet you! :)<p>
 				<p>First: to all of you who used previous versions of WP-dTree (<em>sorry for keeping you waiting!</em>) - I apologize for breaking backwards compatibility and eating your settings...</p>
 				<p>I've applied all that I've learnt in the last 3 years to create WP-dTree <?php echo $opt['version']; ?>. It is a <em>complete</em> re-write, bringing the plugin up to speed with a much matured WordPress API.</p>				
 				<p><?php echo $opt['version']; ?> is significantly more sane and robust; handling "foreign" characters gracefully, being more in tune with your theme, playing nice with translators and offering proper fallbacks for those who surf without JavaScript.</p>				

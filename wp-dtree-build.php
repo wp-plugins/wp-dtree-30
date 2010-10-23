@@ -38,7 +38,7 @@ function wpdt_build_tree($nodelist, $args){ //internal
 		}		
 		$tree .= "{$t}.a({$nodedata['id']},{$nodedata['pid']},'{$nodedata['name']}','{$nodedata['title']}','{$nodedata['url']}','{$target}','{$rsspath}');\n";		
 	}		
-	$tree .= "document.write({$t});\n";
+	$tree .= "document.write({$t});\n";	
 	if(strlen($opento)){//force open to
 		$tree .= wpdt_force_open_to($opento, $t, $tree);			
 	}
