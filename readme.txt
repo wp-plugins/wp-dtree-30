@@ -4,7 +4,7 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
 Requires at least: 3.0.1
 Tested up to: 3.0.1
-Stable tag: 4.1
+Stable tag: 4.2
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
 
@@ -15,6 +15,9 @@ This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javas
 WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
 
 *If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please **help me out** by [downloading and installing DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) from my refferal link. It's a cross-plattform application to sync your files online and across computers. A 2GB account is free and my refferal earns you a 250MB bonus!*
+
+= Changes in v4.2 (2010-10-29) =
+* Fixed the uninstallation procedure.
 
 = Changes in v4.1 (2010-10-23) =
 * Improved installation to fix [database error for some users](http://tinyurl.com/37352en)
@@ -42,12 +45,6 @@ WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the mu
 * Only load jQuery if animation is on
 * Minified JS and CSS (9KB vs. 16KB!)
 * Cache is created on site visit (faster admin, less server load)
-
-**Known issues in 4.0:** 
-
-* This is a true .0 release - please explore and play with all the settings. [Let me know](http://wordpress.org/tags/wp-dtree-30) when something breaks (provide links!).
-* Only tested in Chrome
-* `opentoselection` doesn't handle paging
 
 [Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/changelog/).
 
@@ -103,6 +100,9 @@ They all return associative arrays whith all arguments defaulted.
 
 == Upgrade Notice ==
 
+= 4.2 =
+Fixed the uninstallation procedure.
+
 = 4.1 =
 Safer installation, better performance. 
 
@@ -112,6 +112,9 @@ Complete rewrite! Read the docs before upgrading!
 == Changelog == 
 
 (Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
+
+= Changes in v4.2 (2010-10-29) =
+* Fixed the uninstallation procedure.
 
 = Changes in v4.1 (2010-10-23) =
 * Improved installation to fix [database error for some users](http://tinyurl.com/37352en)
