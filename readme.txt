@@ -16,6 +16,9 @@ WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the mu
 
 *If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please **help me out** by [downloading and installing DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) from my refferal link. It's a cross-plattform application to sync your files online and across computers. A 2GB account is free and my refferal earns you a 250MB bonus!*
 
+= Note: =
+For some users the installation procedure left WP-dTree without a default configuration. If after installing and activating the widget all you get is [a wierd string of code](http://wordpress.org/support/topic/plugin-wp-dtree-only-outputs-1-string-of-textcode), just go to Settings -> WP-dTree and hit "Update settings".
+
 = Changes in v4.2 (2010-10-29) =
 * Fixed the uninstallation procedure.
 
