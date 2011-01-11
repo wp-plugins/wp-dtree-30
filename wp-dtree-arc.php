@@ -63,11 +63,10 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 				AND post_date > '{$startmonth}'
 				AND post_date < '{$endmonth}'	
 			 {$postexclusions}							
-			 ORDER BY {$sortby} {$sort_order}
 			 $limit)";				
 	}
 	unset($arcresults);		
-	$query = (count($query) > 1) ? implode(' UNION ALL ', $query) : $query;
+	$query = (count($query) > 1) ? implode(' UNION ALL ', $query)." ORDER BY {$sortby} {$sort_order}" : $query." ORDER BY {$sortby} {$sort_order}";
 	if($query && $listposts){		
 		if($postresults = $wpdb->get_results($query)){
 			foreach($postresults as $postresult){

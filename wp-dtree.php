@@ -101,8 +101,6 @@
 		$opt = get_option('wpdt_options');
 		$deps = array();
 		if($opt['animate']){
-			wp_deregister_script('jquery');
-			wp_register_script('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');		
 			wp_enqueue_script('jquery', '', array(), '1.4.2', true);					
 			$deps = array('jquery');
 		}
