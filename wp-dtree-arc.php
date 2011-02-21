@@ -3,9 +3,8 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	global $month, $wpdb, $wp_locale;	
 	extract( $args, EXTR_SKIP );			
 	$isyearly = ($type == 'yearly');	
-	$idcount = 1; //idcount (negated) is an index for the parent nodes. 
-	$mpidcount = 0; //month's parent id index.	
-	$pidcount = 0; //"parent id" index
+	$idcount = 1; 
+	$mpidcount = 0; 
 	$postexclusions = wpdt_build_exclude_statement($exclude, $wpdb->posts.'.ID');		
 	$arcresults = $wpdb->get_results(
 		"SELECT YEAR(post_date) AS 'year', MONTH(post_date) AS 'month', count(ID) AS 'posts'
@@ -18,8 +17,10 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	if(!$arcresults){
 		return wpdt_build_tree(array(), 'arc'); //just create empty tree and bail
 	}	
+	$limit = ($limit_posts > 0) ? " LIMIT {$limit_posts}" : '';
 	$nodelist = array();
 	$curyear = -1;
+	$query = array();	
 	foreach($arcresults as $arcresult){
 		if($isyearly){			
 			if($arcresult->year != $curyear){ //prepare the year as a parent node, countings it's children etc.
@@ -32,8 +33,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 					'pid' => 0,						 
 					'url' => get_year_link($arcresult->year), 
 					'name' => ($showcount) ? $arcresult->year ."&nbsp;($postcount)" : $arcresult->year,
-					'title' => '',					
-					'post_count' => $postcount //redundant. to be removed.
+					'title' => ''									
 				);					
 				$mpidcount = -$idcount;
 				$idcount++;
@@ -45,45 +45,45 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 			'pid' => $mpidcount,				 
 			'url' => get_month_link($arcresult->year, $arcresult->month), 
 			'name' => sprintf(__('%1$s %2$d'), $wp_locale->get_month($arcresult->month), $arcresult->year),
-			'title' => '',
-			'post_count' => $arcresult->posts //redundant. to be removed
+			'title' => ''
 		);		
 		if($showcount){
 			$nodelist[$idcount]['name'] .= "&nbsp;({$arcresult->posts})";
-		}
-		$pidcount = -$idcount;
+		}		
+		$pidcount = -$idcount;//by keeping parent ID's < 0, we're effeciently avoiding ID-trampling between posts and our generated year/month ID's
 		$idcount++;
-
 		if(!$listposts){
 			continue; //nothing more to do, get back to the top
 		}
 		$startmonth = $arcresult->year."-".zeroise($arcresult->month, 2)."-01 00:00:00";
-		$endmonth = wpdt_add_month($startmonth, 1);
-		$postresults = $wpdb->get_results(
-			"SELECT ID AS 'ID', post_date AS 'post_date', post_title AS 'post_title'
+		$endmonth = wpdt_add_month($startmonth, 1);		
+		$query[] = "(SELECT ID AS 'ID', post_date AS 'post_date', post_title AS 'post_title', {$pidcount} AS 'pID', {$arcresult->posts} AS 'postcount' 
 			 FROM {$wpdb->posts}
 			 WHERE post_type = 'post' AND post_status = 'publish' 
 				AND post_date > '{$startmonth}'
 				AND post_date < '{$endmonth}'	
 			 {$postexclusions}							
-			 ORDER BY {$sortby} {$sort_order}"
-		);
-		if(!$postresults ){	continue;} 
-		foreach ( $postresults as $postresult ){
-			$text = strip_tags(apply_filters('the_title', $postresult->post_title));			
-			$url = get_permalink($postresult->ID);
-			$nodelist[$idcount] = array( 
-				'id' => $postresult->ID, //add arbitrary letter, to avoid ID-collisions.
-				'pid' => $pidcount, 
-				'name' => $text,
-				'url' => $url, 
-				'title' => ''
-			);
-			$idcount++;
-		}
-		unset($postresults);			
+			 $limit)";				
+	}
+	unset($arcresults);		
+	$query = (count($query) > 1) ? implode(' UNION ALL ', $query)." ORDER BY {$sortby} {$sort_order}" : $query." ORDER BY {$sortby} {$sort_order}";
+	if($query && $listposts){		
+		if($postresults = $wpdb->get_results($query)){
+			foreach($postresults as $postresult){
+				$text = strip_tags(apply_filters('the_title', $postresult->post_title));			
+				$url = get_permalink($postresult->ID);
+				$nodelist[$idcount] = array( 
+					'id' => $postresult->ID,
+					'pid' => $postresult->pID, 
+					'name' => $text,
+					'url' => $url, 
+					'title' => ''
+				);
+				$idcount++;
+			}		
+			unset($postresults);		
+		}				
 	}	
-	unset($arcresults);	
 	return $nodelist;
 }
 function wpdt_add_month($datestring, $nummonths='1'){

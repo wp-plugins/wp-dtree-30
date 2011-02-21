@@ -24,6 +24,9 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 		$settings['child_of'] 	= intval($new_settings['child_of']);
 		$settings['parent'] 	= (is_numeric($new_settings['parent']) && intval($new_settings['parent']) >= 0) ? intval($new_settings['parent']) : 'none';
 		$settings['number'] 	= intval($new_settings['number']);
+		$settings['limit_posts'] = intval($new_settings['limit_posts']);
+		$settings['more_link'] = strip_tags($new_settings['more_link'] );
+		$settings['pre_author'] = strip_tags($new_settings['pre_author'] ); //string printed before author name after post title
 		$settings['treetype'] 		= 'cat';
 		$settings['title_li'] 	= ''; //the widget already prints a title. (this is only for the the noscript output, which is from wp_list_categories()
 		if(is_numeric($settings['parent'])){$settings['child_of'] = 0;}
@@ -36,7 +39,7 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 		parent::form($settings);
 	?>
 		<p>
-			<label for="<?php echo $this->get_field_id('sortby'); ?>" title="Sort categories alphabetically or by unique category ID. The default is sort by Category ID."><?php _e('Sort by:', 'wpdtree'); ?></label> 
+			<label for="<?php echo $this->get_field_id('sortby'); ?>" title="<?php esc_attr_e('Sort categories alphabetically or by unique category ID. The default is sort by Category ID.','wpdt');?>"><?php _e('Sort by:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('sortby'); ?>" name="<?php echo $this->get_field_name('sortby'); ?>" class="widefat" style="width:65px;">
 				<option <?php selected('name',$settings['sortby']); ?>>name</option>				
 				<option <?php selected('id',$settings['sortby']); ?>>id</option>
@@ -58,10 +61,19 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 				<option <?php selected('DESC',$settings['cpsortorder']); ?>>DESC</option>
 			</select>
 		</p><p>
-			<label for="<?php echo $this->get_field_id('number'); ?>" title="Number of categories to display. (0 to display all)"><?php _e('Limit:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('number'); ?>" title="<?php esc_attr_e('Number of categories to display. (0 to display all)','wpdt');?>"><?php _e('Limit:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" value="<?php echo $settings['number']; ?>" style="width:3em;" />
+		</p><p>
+			<label for="<?php echo $this->get_field_id('limit_posts'); ?>" title="<?php esc_attr_e('Number of posts to display under each category (0 to display all)','wpdt');?>"><?php _e('Limit posts:', 'wpdtree'); ?></label>
+			<input id="<?php echo $this->get_field_id('limit_posts'); ?>" name="<?php echo $this->get_field_name('limit_posts'); ?>" value="<?php echo $settings['limit_posts']; ?>" style="width:3em;" />		
+		</p><p>	
+			<label for="<?php echo $this->get_field_id('pre_author'); ?>" title="<?php esc_attr_e('String printed before author name after post title. (empty to not print author!)','wpdt'); ?>"><?php esc_html_e('Before author:', 'wpdtree'); ?></label>
+			<input id="<?php echo $this->get_field_id('pre_author'); ?>" name="<?php echo $this->get_field_name('pre_author'); ?>" value="<?php echo $settings['pre_author']; ?>" style="width:95%;"/>
+		</p><p>	
+			<label for="<?php echo $this->get_field_id('more_link'); ?>" title="<?php esc_attr_e('Show link to additional category content. %excluded% is replaced with the remaining count.','wpdt'); ?>"><?php esc_html_e('Show more link:', 'wpdtree'); ?></label>
+			<input id="<?php echo $this->get_field_id('more_link'); ?>" name="<?php echo $this->get_field_name('more_link'); ?>" value="<?php echo $settings['more_link']; ?>" style="width:95%;"/>
 		</p><p>			
-			<label for="<?php echo $this->get_field_id('child_of'); ?>" title="Display all categories that are descendants (i.e. children & grandchildren) of the category."><?php _e('Show descendands of:', 'wpdtree'); ?></label> 
+			<label for="<?php echo $this->get_field_id('child_of'); ?>" title="<?php esc_attr_e('Display all categories that are descendants (i.e. children & grandchildren) of the category.','wpdt'); ?>"><?php _e('Show descendands of:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('child_of'); ?>" name="<?php echo $this->get_field_name('child_of'); ?>" class="widefat" style="width:100%;">
 				<option value="0" <?php selected(0,$settings['child_of']); ?>><?php echo attribute_escape(__('Select an ancestor')); ?></option> 
 			<?php 				
@@ -72,7 +84,7 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 			 ?>
 			</select>
 		</p><p>			
-			<label for="<?php echo $this->get_field_id('parent'); ?>" title="Display only categories that are direct descendants (i.e. children only) of the category. This does NOT work like the 'child_of' parameter."><?php _e('Only *direct* children of:', 'wpdtree'); ?></label> 			
+			<label for="<?php echo $this->get_field_id('parent'); ?>" title="<?php esc_attr_e('Display only categories that are direct descendants (i.e. children only) of the category. This does NOT work like the \'child_of\' parameter.','wpdt'); ?>"><?php _e('Only *direct* children of:', 'wpdtree'); ?></label> 			
 			<select id="<?php echo $this->get_field_id('parent'); ?>" name="<?php echo $this->get_field_name('parent'); ?>" class="widefat" style="width:100%;">				
 				<option value="none" <?php selected('',$settings['parent']); ?>><?php echo attribute_escape(__('Don\'t filter on parents')); ?></option> 
 				<option value="0" <?php selected(0,$settings['parent']); ?>><?php echo attribute_escape(__('Root (0)')); ?></option>
@@ -84,11 +96,11 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 			?>
 			</select>		
 		</p><p>
-			<label for="<?php echo $this->get_field_id('postexclude'); ?>" title="<?php esc_attr_e('Comma separated list of post IDs. The "exclude"-filed above if for category IDs') ?>"><?php esc_html_e('Exclude posts:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('postexclude'); ?>" title="<?php esc_attr_e('Comma separated list of post IDs. The "exclude"-filed above if for category IDs','wpdt') ?>"><?php esc_html_e('Exclude posts:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('postexclude'); ?>" name="<?php echo $this->get_field_name('postexclude'); ?>" value="<?php echo $settings['postexclude']; ?>" style="width:100px;" />
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['allowdupes'], true); ?> id="<?php echo $this->get_field_id('allowdupes'); ?>" name="<?php echo $this->get_field_name('allowdupes'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('allowdupes'); ?>" title="Allow posts sorted under multiple categories? Otherwise the post will appear only in the first of its categories."><?php _e('Allow duplicate entries', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('allowdupes'); ?>" title="<?php esc_attr_e('Allow posts sorted under multiple categories? Otherwise the post will appear only in the first of its categories.','wpdt'); ?>"><?php _e('Allow duplicate entries', 'wpdtree'); ?></label>
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['hide_empty'], true); ?> id="<?php echo $this->get_field_id('hide_empty'); ?>" name="<?php echo $this->get_field_name('hide_empty'); ?>" /> 
 			<label for="<?php echo $this->get_field_id('hide_empty'); ?>"><?php _e('Hide empty categories', 'wpdtree'); ?></label>

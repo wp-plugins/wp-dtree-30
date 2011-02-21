@@ -58,13 +58,14 @@ WP-dTree 3.2 (ulfben 2007-10-08)
 | Updated: 17.04.2003                               |
 |--------------------------------------------------*/
 // dtNode object
-function dtNode(id, pid, name, url, title, targ, rsspath){ 
+function dtNode(id, pid, name, url, title, targ, rsspath, authorlink){ 
 	this.id = id;
 	this.pid = pid;
 	this.name = name;
 	this.url = url;
 	this.title = title;	
 	this.rsspath = rsspath; //for feed link.
+	this.authorlink = authorlink;
 	var icon, iconOpen, open; //these were originally passed as parameters, but were never used in wp-dtree.	
 	this.target = targ;
 	this.icon = icon;
@@ -118,7 +119,7 @@ function wpdTree(objName, baseUrl, truncate){
 };
 
 // Adds a new node to the node array
-wpdTree.prototype.a = function(id, pid, name, title, path, link_target, rsspath){		
+wpdTree.prototype.a = function(id, pid, name, title, path, link_target, rsspath, authorlink){		
 	if(rsspath != ""){
 		rsspath = "<a class='dtree-rss' href='" + this._url + rsspath + "' title='Feed for "+name+"'></a>";	
 	}		
@@ -131,7 +132,7 @@ wpdTree.prototype.a = function(id, pid, name, title, path, link_target, rsspath)
 	if(this._truncate > 0){
 		name = this.truncate(name, this._truncate);
 	}
-	this.adtNodes[this.adtNodes.length] = new dtNode(id, pid, name, url, title, link_target, rsspath); 
+	this.adtNodes[this.adtNodes.length] = new dtNode(id, pid, name, url, title, link_target, rsspath, authorlink); 
 };
  
 wpdTree.prototype.truncate = function(str, length){
@@ -221,6 +222,9 @@ wpdTree.prototype.node = function(node, nodeId){
 	}	
 	if(node.rsspath){
 		str	+= node.rsspath;
+	}
+	if(node.authorlink){
+		str += node.authorlink;
 	}
 	str += ' </div>';	
 	if(node._hc){
