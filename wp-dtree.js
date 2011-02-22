@@ -199,7 +199,8 @@ wpdTree.prototype.node = function(node, nodeId){
 		if(!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
 		if(!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
 		if(this.root.id != node.pid){		
-			str += '<img id="i' + this._objName + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
+			var iconClass = (node.icon == this.icon.node) ? "page" : "folder";
+			str += '<img id="i' + this._objName + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" class="nodeIcon '+iconClass+ '"/>';
 		}
 	}
 	if(this.root.id != node.pid){
@@ -215,7 +216,7 @@ wpdTree.prototype.node = function(node, nodeId){
 		else if((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id){
 			str += '<a href="javascript: ' + this._objName + '.o(' + nodeId + ');"'
 			if(true || node.title) str += ' title="' + node.title + '"';
-			str += ' class="node">';
+			str += ' class="parentnode">';
 		}
 		str += node.name;	
 		if(node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';	
@@ -241,14 +242,14 @@ wpdTree.prototype.indent = function(node, nodeId){
 	var str = '';
 	if(this.root.id != node.pid){
 		for (var n=0; n<this.aIndent.length; n++)
-			str += '<img src="' + ( (this.aIndent[n] == 1 && this.config.useLines) ? this.icon.line : this.icon.empty ) + '" alt="" />';
+			str += '<img src="' + ( (this.aIndent[n] == 1 && this.config.useLines) ? this.icon.line : this.icon.empty ) + '" alt="" class="indent" />';
 		(node._ls) ? this.aIndent.push(0) : this.aIndent.push(1);
 		if(node._hc){
 			str += '<a href="javascript: ' + this._objName + '.o(' + nodeId + ');"><img id="j' + this._objName + nodeId + '" src="';
 			if(!this.config.useLines) str += (node._io) ? this.icon.nlMinus : this.icon.nlPlus;
 			else str += ( (node._io) ? ((node._ls && this.config.useLines) ? this.icon.minusBottom : this.icon.minus) : ((node._ls && this.config.useLines) ? this.icon.plusBottom : this.icon.plus ) );
 			str += '" alt="" /></a>';
-		} else str += '<img src="' + ( (this.config.useLines) ? ((node._ls) ? this.icon.joinBottom : this.icon.join ) : this.icon.empty) + '" alt="" />';
+		} else str += '<img src="' + ( (this.config.useLines) ? ((node._ls) ? this.icon.joinBottom : this.icon.join ) : this.icon.empty) + '" alt="" class="indent" />';
 	}
 	return str;
 };
@@ -438,3 +439,13 @@ if(!Array.prototype.pop){
 		return lastElement;
 	}
 };
+
+jQuery(document).ready(function(){		
+	var $nodes = jQuery('div .dtree .dtNode');
+	$nodes.children('.indent').css('display', 'none');
+	$nodes.children('.page').css("margin-left", "-16px");
+	$nodes.css("margin-left", function(){
+		var margin = jQuery(this).children(".indent").length * 18;
+		return margin.toString() + "px";
+	});	
+});

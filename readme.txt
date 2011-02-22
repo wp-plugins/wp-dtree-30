@@ -6,7 +6,7 @@ Requires at least: 3.0.1
 Tested up to: 3.0.1
 Stable tag: 4.2
 
-Customized by Ulf Benjaminsson for ripostelaique.com, adding author-names to post titles! 
+Customized by Ulf Benjaminsson for ripostelaique.com, adding line wrap and author-names to post titles! 
 
 == Description ==
 

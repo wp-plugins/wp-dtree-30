@@ -2,7 +2,7 @@
 Copy these selectors to your own theme's stylesheet, and edit that. 
 This file is unused and will be replaced every time the plugin updates.*/
 .dtree {
-	white-space: nowrap !important;
+	
 }
 .dtree img {
 	border: 0px !important;

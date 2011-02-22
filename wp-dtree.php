@@ -2,8 +2,8 @@
 	/*
 	Plugin Name: WP-dTree [ripostelaique.com]
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
-	Description: Customized by Ulf Benjaminsson for ripostelaique.com, adding author names to post titles
-	Version: 9 [ripostelaique.com]
+	Description: Customized by Ulf Benjaminsson for ripostelaique.com, adding line wrap and author names to post titles
+	Version: 9.1 [ripostelaique.com]
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2

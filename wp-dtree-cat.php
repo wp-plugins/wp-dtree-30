@@ -71,7 +71,7 @@ function wpdt_get_category_nodelist($args){
 			$author_name = get_the_author_meta('display_name', $postresult->post_author);
 			$author_url = get_author_posts_url($postresult->post_author);
 			if($author_name && $author_url){			
-				$author_name = " <a href=\"{$author_url}\">{$pre_author}{$author_name}</a>";				
+				$author_name = " <a href=\"{$author_url}\" class=\"authorlink\">{$pre_author}{$author_name}</a>";				
 			}else{
 				$author_name = '';
 			}
