@@ -71,7 +71,7 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 		</p><p>			
 			<label for="<?php echo $this->get_field_id('child_of'); ?>" title="<?php esc_attr_e('Display all categories that are descendants (i.e. children & grandchildren) of the category.','wpdt'); ?>"><?php _e('Show descendands of:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('child_of'); ?>" name="<?php echo $this->get_field_name('child_of'); ?>" class="widefat" style="width:100%;">
-				<option value="0" <?php selected(0,$settings['child_of']); ?>><?php echo attribute_escape(__('Select an ancestor')); ?></option> 
+				<option value="0" <?php selected(0,$settings['child_of']); ?>><?php echo esc_attr(__('Select an ancestor')); ?></option> 
 			<?php 				
 				foreach (get_categories() as $category) {
 					$sel = ($category->term_id == $settings['child_of']) ? 'selected="selected"' : '';
@@ -82,8 +82,8 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 		</p><p>			
 			<label for="<?php echo $this->get_field_id('parent'); ?>" title="<?php esc_attr_e('Display only categories that are direct descendants (i.e. children only) of the category. This does NOT work like the \'child_of\' parameter.','wpdt'); ?>"><?php _e('Only *direct* children of:', 'wpdtree'); ?></label> 			
 			<select id="<?php echo $this->get_field_id('parent'); ?>" name="<?php echo $this->get_field_name('parent'); ?>" class="widefat" style="width:100%;">				
-				<option value="none" <?php selected('',$settings['parent']); ?>><?php echo attribute_escape(__('Don\'t filter on parents')); ?></option> 
-				<option value="0" <?php selected(0,$settings['parent']); ?>><?php echo attribute_escape(__('Root (0)')); ?></option>
+				<option value="none" <?php selected('',$settings['parent']); ?>><?php echo esc_attr(__('Don\'t filter on parents')); ?></option> 
+				<option value="0" <?php selected(0,$settings['parent']); ?>><?php echo esc_attr(__('Root (0)')); ?></option>
 			<?php 				 
 				foreach (get_categories() as $category) {
 					$sel = ($category->term_id == $settings['parent']) ? 'selected="selected"' : '';

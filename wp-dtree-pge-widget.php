@@ -54,7 +54,7 @@ class WPDT_Pages_Widget extends WPDT_Widget{
 		</p><p>
 			<label for="<?php echo $this->get_field_id('child_of'); ?>" title="Display all pages that are descendants (i.e. children & grandchildren) of this page"><?php _e('Show only children of:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('child_of'); ?>" name="<?php echo $this->get_field_name('child_of'); ?>" class="widefat" style="width:100%;">
-				<option value="0" <?php selected(0, $settings['child_of']); ?>><?php echo attribute_escape('(allow all)'); ?></option> 
+				<option value="0" <?php selected(0, $settings['child_of']); ?>><?php echo esc_attr('(allow all)'); ?></option> 
 			<?php 				
 				foreach (get_pages() as $page) {					
 					echo "<option value='{$page->ID}'{$sel}"; selected($page->ID, $settings['child_of']); echo ">{$page->post_title} (ID: {$page->ID})</option>\n";								
@@ -64,7 +64,7 @@ class WPDT_Pages_Widget extends WPDT_Widget{
 		</p><p>
 			<label for="<?php echo $this->get_field_id('parent'); ?>" title="Display only pages that are direct descendants (i.e. children only) of the page. This does NOT work like the 'child_of' parameter."><?php _e('Show only *direct* children of:', 'wpdtree'); ?></label> 			
 			<select id="<?php echo $this->get_field_id('parent'); ?>" name="<?php echo $this->get_field_name('parent'); ?>" class="widefat" style="width:100%;">				
-				<option value="-1" <?php selected(-1,$settings['parent']);?>><?php echo attribute_escape('(allow all parents)'); ?></option> 
+				<option value="-1" <?php selected(-1,$settings['parent']);?>><?php echo esc_attr('(allow all parents)'); ?></option> 
 			<?php 				 
 				foreach (get_pages() as $page) {
 					echo "<option value='{$page->ID}'{$sel}"; selected($page->ID, $settings['parent']); echo ">{$page->post_title} (ID: {$page->ID})</option>\n";							
@@ -74,7 +74,7 @@ class WPDT_Pages_Widget extends WPDT_Widget{
 		</p><p>
 			<label for="<?php echo $this->get_field_id('exclude_tree'); ?>" title="The opposite of 'child_of', 'exclude_tree' will remove all children of a given ID from the results. Useful for hiding all children of a given page. Can also be used to hide grandchildren in conjunction with a 'child_of' value."><?php _e('Show no children from:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('exclude_tree'); ?>" name="<?php echo $this->get_field_name('exclude_tree'); ?>" class="widefat" style="width:100%;">
-				<option value="0" <?php selected(0,$settings['exclude_tree']);?>><?php echo attribute_escape('(exclude nothing)'); ?></option> 
+				<option value="0" <?php selected(0,$settings['exclude_tree']);?>><?php echo esc_attr('(exclude nothing)'); ?></option> 
 			<?php 				
 				foreach (get_pages() as $page) {
 					echo "<option value='{$page->ID}'{$sel}"; selected($page->ID, $settings['exclude_tree']); echo ">{$page->post_title} (ID: {$page->ID})</option>\n";						

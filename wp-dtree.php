@@ -12,7 +12,7 @@
 
 	WP-dTree - Creates a JS navigation tree for your blog archives	
 	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
-	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	
+	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	 
 	
 	This is a plugin created for Wordpress in order to generate JS navigation trees	for your archives. 
 	It uses the (much modified) JS engine dTree that was created by Geir Landrö (http://www.destroydrop.com/javascripts/tree/).
@@ -35,9 +35,9 @@
 	define('WPDT_URL', WP_PLUGIN_URL.'/wp-dtree-30/');
 	define('WPDT_SCRIPT_URL', WPDT_URL.'wp-dtree.min.js');	
 	define('WPDT_STYLE_URL', WPDT_URL.'wp-dtree.min.css');	
-	load_plugin_textdomain('wpdt', WP_PLUGIN_DIR.'/wp-dtree-30/lang/');
+	load_plugin_textdomain('wpdt', false, dirname(plugin_basename(__FILE__)).'/lang/');
 	global $wpdt_tree_ids;
-	$wpdt_tree_id = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0);//used to create unique instance names for the javascript trees.
+	$wpdt_tree_ids = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0);//used to create unique instance names for the javascript trees.
 	
 	function wpdt_get_version(){
 		static $plugin_data;
@@ -87,7 +87,7 @@
 		printf('%1$s by %2$s (who <a href="'.WPDT_DONATE_URL.'">appreciates books</a>) :)<br />', $plugin_data['Title'].' '.$plugin_data['Version'], $plugin_data['Author']);		
 	}								
 	function wpdt_add_option_page(){				
-		add_options_page('WP-dTree Settings', 'WP-dTree', 8, WPDT_BASENAME, 'wpdt_option_page');						 
+		add_options_page('WP-dTree Settings', 'WP-dTree', 'manage_options', WPDT_BASENAME, 'wpdt_option_page');						 
 	}		
 	function wpdt_css(){
 		if(is_admin() || is_feed()){return;}

@@ -27,7 +27,7 @@ function wpdt_build_tree($nodelist, $args){ //internal
 {$t}.a(0,'root','{$title}','','','','');\n";		
 	foreach($nodelist as $nodedata){		
 		$nodedata['url'] = str_replace($blogpath, '', esc_url($nodedata['url'])); //make all path's relative, to save space.																
-		$target = ($nodedata['target']) ? esc_js(esc_attr($nodedata['target'])) : '';
+		$target = (!empty($nodedata['target'])) ? esc_js(esc_attr($nodedata['target'])) : '';
 		$rsspath = ($showrss) ? esc_js(esc_url(wpdt_get_rss($nodedata, $treetype))) : '';				
 		if((!$nodedata['title']) || ($nodedata['name'] == $nodedata['title'])){
 			$nodedata['name'] = esc_js(esc_html($nodedata['name']));
