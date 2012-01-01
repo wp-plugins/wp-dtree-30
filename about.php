@@ -4,6 +4,7 @@ if(!defined('ULFBEN_DONATE_URL')){
 }
 $plugin_title = 'WP-dTree';
 $plugin_changelog = 'http://wordpress.org/extend/plugins/wp-dtree-30/changelog/';	
+$year = '2007';
 $plugin_forum = 'http://wordpress.org/tags/wp-dtree-30?forum_id=10';
 $flattr_profile = 'http://flattr.com/thing/367557/Support-my-plugins';
 $flattr_api = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
@@ -23,14 +24,14 @@ $author_profile = 'http://profiles.wordpress.org/users/ulfben/';
 /* ]]> */
 </script>
 <style type="text/css">
-	#about{ float: right; width:350px; background: #ffc; border: 1px solid #333; padding: 5px; text-align: justify; }
+	#about{ float: right; width:300px; background: #ffc; border: 1px solid #333; padding: 5px; text-align: justify; }
 	#about p, li, ol{ font-family:verdana; font-size:11px; }
 	#about h3 {text-align:center;}
 	.field_info {text-align:right;};
 </style>
 <?php echo "<div id='about'> 
 	<h3>From the author</h3> 				
-	<p>My name is <a href='{$author_site}'>Ulf Benjaminsson</a> and I've developed {$plugin_title} <a href='{$plugin_changelog}'>since 2010</a>. Nice to meet you! :)<p>
+	<p>My name is <a href='{$author_site}'>Ulf Benjaminsson</a> and I've developed {$plugin_title} <a href='{$plugin_changelog}'>since {$year}</a>. Nice to meet you! :)</p>
 	<p>If you value <a href='{$author_profile}'>my plugins</a>, please <strong>help me out</strong> by <a href='{$flattr_profile}' target='_blank'>Flattr-ing them</a>!</p>
 	<p style='text-align:center;'>
 	<a class='FlattrButton' style='display:none;' rev='flattr;button:compact;' href='{$author_profile}'></a>

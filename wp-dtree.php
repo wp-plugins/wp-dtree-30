@@ -9,22 +9,21 @@
 	License: GPL2
 	Text Domain: wpdtree
 	Domain Path: /lang
-
+	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
 	Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben.com)	
 	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	 
 	
 	This is a plugin created for Wordpress in order to generate JS navigation trees	for your archives. 
-	It uses the (much modified) JS engine dTree that was created by Geir Landr� (http://www.destroydrop.com/javascripts/tree/).
-	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as a plugin. He handled all development of WP-dTree up to version 2.2.	
-	*/	
-	require_once('wp-dtree-cache.php');
+	It uses the (much modified) JS engine dTree that was created by Geir Landrö (http://www.destroydrop.com/javascripts/tree/).
+	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as a plugin. He handled all development of WP-dTree up to version 2.2 (~2007).	
+	*/		
 	add_action('plugins_loaded', 'wpdt_init');
 	register_activation_hook(__FILE__, 'wpdt_activate');	
 	register_deactivation_hook(__FILE__, 'wpdt_deactivate');				
 	global $wpdt_tree_ids;
 	$wpdt_tree_ids = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0, 'tax' => 0);//used to create unique instance names for the javascript trees.	
-		
+	require_once('wp-dtree-cache.php');	
 	function wpdt_init() {
 		if(!defined('ULFBEN_DONATE_URL')){
 			define('ULFBEN_DONATE_URL', 'http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17');
@@ -32,9 +31,8 @@
 		define('WPDT_BASENAME', plugin_basename( __FILE__ ));		
 		define('WPDT_SCRIPT', 'wp-dtree.min.js');	
 		define('WPDT_STYLE', 'wp-dtree.min.css');			
-		//load_plugin_textdomain('wpdt', false, dirname(WPDT_BASENAME).'/lang/');				
-		add_filter('plugin_row_meta', 	'wpdt_set_plugin_meta', 2, 10);	
-		add_action('widgets_init', 		'wpdt_load_widgets');	
+		load_plugin_textdomain('wpdt', false, dirname(WPDT_BASENAME).'/lang/');				
+		add_filter('plugin_row_meta', 	'wpdt_set_plugin_meta', 2, 10);			
 		add_action('admin_menu', 		'wpdt_add_option_page');	
 		add_action('deleted_post', 		'wpdt_update_cache'); 
 		add_action('publish_post', 		'wpdt_update_cache'); 
@@ -48,8 +46,15 @@
 		add_action('delete_link', 		'wpdt_update_cache');
 		add_action('edit_link', 		'wpdt_update_cache');
 		add_action('wp_print_styles', 	'wpdt_css');	
-		add_action('wp_print_scripts', 	'wpdt_js');
-	}	
+		add_action('wp_print_scripts', 	'wpdt_js');	
+		add_action('widgets_init', 		'wpdt_load_widgets');	
+		wpdt_print_errors();		
+	}			
+	function wpdt_print_errors(){	
+		if ( TRUE === function_exists('error_get_last') && isset($_GET['charsout'])) {
+			echo '<div id="message" class="error"><p>' . sprintf(__('error/warning/notice: <code>%s</code> | length: <code>%s</code>'), esc_html(var_export(error_get_last(), true)), $_GET['charsout']) . '</p></div>';
+		}
+	}
 		
 	function wpdt_get_version(){
 		static $plugin_data;
@@ -63,7 +68,8 @@
 	function wpdt_activate(){
 		delete_option('wpdt_db_version');		
 		wpdt_install_cache();		
-		wpdt_install_options();		
+		wpdt_install_options();
+		wpdt_print_errors();	
 	}	
 	function wpdt_deactivate(){
 		//options are only cleared on plugin uninstall (ie. delete from admin panel)		
@@ -250,7 +256,7 @@
 		if($args['cache'] && !$was_cached){
 			wpdt_insert_tree_data($tree, $seed);
 		} 	
-		if($args['opentoselection'] || $args['opento']){ //Got some error reports on stripos when the tree wasn't long enough		
+		if($args['opentoselection'] || $args['opento']){ 	
 			$tree_id = wpdt_get_tree_id($tree); 
 			$openTo = '';			
 			if($tree_id){
@@ -266,6 +272,7 @@
 			}
 		}
 		unset($opt);
+		wpdt_print_errors();
 		return $tree;
 	}	
 	
@@ -394,6 +401,7 @@
 		if(!function_exists('current_user_can') || !current_user_can('manage_options') ){
 			die(__('Cheatin&#8217; uh?'));
 		}				
+		require_once('wp-dtree-cache.php');	 
 		add_action('in_admin_footer', 'wpdt_add_admin_footer');
 		$oplain	= "\n<script type='text/javascript'>\ntry{\n";	
 		$cplain = "}catch(e){}</script>\n";
@@ -428,7 +436,7 @@
 			wpdt_update_cache();
 		}		
 	?>	
-	<?php include_once(plugin_dir_path(__FILE__).'about.php'); ?>
+	
 	<form method="post">
 	<div class="wrap">									
 		<h2><?php esc_html_e('WP-dTree General Settings','wpdtree'); ?></h2>				
@@ -456,28 +464,11 @@
 				</select>
 			</p>
 			<p><input id="submit" type="submit" name="submit" value="<?php esc_attr_e('Update Settings &raquo;') ?>" /></p>			
-			</td><td valign="top">
-			<div id="about"> 
-				<h3 align='center'>From the author</h3> 				
-				<p>Hi! My name is <a href="http://profiles.wordpress.org/users/ulfben/">Ulf Benjaminsson</a> and I've developed WP-dTree <a href="http://wordpress.org/extend/plugins/wp-dtree-30/changelog/">since 2007</a>. Nice to meet you! :)<p>
-				<p>First: to all of you who used previous versions of WP-dTree (<em>sorry for keeping you waiting!</em>) - I apologize for breaking backwards compatibility and eating your settings...</p>
-				<p>I've applied all that I've learnt in the last 3 years to create WP-dTree <?php echo $opt['version']; ?>. It is a <em>complete</em> re-write, bringing the plugin up to speed with a much matured WordPress API.</p>				
-				<p><?php echo $opt['version']; ?> is significantly more sane and robust; handling "foreign" characters gracefully, being more in tune with your theme, playing nice with translators and offering proper fallbacks for those who surf without JavaScript.</p>				
-				<p>There is so much new functionality and so many new features that I consider WP-dTree <?php echo $opt['version']; ?> an entirely new plugin. So please - explore and play with all the new settings. And <a href="http://wordpress.org/tags/wp-dtree-30" title="WordPress support forum">let me know</a> if anything breaks.</p>													
-				<p>//<a href="http://www.ulfben.com/">ulfben</a></p>								
-				<hr />
-				<h3 align='center'>Need Help?</h3> 
-				<ol> 	
-				<li><a href="http://wordpress.org/extend/plugins/wp-dtree-30/faq/">Frequently Asked Questions</a></li> 
-				<li><a href="http://wordpress.org/tags/wp-dtree-30">Support Forum</a></li> 
-				</ol> 
-				<p style="font-size:xx-small"><br /><strong>psst...</strong> if you value <a href="http://profiles.wordpress.org/users/ulfben/">my plugins</a>, please help me out by <a href="http://www.dropbox.com/referrals/NTIzMDI3MDk" title="Sync your files online and across computers with Dropbox. 2GB account is free!">signing up for DropBox</a>. 
-It's an online drive to sync your files across computers. 2GB account is free and my refferal earns you a free 250MB bonus! Or if you want to spend money, feel free to <a href="<?php echo ULFBEN_DONATE_URL; ?>" title="Amazon whishlist">send me a book</a>. Used ones are fine! :)</span></p>
-				</div> 
-				</td></tr>			
-					</fieldset>												
-				</table>								
-			</div>		
+			</td><td><?php include_once(plugin_dir_path(__FILE__).'about.php'); ?> </td></tr>			
+			</fieldset>												
+		</table>
+										
+	</div>		
 	</form>
 	<?php
 }

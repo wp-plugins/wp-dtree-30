@@ -1,9 +1,9 @@
 <?php
 class WPDT_Taxonomies_Widget extends WPDT_Widget{	
-	function WPDT_Taxonomies_Widget(){		
+	function __construct() {		
 		$widget_ops = array('classname' => 'wpdt-taxonomies', 'description' => __('Dynamic Taxonomy list', 'wpdtree') ); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-taxonomies-widget'); //Widget control settings.
-		$this->WP_Widget('wpdt-taxonomies-widget', __('WP-dTree Taxonomies (beta)', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.
+		parent::__construct('wpdt-taxonomies-widget', __('WP-dTree Taxonomies (beta)', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.
 	}
 	
 	function widget($args, $settings){		

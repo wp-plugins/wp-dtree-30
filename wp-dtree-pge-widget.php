@@ -1,9 +1,9 @@
 <?php
 class WPDT_Pages_Widget extends WPDT_Widget{	
-	function WPDT_Pages_Widget(){ 				
+	function __construct() {			
 		$widget_ops = array('classname' => 'wpdt-pages', 'description' => __('Dynamic javascript pages', 'wpdtree') ); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-pages-widget'); //Widget control settings.
-		$this->WP_Widget('wpdt-pages-widget', __('WP-dTree Pages', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.		
+		parent::__construct('wpdt-pages-widget', __('WP-dTree Pages', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.		
 	}
 	
 	function widget($args, $settings){

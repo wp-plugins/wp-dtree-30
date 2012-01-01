@@ -1,6 +1,10 @@
 <?php
-class WPDT_Widget extends WP_Widget{	
-	function WPDT_Widget() {}
+
+class WPDT_Widget extends WP_Widget{
+			
+	function __construct($id_base = false, $name, $widget_options = array(), $control_options = array()){
+		parent::__construct($id_base, $name, $widget_options, $control_options);
+	}
 	
 	function widget($args, $settings){
 		extract($args);		

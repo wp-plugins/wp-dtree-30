@@ -1,9 +1,10 @@
 <?php
-class WPDT_Archives_Widget extends WPDT_Widget {	
-	function WPDT_Archives_Widget(){				
+class WPDT_Archives_Widget extends WPDT_Widget {
+		
+	function __construct() {				
 		$widget_ops = array('classname' => 'wpdt-archives', 'description' => __('Dynamic javascript archives', 'wpdtree') ); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-archives-widget'); //Widget control settings.
-		$this->WP_Widget('wpdt-archives-widget', __('WP-dTree Archives', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.		
+		parent::__construct('wpdt-archives-widget', __('WP-dTree Archives', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.       			
 	}
 	
 	function widget($args, $settings){ 

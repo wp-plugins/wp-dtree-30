@@ -12,7 +12,7 @@ Stable tag: 4.2
 
 This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the standard archives, categories, pages and link lists. They're widgets so you can setup [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) with drag & drop ease, but it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/) for developers.
 
-WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
+WP-dTree 4.x is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
 
 If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), please help me out by [Flattr-ing them](http://flattr.com/thing/367557/Support-my-WordPress-plugins)! Or perhaps [send me a book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=11&y=10)? Used ones are fine! :)
 

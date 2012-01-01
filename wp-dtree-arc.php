@@ -4,29 +4,32 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	extract( $args, EXTR_SKIP );			
 	$isyearly = ($type == 'yearly');	
 	$idcount = 1; 
-	$mpidcount = 0; 
+	$mpidcount = 0; 	
+	$count = ($showcount) ? ", count({$wpdb->posts}.ID) AS 'posts' ": '';
+	$limit = ($limit_posts > 0) ? " LIMIT {$limit_posts}" : '';
 	$postexclusions = wpdt_build_exclude_statement($exclude, $wpdb->posts.'.ID');
+	$from = " FROM {$wpdb->posts} ";
 	$catexclusions = '';
 	if($exclude_cats){
 		$catexclusions = " AND {$wpdb->term_relationships}.object_id = {$wpdb->posts}.ID
 		 AND {$wpdb->term_taxonomy}.taxonomy = 'category' 
 		 AND {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id 
 		 AND {$wpdb->term_taxonomy}.term_id NOT IN ({$exclude_cats}) ";
-	}
-	
-	$query = "SELECT YEAR(post_date) AS 'year', MONTH(post_date) AS 'month', count(ID) AS 'posts'
-		 FROM {$wpdb->posts}, {$wpdb->terms}, {$wpdb->term_relationships}, {$wpdb->term_taxonomy} 
-		 WHERE post_type = 'post' AND post_status = 'publish' 
-		 {$postexclusions}
-		 {$catexclusions}
-		 GROUP BY YEAR(post_date), MONTH(post_date)
-		 ORDER BY post_date DESC";
+		 $from .= ", {$wpdb->term_relationships}, {$wpdb->term_taxonomy} ";
+	}	
+	$query = "SELECT YEAR({$wpdb->posts}.post_date) AS 'year', MONTH({$wpdb->posts}.post_date) AS 'month' {$count}
+		 $from  
+		 WHERE {$wpdb->posts}.post_type = 'post' AND {$wpdb->posts}.post_status = 'publish' 
+		 {$postexclusions}		 
+		 {$catexclusions} 
+		 GROUP BY year, month 
+		 ORDER BY {$wpdb->posts}.post_date DESC";
 	$arcresults = $wpdb->get_results($query);		
-	
+
 	if(!$arcresults){
 		return array(); //just create empty tree and bail
 	}	
-	$limit = ($limit_posts > 0) ? " LIMIT {$limit_posts}" : '';
+	
 	$nodelist = array();
 	$curyear = -1;
 	$query = array();	
@@ -68,11 +71,12 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 		$startmonth = $arcresult->year."-".zeroise($arcresult->month, 2)."-01 00:00:00";
 		$endmonth = wpdt_add_month($startmonth, 1);		
 		$query[] = "(SELECT ID AS 'ID', post_date AS 'post_date', post_title AS 'post_title', {$pidcount} AS 'pID'  
-			 FROM {$wpdb->posts}
+			 {$from}
 			 WHERE post_type = 'post' AND post_status = 'publish' 
 				AND post_date > '{$startmonth}'
 				AND post_date < '{$endmonth}'	
-			 {$postexclusions}							
+			 {$postexclusions}	
+			 {$catexclusions} 						
 			 $limit)";				
 	}
 	unset($arcresults);	

@@ -4,7 +4,7 @@ function wpdt_get_table_name(){
 	global $wpdb; return $wpdb->prefix . "dtree_cache";
 }
 
-function wpdt_install_cache(){	
+function wpdt_install_cache(){
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	global $wpdb;
 	$wpdt_cache = wpdt_get_table_name();
@@ -90,7 +90,7 @@ function wpdt_clean_exclusion_list($excluded){
 	return $cleanlist;
 }
 
-function wpdt_build_exclude_statement($excluded, $field ='ID'){
+function wpdt_build_exclude_statement($excluded, $field = 'ID'){
 	return ($excluded) ? " AND {$field} NOT IN ($excluded) " : '';
 }
 ?>
