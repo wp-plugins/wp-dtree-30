@@ -11,6 +11,9 @@ This file is unused and will be replaced every time the plugin updates.*/
 .oclinks { /*the open/close links*/
 	display:none; /*to be revealed only if javascript is on!*/
 }
+.oclinks_sep{/*the open/close link separator*/
+    
+}
 .dtree a.nodeSel { /*the currently selected node, if "Highlight selection" is on*/
 	text-decoration: underline;  !important; 
 }
@@ -35,7 +38,8 @@ This file is unused and will be replaced every time the plugin updates.*/
 .dtree_arc{ /* _any_ archive tree*/
  /* dtree_cat for categories, 
 	dtree_pge for pages, 
-	dtree_lnk for links
+	dtree_lnk for links,
+	dtree_tax for taxonomies
   */
 }
 #dtree_arc1{ /*the _first_ archive tree*/	
@@ -47,3 +51,4 @@ This file is unused and will be replaced every time the plugin updates.*/
 #dtree_arc1 a.node{ /*style _nodes_ in the _first archive_ tree*/	
 }
 #oclinks_arc1{}/*open/close links for the _first archive_ tree*/
+#oclinks_sep_arc1{}/*open/close link separator for the _first archive_ tree*/

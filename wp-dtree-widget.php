@@ -22,7 +22,10 @@ class WPDT_Widget extends WP_Widget{
 		$settings['title'] = strip_tags($new_settings['title']);
 		$settings['sort_order'] = $new_settings['sort_order']; //asc / desc
 		$settings['sortby'] = $new_settings['sortby']; //sort_columns is native for pages. 
-		$settings['oclinks'] = isset($new_settings['oclinks'])? 1 : 0;
+		//$settings['oclinks'] = isset($new_settings['oclinks'])? 1 : 0;
+		$settings['openlink'] = strip_tags($new_settings['openlink']);
+		$settings['closelink'] = strip_tags($new_settings['closelink']);
+		$settings['oclink_sep'] = strip_tags($new_settings['oclink_sep']);
 		$settings['uselines'] = isset($new_settings['uselines'])? 1 : 0;
 		$settings['useicons'] = isset($new_settings['useicons'])? 1 : 0;
 		$settings['exclude'] = wpdt_clean_exclusion_list($new_settings['exclude']);
@@ -44,9 +47,15 @@ class WPDT_Widget extends WP_Widget{
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['cache'], true); ?> id="<?php echo $this->get_field_id('cache'); ?>" name="<?php echo $this->get_field_name('cache'); ?>" /> 
 			<label for="<?php echo $this->get_field_id('cache'); ?>" title="Do not disable this unless you're a developer or having problems with the trees not updating properly!"><?php _e('Cache (recommended!)', 'wpdtree'); ?></label>
-		</p><p>
-			<input class="checkbox" type="checkbox" <?php checked($settings['oclinks'], true); ?> id="<?php echo $this->get_field_id('oclinks'); ?>" name="<?php echo $this->get_field_name('oclinks'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('oclinks'); ?>" title="Show the open/close-links?"><?php _e('Show Open/Close-all links', 'wpdtree'); ?></label>
+		</p><p>		
+			<input type="text" value="<?php echo $settings['openlink']; ?>" name="<?php echo $this->get_field_name('openlink'); ?>" id="<?php echo $this->get_field_id('openlink'); ?>" size="10" />
+			<label for="<?php echo $this->get_field_id('openlink'); ?>"><?php esc_html_e('"open all"-link', 'wpdtree'); ?></label>
+			<br />
+			<input type="text" value="<?php echo $settings['oclink_sep']; ?>" name="<?php echo $this->get_field_name('oclink_sep'); ?>" id="<?php echo $this->get_field_id('oclink_sep'); ?>" size="10" />
+			<label for="<?php echo $this->get_field_id('oclink_sep'); ?>"><?php esc_html_e('open/close all separator', 'wpdtree'); ?></label>	
+			<br />
+			<input type="text" value="<?php echo $settings['closelink']; ?>" name="<?php echo $this->get_field_name('closelink'); ?>" id="<?php echo $this->get_field_id('closelink'); ?>" size="10" />
+			<label for="<?php echo $this->get_field_id('closelink'); ?>"><?php esc_html_e('"close all"-link', 'wpdtree'); ?></label>					
 		</p><p>	
 			<input class="checkbox" type="checkbox" <?php checked($settings['uselines'], true); ?> id="<?php echo $this->get_field_id('uselines'); ?>" name="<?php echo $this->get_field_name('uselines'); ?>" /> 
 			<label for="<?php echo $this->get_field_id('uselines'); ?>" title="Draw the dotted lines"><?php _e('Use lines', 'wpdtree'); ?></label>

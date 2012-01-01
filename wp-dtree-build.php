@@ -5,18 +5,27 @@ function wpdt_build_tree($nodelist, $args){ //internal
 	extract($args, EXTR_SKIP);
 	unset($args);
 	global $wpdt_tree_ids;  
-	$openlink_title = esc_attr__($wpdtreeopt['openlink'], 'wpdtree');
-	$closelink_title = esc_attr__($wpdtreeopt['closelink'], 'wpdtree');
-	$openlink = esc_html__($wpdtreeopt['openlink'], 'wpdtree');
-	$closelink = esc_html__($wpdtreeopt['closelink'], 'wpdtree');
-	$blogpath = trailingslashit(get_bloginfo('url'));
-	$tree = '';				
-	$t = $treetype.$wpdt_tree_ids[$treetype]; //a unique handle for the tree.	
-	if($oclinks){
-		$tree .= "<span class='oclinks oclinks_{$treetype}' id='oclinks_{$t}'><a href='javascript:{$t}.openAll();' title='{$openlink_title}'>{$openlink}</a> | <a href='javascript:{$t}.closeAll();' title='{$closelink_title}'>{$closelink}</a></span>\n";			
+	$openlink_title = esc_attr__($openlink, 'wpdtree');
+	$closelink_title = esc_attr__($closelink, 'wpdtree');
+	$openlink = esc_html__($openlink, 'wpdtree');
+	$closelink = esc_html__($closelink, 'wpdtree');
+	$separator = esc_html__($oclink_sep, 'wpdtree');
+	$blogpath = trailingslashit(get_bloginfo('url'));	 
+	$addhome = false; //seriously stupid idea. just add a filter to the widget-output instead.
+	if($addhome){		
+		$home_node = array( 'id' => 3.14, 'pid' => 0, 'url' => esc_url(get_home_url()), 
+				'name' => esc_js(esc_html(get_bloginfo('name'))), 
+				'title' => esc_js(esc_attr(get_bloginfo('description'))));
+		array_unshift($nodelist, $home_node);
 	}
-	$tree .= $wpdtreeopt['openscript'];	
-	$title = esc_js($title);
+	$tree = '';				
+	$t = $treetype.$wpdt_tree_ids[$treetype]; //a unique handle for the tree.		
+	$tree .= ($openlink || $closelink) ? "<span class='oclinks oclinks_{$treetype}' id='oclinks_{$t}'>" : '';
+	$tree .= ($openlink) ? "<a href='javascript:{$t}.openAll();' title='{$openlink_title}'>{$openlink}</a>" : '';
+	$tree .= ($separator && $openlink && $closelink)? "<span class='oclinks_sep oclinks_sep_{$treetype}' id='oclinks_sep_{$t}'>{$separator}</span>" : '';
+	$tree .= ($closelink)? "<a href='javascript:{$t}.closeAll();' title='{$closelink_title}'>{$closelink}</a>" : '';			
+	$tree .= ($openlink || $closelink) ? "</span>\n" : '';
+	$tree .= ($wpdtreeopt['openscript']) ? $wpdtreeopt['openscript'] : "<script type='text/javascript'>"; //this happens for some reason?
 	$tree .= "if(document.getElementById && document.getElementById('oclinks_{$t}')){document.getElementById('oclinks_{$t}').style.display = 'block';}\n";
 	$tree .= "var {$t} = new wpdTree('{$t}', '{$blogpath}','{$truncate}');
 {$t}.config.useLines={$uselines};
@@ -24,11 +33,11 @@ function wpdt_build_tree($nodelist, $args){ //internal
 {$t}.config.closeSameLevel={$closelevels};
 {$t}.config.folderLinks={$folderlinks};
 {$t}.config.useSelection={$showselection};
-{$t}.a(0,'root','{$title}','','','','');\n";		
+{$t}.a(0,'root','','','','','');\n";
 	foreach($nodelist as $nodedata){		
 		$nodedata['url'] = str_replace($blogpath, '', esc_url($nodedata['url'])); //make all path's relative, to save space.																
 		$target = (!empty($nodedata['target'])) ? esc_js(esc_attr($nodedata['target'])) : '';
-		$rsspath = ($showrss) ? esc_js(esc_url(wpdt_get_rss($nodedata, $treetype))) : '';				
+		$rsspath = ($showrss) ? esc_js(wpdt_get_rss($nodedata, $treetype)) : '';				
 		if((!$nodedata['title']) || ($nodedata['name'] == $nodedata['title'])){
 			$nodedata['name'] = esc_js(esc_html($nodedata['name']));
 			$nodedata['title'] = ''; //save space, let the javascript default title to name.
@@ -39,10 +48,7 @@ function wpdt_build_tree($nodelist, $args){ //internal
 		$tree .= "{$t}.a({$nodedata['id']},{$nodedata['pid']},'{$nodedata['name']}','{$nodedata['title']}','{$nodedata['url']}','{$target}','{$rsspath}');\n";		
 	}		
 	$tree .= "document.write({$t});\n";	
-	if(strlen($opento)){//force open to
-		$tree .= wpdt_force_open_to($opento, $t, $tree);			
-	}
-	$tree .= $wpdtreeopt['closescript'];
+	$tree .= ($wpdtreeopt['closescript']) ? $wpdtreeopt['closescript'] : '</script>' ;
 	unset($wpdtreeopt);
 	unset($nodelist);
 	return $tree; 
@@ -59,25 +65,24 @@ function wpdt_get_rss($nodedata, $treetype){
 	$feedtype = 'rss2';		
 	if($nodedata['id'] <= 0){					 		
 		if(get_option('permalink_structure') == ''){
-			$rsslink = '?feed='.$feedtype.'&'.$treetype.'='.($nodedata['id']-$idtranspose[$treetype]);	 		
+			$rsslink = '?feed='.$feedtype.'&'.$treetype.'='.$nodedata['id'];	 		
 		} else{				
-			$path = str_replace(trailingslashit(get_bloginfo('url')), '', $nodedata['url']);			
-			$rsslink = trailingslashit($path).'feed';			
+			//$path = str_replace(trailingslashit(get_bloginfo('url')), '', $nodedata['url']);			
+			$rsslink = trailingslashit($nodedata['url']).'feed';			
 		}		
 	}
 	return $rsslink;
 }
 
 function wpdt_force_open_to($opento, $tree_id, $treestring){ 
-	$result = '';
+	$result = "\n/*WP-dTree: force open to: '{$opento}' */\n";
 	if(trim($opento) == 'all'){
-		$result = $tree_id.".openAll();\n";
+		$result .= $tree_id.".openAll();\n";
 	} else {
 		$requests = explode(',', $opento);		
 		foreach($requests as $request){
-			$result .= wpdt_open_tree_to($request, $tree_id, $treestring);
-		}
-		$result .= "\n/*WP-dTree: force open to: {$opento} */\n";					
+			$result .= wpdt_open_tree_to($request, $tree_id, $treestring, true);
+		}					
 	}	
 	return $result;				
 }
@@ -85,23 +90,38 @@ function wpdt_force_open_to($opento, $tree_id, $treestring){
 /* 	This function is hairy. It helps if you take a look at the JS-source in the HTML first. Here's one typical line:
 		arc1.a(4695,2,'Post Title','','2010/10/post-title/','','');
 	We're trying to find the node-ID (4695 in this case) corresponding to the requested URL. */
-function wpdt_open_tree_to($request, $tree_id, $treestring){	
-	if(strlen($treestring) < 1){return '';}
-	if($tree_id == ''){	
-		$opt = get_option('wpdt_options');		
-		$s = stripos($treestring, 'var ', strlen($opt['openscript']))+4; // 4 = strlen('var ')
-		$e = stripos($treestring, ' = new wpdTree', $s); //var {id} = new wpdTree
-		$tree_id = substr($treestring, $s, $e-$s);		
-	}	
-	if(is_numeric($request)){ //assume request was a node ID.
-		return "$tree_id.openTo('$request', true);\n";
-	}	
-	
+function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false){
+	global $wp_query;	
+	$opt = get_option('wpdt_options');	
+	$prefix = is_category() ? '-' : ''; //category IDs are negated to avoid ID-trampling in the tree		
+	if(is_numeric($request)){ //assume request was a node ID.				
+		return "$tree_id.openTo('{$prefix}{$request}', true); /*was numeric*/\n";
+	}
+	if(!$forced){ //don't allow shortcutting when forcing a node open.
+		if(is_home()){
+			return "$tree_id.closeAll(); /*is home*/\n";
+		}
+		if($wp_query){
+			$maybe_id = $wp_query->get_queried_object_id();//If the request is a category, author, permalink or page
+			if($maybe_id){
+				return "$tree_id.openTo('{$prefix}{$maybe_id}', true); /*wp_query object id*/\n";
+			}		
+			$maybe_id = (isset($wp_query->post->ID) && $wp_query->found_posts == 1) ? $wp_query->post->ID : false;
+			if($maybe_id !== false){//if more than one post, ignore the id (will be top-post but we want the category/archive view)
+				return  "$tree_id.openTo('{$maybe_id}', true); /*wp_query post ID*/\n";
+			}
+			$paged = $wp_query->query_vars['paged'];
+			if($paged > 0){//the dtree is unaware of paging, so remove it from request.			
+				$request = str_replace("?paged={$paged}", '', $request);
+				$request = str_replace("/page/{$paged}", '', $request);	
+			}
+		}
+	}
 	//Okay, we were fed an URL. Let's clean it up to look like it would in the JS-source. 
 	$path = ltrim($request, '/'); 					//REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.								  	
 	$blogurl = get_bloginfo('url'); 				//yields: http://blog.server.com, http://server.com/~userdir - you get the picture. 							
-	if(empty($path) || $path == $blogurl || $path == '/'){ 			//we've probably requested "home", so let's close the tree.
-		return "{$tree_id}.closeAll();\n";
+	if(empty($path) || $path == $blogurl || $path == '/'){ 			//we've probably requested "home", so let's do nothing
+		return "/*\nWP-dTree: $tree_id request seems to be home.\n*/";	
 	}else if(strpos($path, $blogurl) === 0){		//REQUEST_URI included http://server.com/ (happens on some hosts)			
 		$path = str_replace($blogurl, '', $path);	//all URLs are relative in the JS source (to save space), so let's get rid of the blog url.
 	} else { 										//some servers (with userdir) gives us: '~userdir/blog/category/post/'				
@@ -111,12 +131,12 @@ function wpdt_open_tree_to($request, $tree_id, $treestring){
 		}		
 	}
 	$path = ltrim($path, '/'); 					//REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.								  
-	if(empty($path)){return "{$tree_id}.closeAll();\n";} //this should never happen, so let's handle it. :P	
+	if(empty($path)){return "/*WP-dTree: requested path was empty*/";} //this should never happen, so let's handle it. :P	
 	$path = "'".$path."'";					//the JS parameters are surrounded by '', so let's be explicit (avoid 2010/10 match with 2010/10/post-title)
 	//Now to isolate the ID. First we find the line where it appears
 	$parts = explode($path, $treestring); 	//split the script around the path, to immedietly narrow the search. (thus we know line is at the end of the first part)
 	if(count($parts) < 2){
-		return "/*WP-dTree: $tree_id request was {$path} */\n{$tree_id}.closeAll();\n";
+		return "/*WP-dTree: $tree_id request was {$path}. Couldn't find it.*/\n";
 	}	
 	$parts = $parts[0]; 					//we know line is at the end of the first part
 	$needle = $tree_id.'.a(';
@@ -134,7 +154,14 @@ function wpdt_open_tree_to($request, $tree_id, $treestring){
 	if(is_numeric($number)){		
 		return "/*WP-dTree: $tree_id request was {$path}. I found: '".esc_js($number)."'*/\n\n{$tree_id}.openTo('{$number}', true);\n";
 	}	 	
-	return "/*WP-dTree: {PHP_VERSION} $tree_id request was {$path}. I found: ".esc_js($number)."*/\n {$tree_id}.closeAll();\n";	//if we get down here something was wrong. output some debug-info.
+	return "/*WP-dTree: {PHP_VERSION} $tree_id request was {$path}. I found: ".esc_js($number)."*/\n";	//if we get down here something was wrong. output some debug-info.
+}
+
+function wpdt_get_tree_id($treestring){
+	if(!$treestring){return false;}
+	$s = stripos($treestring, 'var ')+4; // 4 = strlen('var ')
+	$e = stripos($treestring, ' = new wpdTree', $s); //var {id} = new wpdTree
+	return substr($treestring, $s, $e-$s);		
 }
 
 ?>

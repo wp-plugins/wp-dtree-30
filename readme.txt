@@ -2,8 +2,8 @@
 Contributors: ulfben
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
-Requires at least: 3.0.1
-Tested up to: 3.0.1
+Requires at least: 3.3
+Tested up to: 3.3
 Stable tag: 4.2
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
@@ -14,10 +14,23 @@ This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javas
 
 WP-dTree 4.0 is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
 
-*If you value [my plugins](http://profiles.wordpress.org/users/ulfben/) and want to motivate further development - please **help me out** by [downloading and installing DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) from my refferal link. It's a cross-plattform application to sync your files online and across computers. A 2GB account is free and my refferal earns you a 250MB bonus!*
+If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), please help me out by [Flattr-ing them](http://flattr.com/thing/367557/Support-my-WordPress-plugins)! Or perhaps [send me a book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=11&y=10)? Used ones are fine! :)
 
-= Note: =
-For some users the installation procedure left WP-dTree without a default configuration. If after installing and activating the widget all you get is [a wierd string of code](http://wordpress.org/support/topic/plugin-wp-dtree-only-outputs-1-string-of-textcode), just go to Settings -> WP-dTree and hit "Update settings".
+//*[Ulf Benjaminsson](http://profiles.wordpress.org/users/ulfben/)*
+
+= Changes in v4.3 (2012-01-01) =
+* Added: support and widget for custom taxonomies. (Thanks: Einat Dagan!)
+* Added: configurable open/close links for each tree
+* Added: [configurable open/close separator for each tree](http://wordpress.org/support/topic/plugin-wp-dtree-pipe-character-between-open-all-and-close-all?replies=2)
+* Fixed: various PHP [errors](http://wordpress.org/support/topic/plugin-wp-dtree-stripos-function-error-followed-by-crash-of-site?replies=1#post-2393280) and warnings.
+* [Fixed: feed links being wrong](http://wordpress.org/support/topic/rss-problem-36?replies=2#post-2221275)
+* Fixed: initialization routines
+* Fixed: excluding categories from the archive tree
+* Fixed: excluding posts from category tree
+* Fixed: [open/close link separator behavior](http://wordpress.org/support/topic/plugin-wp-dtree-pipe-character-between-open-all-and-close-all?replies=2)
+* Fixed: [link children are sorted correctly](http://wordpress.org/support/topic/plugin-wp-dtree-sorting-links-by-id-not-working?replies=1)
+* Fixed: Open to selection supports pagination
+* Fixed: [Open to selection supports categories again](http://wordpress.org/support/topic/plugin-wp-dtree-how-to-force-open-wdtree?replies=3#post-2523443)
 
 = Changes in v4.2 (2010-10-29) =
 * Fixed the uninstallation procedure.
@@ -69,6 +82,7 @@ WP-dTree exposes the following [template tag functions](http://codex.wordpress.o
 
 * `wpdt_list_archives();`			
 * `wpdt_list_categories();`
+* `wpdt_list_taxonomies(); //needs testing.`
 * `wpdt_list_pages();`
 * `wpdt_list_links();`
 * `wpdt_list_bookmarks(); //alias for wpdt_list_links`
@@ -96,12 +110,16 @@ So, to find out what arguments are definetly available grab the default `$args`:
 
 * `wpdt_get_archives_defaults();` 
 * `wpdt_get_categories_defaults();` 
+* `wpdt_get_taxonomies_defaults()`
 * `wpdt_get_pages_defaults();`
 * `wpdt_get_links_defaults();`
 
 They all return associative arrays whith all arguments defaulted.
 
 == Upgrade Notice ==
+
+= 4.3 = 
+Lots and lots of fixes. Widget for custom taxonomies.
 
 = 4.2 =
 Fixed the uninstallation procedure.
@@ -115,6 +133,20 @@ Complete rewrite! Read the docs before upgrading!
 == Changelog == 
 
 (Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
+
+= Changes in v4.3 (2012-01-01) =
+* Added: support and widget for custom taxonomies. (needs testing, for sure...)
+* Added: configurable open/close links for each tree
+* Added: [configurable open/close separator for each tree](http://wordpress.org/support/topic/plugin-wp-dtree-pipe-character-between-open-all-and-close-all?replies=2)
+* Fixed: various PHP [errors](http://wordpress.org/support/topic/plugin-wp-dtree-stripos-function-error-followed-by-crash-of-site?replies=1#post-2393280) and warnings.
+* [Fixed: feed links being wrong](http://wordpress.org/support/topic/rss-problem-36?replies=2#post-2221275)
+* Fixed: initialization routines
+* Fixed: excluding categories from the archive tree
+* Fixed: excluding posts from category tree
+* Fixed: open/close link separator behavior (only show when both open/close is shown)
+* Fixed: [link children are sorted correctly](http://wordpress.org/support/topic/plugin-wp-dtree-sorting-links-by-id-not-working?replies=1)
+* Fixed: Open to selection supports pagination
+* Fixed: [Open to selection supports categories again](http://wordpress.org/support/topic/plugin-wp-dtree-how-to-force-open-wdtree?replies=3#post-2523443)
 
 = Changes in v4.2 (2010-10-29) =
 * Fixed the uninstallation procedure.
@@ -262,15 +294,15 @@ The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change
 
 The original 'WP-dTree' was created by [Christopher Hwang](http://www.silpstream.com/blog/) in ~2005. By 2007 Mr. Hwang seemed to have dropped of the internet for good so [Ulf Benjaminsson](http://www.ulfben.com/) forked the plugin in and named it 'WP-dTree 3.0' (note to self: having a release number in the title is *stupid*).
 
-Ulf's fork was focused on performance improvements - mainly caching - but soon expanded to add a lot of new features and modernizations; compatibility with WP 2.7, 2.8, 2.9, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more. 
+Ulf's fork was focused on performance improvements - mainly caching - but soon expanded to add a lot of new features and modernizations; compatibility with WP 2.7 through WP 3.3, widgets, out-of-the-box Scriptaculous support, link trees, feed icons and more. 
 
 For version 4.0 the entire plugin has been rewritten from scratch by Ulf, bringing it in line with the much matured WP 3.x API and generally being less of a hack. :P
 
-*WP-dTree (3.0 and up) is Copyright (C) 2007-2010 Ulf Benjaminsson (email: ulf at ulfben dot com)
+*WP-dTree (3.0 and up) is Copyright (C) 2007-2012 Ulf Benjaminsson (email: first name at ulfben dot com)
 
 *WP-dTree (3.x and lower) Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
 
-*[dTree](www.destroydrop.com/javascript/tree/)-JavaScript is Copyright (c) 2002-2003 Geir Landrö
+*[dTree](www.destroydrop.com/javascript/tree/)-JavaScript is Copyright (c) 2002-2003 Geir Landrï¿½
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

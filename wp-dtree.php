@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a> widgets to replace the standard archives-, categories-, pages- and link lists.
-	Version: 4.2
+	Version: 4.3
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2
@@ -15,30 +15,42 @@
 	Copyright (C) 2006 Christopher Hwang (email: chris@silpstream.com)	 
 	
 	This is a plugin created for Wordpress in order to generate JS navigation trees	for your archives. 
-	It uses the (much modified) JS engine dTree that was created by Geir Landrö (http://www.destroydrop.com/javascripts/tree/).
+	It uses the (much modified) JS engine dTree that was created by Geir Landrï¿½ (http://www.destroydrop.com/javascripts/tree/).
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as a plugin. He handled all development of WP-dTree up to version 2.2.	
-	*/
-	if(!defined('WP_CONTENT_URL')){
-		define('WP_CONTENT_URL', get_option('siteurl').'/wp-content');
-	}
-	if(!defined('WP_CONTENT_DIR')){
-		define('WP_CONTENT_DIR', ABSPATH.'wp-content');
-	}
-	if(!defined('WP_PLUGIN_URL')){
-		define('WP_PLUGIN_URL', WP_CONTENT_URL.'/plugins');
-	}
-	if(!defined('WP_PLUGIN_DIR')){
-		define('WP_PLUGIN_DIR', WP_CONTENT_DIR.'/plugins');
-	}	
-	define('WPDT_DONATE_URL', 'http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17');
-	define('WPDT_BASENAME', plugin_basename( __FILE__ ));
-	define('WPDT_URL', WP_PLUGIN_URL.'/wp-dtree-30/');
-	define('WPDT_SCRIPT_URL', WPDT_URL.'wp-dtree.min.js');	
-	define('WPDT_STYLE_URL', WPDT_URL.'wp-dtree.min.css');	
-	load_plugin_textdomain('wpdt', false, dirname(plugin_basename(__FILE__)).'/lang/');
+	*/	
+	require_once('wp-dtree-cache.php');
+	add_action('plugins_loaded', 'wpdt_init');
+	register_activation_hook(__FILE__, 'wpdt_activate');	
+	register_deactivation_hook(__FILE__, 'wpdt_deactivate');				
 	global $wpdt_tree_ids;
-	$wpdt_tree_ids = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0);//used to create unique instance names for the javascript trees.
-	
+	$wpdt_tree_ids = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0, 'tax' => 0);//used to create unique instance names for the javascript trees.	
+		
+	function wpdt_init() {
+		if(!defined('ULFBEN_DONATE_URL')){
+			define('ULFBEN_DONATE_URL', 'http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17');
+		}		
+		define('WPDT_BASENAME', plugin_basename( __FILE__ ));		
+		define('WPDT_SCRIPT', 'wp-dtree.min.js');	
+		define('WPDT_STYLE', 'wp-dtree.min.css');			
+		//load_plugin_textdomain('wpdt', false, dirname(WPDT_BASENAME).'/lang/');				
+		add_filter('plugin_row_meta', 	'wpdt_set_plugin_meta', 2, 10);	
+		add_action('widgets_init', 		'wpdt_load_widgets');	
+		add_action('admin_menu', 		'wpdt_add_option_page');	
+		add_action('deleted_post', 		'wpdt_update_cache'); 
+		add_action('publish_post', 		'wpdt_update_cache'); 
+		add_action('save_post', 		'wpdt_update_cache');
+		add_action('created_category', 	'wpdt_update_cache'); 
+		add_action('edited_category', 	'wpdt_update_cache'); 
+		add_action('delete_category', 	'wpdt_update_cache');
+		add_action('publish_page', 		'wpdt_update_cache');	
+		add_action('update_option_permalink_structure', 'wpdt_update_cache');
+		add_action('add_link', 			'wpdt_update_cache');
+		add_action('delete_link', 		'wpdt_update_cache');
+		add_action('edit_link', 		'wpdt_update_cache');
+		add_action('wp_print_styles', 	'wpdt_css');	
+		add_action('wp_print_scripts', 	'wpdt_js');
+	}	
+		
 	function wpdt_get_version(){
 		static $plugin_data;
 		if(!$plugin_data){
@@ -46,29 +58,10 @@
 			$plugin_data = get_plugin_data( __FILE__ );
 		}
 		return "".$plugin_data['Version'];
-	}			
-	require_once('wp-dtree-cache.php');
-	register_activation_hook(__FILE__, 'wpdt_activate');	
-	register_deactivation_hook(__FILE__, 'wpdt_deactivate');				
-	add_filter('plugin_row_meta', 	'wpdt_set_plugin_meta', 2, 10);	
-	add_action('widgets_init', 		'wpdt_load_widgets');	
-	add_action('admin_menu', 		'wpdt_add_option_page');	
-	add_action('deleted_post', 		'wpdt_update_cache'); 
-	add_action('publish_post', 		'wpdt_update_cache'); 
-	add_action('save_post', 		'wpdt_update_cache');
-	add_action('created_category', 	'wpdt_update_cache'); 
-	add_action('edited_category', 	'wpdt_update_cache'); 
-	add_action('delete_category', 	'wpdt_update_cache');
-	add_action('publish_page', 		'wpdt_update_cache');	
-	add_action('update_option_permalink_structure', 'wpdt_update_cache');
-	add_action('add_link', 			'wpdt_update_cache');
-	add_action('delete_link', 		'wpdt_update_cache');
-	add_action('edit_link', 		'wpdt_update_cache');
-	add_action('wp_print_styles', 	'wpdt_css');	
-	add_action('wp_print_scripts', 	'wpdt_js');
-	
+	}	
+
 	function wpdt_activate(){
-		delete_option("wpdt_db_version");		
+		delete_option('wpdt_db_version');		
 		wpdt_install_cache();		
 		wpdt_install_options();		
 	}	
@@ -84,7 +77,7 @@
 	}	
 	function wpdt_add_admin_footer(){ //shows some plugin info in the footer of the config screen.
 		$plugin_data = get_plugin_data(__FILE__);
-		printf('%1$s by %2$s (who <a href="'.WPDT_DONATE_URL.'">appreciates books</a>) :)<br />', $plugin_data['Title'].' '.$plugin_data['Version'], $plugin_data['Author']);		
+		printf('%1$s by %2$s (who <a href="'.ULFBEN_DONATE_URL.'">appreciates books</a>) :)<br />', $plugin_data['Title'].' '.$plugin_data['Version'], $plugin_data['Author']);		
 	}								
 	function wpdt_add_option_page(){				
 		add_options_page('WP-dTree Settings', 'WP-dTree', 'manage_options', WPDT_BASENAME, 'wpdt_option_page');						 
@@ -93,7 +86,7 @@
 		if(is_admin() || is_feed()){return;}
 		$opt = get_option('wpdt_options');
 		if(!$opt['disable_css']){
-			wp_enqueue_style('dtree.css', WPDT_STYLE_URL, false, wpdt_get_version());
+			wp_enqueue_style('dtree.css', plugin_dir_url(__FILE__).WPDT_STYLE, false, wpdt_get_version());
 		}
 	}
 	function wpdt_js() {			   	
@@ -101,20 +94,22 @@
 		$opt = get_option('wpdt_options');
 		$deps = array();
 		if($opt['animate']){
-			wp_enqueue_script('jquery', '', array(), '1.4.2', true);					
+			wp_enqueue_script('jquery', '', array(), false, true);					
 			$deps = array('jquery');
 		}
-		wp_enqueue_script('dtree', WPDT_SCRIPT_URL, $deps, wpdt_get_version(), false);				
-		wp_localize_script('dtree', 'WPdTreeSettings', array('animate' => $opt['animate'],'duration'=>$opt['duration'],'imgurl'=>WPDT_URL));
+		wp_enqueue_script('dtree', plugin_dir_url(__FILE__).WPDT_SCRIPT, $deps, wpdt_get_version(), false);				
+		wp_localize_script('dtree', 'WPdTreeSettings', array('animate' => $opt['animate'],'duration'=>$opt['duration'],'imgurl'=>plugin_dir_url(__FILE__)));
 	}	
 	function wpdt_load_widgets() {
 		require_once('wp-dtree-widget.php');
 		require_once('wp-dtree-arc-widget.php');
 		require_once('wp-dtree-cat-widget.php');
+		require_once('wp-dtree-tax-widget.php');
 		require_once('wp-dtree-pge-widget.php');
 		require_once('wp-dtree-lnk-widget.php');
 		register_widget('WPDT_Archives_Widget');
 		register_widget('WPDT_Categories_Widget');
+		register_widget('WPDT_Taxonomies_Widget');
 		register_widget('WPDT_Pages_Widget');
 		register_widget('WPDT_Links_Widget');
 	}
@@ -134,6 +129,10 @@
 		$args = wp_parse_args($args, wpdt_get_defaults('cat'));		
 		return wpdt_list_($args);			
 	}	
+	function wpdt_list_taxonomies($args = array()){ //similar to wp_list_categories
+		$args = wp_parse_args($args, wpdt_get_defaults('tax'));		
+		return wpdt_list_($args);			
+	}	
 	function wpdt_list_pages($args = array()){ 		//similar to wp_list_pages
 		$args = wp_parse_args($args, wpdt_get_defaults('pge'));
 		return wpdt_list_($args);
@@ -150,6 +149,9 @@
 	}
 	function wpdt_get_categories_defaults(){
 		return wpdt_get_defaults('cat');
+	}
+	function wpdt_get_taxonomies_defaults(){
+		return wpdt_get_defaults('tax');
 	}
 	function wpdt_get_pages_defaults(){
 		return wpdt_get_defaults('pge');
@@ -209,6 +211,19 @@
 					$args['echo'] = 0;		
 					$tree .= "\n<noscript>\n".wp_list_categories($args)."\n</noscript>\n";								
 				}
+			}else if($args['treetype'] == 'tax'){
+				require_once('wp-dtree-tax.php');
+				if(isset($args['parent']) && $args['parent'] == 'none'){unset($args['parent']);} //no default for parent, so let's flag and turn it off here.								
+				if(isset($args['show_count'])){$args['showcount'] = $args['show_count'];} //convert vanilla wp_list_categories arguments
+				if(isset($args['orderby'])){$args['sortby'] = $args['orderby'];}
+				if(isset($args['order'])){$args['sortorder'] = $args['order'];}
+				if(isset($args['feed'])){$args['showrss'] = 1;}			
+				$nodelist = wpdt_get_taxonomy_nodelist($args);
+				$tree = wpdt_build_tree($nodelist, $args);
+				if($opt['addnoscript']){
+					$args['echo'] = 0;		
+					$tree .= "\n<noscript>\n".wp_list_categories($args)."\n</noscript>\n";	//http://groups.google.com/group/wp-hackers/browse_thread/thread/24a41454c945dd9f?pli=1							
+				}
 			}else if($args['treetype'] == 'pge'){
 				require_once('wp-dtree-pge.php');
 				if(!isset($args['sort_column']) || $args['sort_column'] == ''){$args['sort_column'] = $args['sortby'];} //handle the vanilla wp_get_pages arguments.
@@ -221,7 +236,7 @@
 			}else if($args['treetype'] == 'lnk'){ 
 				require_once('wp-dtree-lnk.php');
 				if(!isset($args['orderby']) || $args['orderby'] == ''){$args['orderby'] = $args['sortby'];} //handle the vanilla wp_get_bookmarks arguments.	
-				if(!isset($args['order']) || $args['order'] == ''){$args['orderby'] = $args['sort_order'];} 
+				if(!isset($args['order']) || $args['order'] == ''){$args['order'] = $args['sort_order'];} 
 				$nodelist = wpdt_get_links_nodelist($args);
 				$tree = wpdt_build_tree($nodelist, $args);
 				if($opt['addnoscript']){
@@ -235,23 +250,37 @@
 		if($args['cache'] && !$was_cached){
 			wpdt_insert_tree_data($tree, $seed);
 		} 	
-		if($args['opentoselection'] && isset($_SERVER['REQUEST_URI'])){	
-			$tree .= $opt['openscript'] . wpdt_open_tree_to($_SERVER['REQUEST_URI'],'', $tree) . $opt['closescript'];		
-		}		
+		if($args['opentoselection'] || $args['opento']){ //Got some error reports on stripos when the tree wasn't long enough		
+			$tree_id = wpdt_get_tree_id($tree); 
+			$openTo = '';			
+			if($tree_id){
+				if($args['opentoselection'] && isset($_SERVER['REQUEST_URI'])){	
+					$openTo .= wpdt_open_tree_to($_SERVER['REQUEST_URI'], $tree_id, $tree);		
+				}
+				if($args['opento']){ //force open to			
+					$openTo .= wpdt_force_open_to($args['opento'], $tree_id, $tree);	
+				}
+			}
+			if($openTo){
+				$tree .= $opt['openscript'] . $openTo . $opt['closescript'];	
+			}
+		}
 		unset($opt);
 		return $tree;
 	}	
 	
 	function wpdt_get_defaults($treetype){
-		$common = array('title' => '', 'cache'=> 1, 'opento' => '', 'oclinks' => 1, 'uselines' => 1, 'useicons' => 0, 
+		$common = array('title' => '', 'cache'=> 1, 'opento' => '', 'uselines' => 1, 'useicons' => 0, 
 			'exclude' => '', 'closelevels' => 1, 'folderlinks' => 0, 'showselection' => 0, 'include' => '',
-			'opentoselection' => 1,'truncate' => 0, 'sort_order' => 'ASC', 'sortby' => 'ID', 'treetype' => $treetype
+			'opentoselection' => 1,'truncate' => 0, 'sort_order' => 'ASC', 'sortby' => 'ID', 'treetype' => $treetype,
+			'openlink' 	=> __('open all', 'wpdtree'), 'closelink' => __('close all', 'wpdtree'), 'oclink_sep' => ' | '
 		);		
 		if($treetype == 'arc'){			
 			return array_merge($common, array(				
 				'title' => __('Archives', 'wpdtree'),
 				'sortby' 	=> 'post_date',
-				'sort_order'=> 'DESC',				
+				'sort_order'=> 'DESC',
+				'exclude_cats' => '',				
 				'listposts' => 1,				
 				'showrss' 	=> 0,
 				'type' 		=> 'monthly',
@@ -274,6 +303,27 @@
 				'showrss' 		=> 0,
 				'showcount' 	=> 0,	//show_count
 				'taxonomy' 		=> 'category',			
+				'pad_counts' 	=> 1,
+				'hierarchical' 	=> 0,
+				'number' 		=> 0,
+				'limit_posts'	=> 0,
+				'more_link' 	=> "Show more (%excluded%)...", //if number of posts-limit is hit, show link to full category listing
+				'include_last_update_time' => 0
+			));		
+		}else if($treetype == 'tax'){
+			return array_merge($common, array(				
+				'title' => __('Taxonomy', 'wpdtree'),								
+				'cpsortby' 		=> 'post_date',
+				'cpsortorder' 	=> 'DESC',			
+				'hide_empty' 	=> 1,
+				'child_of' 		=> 0,
+				'parent' 		=> 'none', //there is no default for parents.
+				'allowdupes' 	=> 1,
+				'postexclude' 	=> '',
+				'listposts' 	=> 1,									
+				'showrss' 		=> 0,
+				'showcount' 	=> 0,	//show_count
+				'taxonomy' 		=> 'taxonomy', //or any registered taxonomy			
 				'pad_counts' 	=> 1,
 				'hierarchical' 	=> 0,
 				'number' 		=> 0,
@@ -316,9 +366,7 @@
 				'search'        => '' //Searches link_url, link_name or link_description like the search string.				
 			));				
 		}else{
-			return array(
-				'openlink' 	=> __('open all', 'wpdtree'),
-				'closelink' => __('close all', 'wpdtree'),
+			return array(				
 				'openscript'=> "\n<script type='text/javascript'>\n/* <![CDATA[ */\ntry{\n",
 				'closescript'=> "}catch(e){} /* ]]> */\n</script>\n",
 				'addnoscript'=> 0,
@@ -358,9 +406,7 @@
 			wpdt_install_options(); //update options if the user forgot to disable the plugin prior to upgrading.
 			$opt = get_option('wpdt_options');			
 		}				
-		if(isset($_POST['submit'])){											
-			$opt['openlink'] = strip_tags($_POST['openlink']);
-			$opt['closelink'] = strip_tags($_POST['closelink']);
+		if(isset($_POST['submit'])){			
 			$opt['version'] = wpdt_get_version();	
 			$opt['duration'] = intval($_POST['duration']);
 			$opt['animate'] = isset($_POST['animate']) ? 1 : 0;	
@@ -382,26 +428,15 @@
 			wpdt_update_cache();
 		}		
 	?>	
-	<style type="text/css"> 
-	label{ font-weight:bold; }
-	#submit{ color: #000; }	
-	#about{ width:350px; background: #ffc; border: 1px solid #333; margin-right: 2px; padding: 5px; text-align: justify; }
-	#about p, li, ol{ font-family:verdana; font-size:11px; }
-	</style>
-	<form method="post">	
+	<?php include_once(plugin_dir_path(__FILE__).'about.php'); ?>
+	<form method="post">
 	<div class="wrap">									
 		<h2><?php esc_html_e('WP-dTree General Settings','wpdtree'); ?></h2>				
 		<table class="optiontable" width="80%">
 			<fieldset class="options">
 			<tr><td valign="top">
 			<p style="font-weight:bold;">Widget-settings are in <a href="<?php echo get_bloginfo('url'); ?>/wp-admin/widgets.php">the widget panels</a>.</p>			
-			<p><br />				
-				<input type="text" value="<?php echo $opt['openlink']; ?>" name="openlink" size="10" />
-				<label><?php esc_html_e('Name of the "open all"-link', 'wpdtree'); ?></label>
-				<br />
-				<input type="text" value="<?php echo $opt['closelink']; ?>" name="closelink" size="10" />
-				<label><?php esc_html_e('Name of the "close all"-link', 'wpdtree'); ?></label>					
-			</p><p>
+			<p>
 				<label for="animate" title="<?php esc_attr_e('Use jquery to animate the tree opening/closing.','wpdtree'); ?>"><?php esc_html_e('Animate:', 'wpdtree'); ?></label>
 				<input class="checkbox" type="checkbox" <?php checked($opt['animate'], true ); ?> id="animate" name="animate" /> 								
 				<input type="text" value="<?php echo $opt['duration']; ?>" name="duration" id="duration" size="10" />
@@ -437,7 +472,7 @@
 				<li><a href="http://wordpress.org/tags/wp-dtree-30">Support Forum</a></li> 
 				</ol> 
 				<p style="font-size:xx-small"><br /><strong>psst...</strong> if you value <a href="http://profiles.wordpress.org/users/ulfben/">my plugins</a>, please help me out by <a href="http://www.dropbox.com/referrals/NTIzMDI3MDk" title="Sync your files online and across computers with Dropbox. 2GB account is free!">signing up for DropBox</a>. 
-It's an online drive to sync your files across computers. 2GB account is free and my refferal earns you a free 250MB bonus! Or if you want to spend money, feel free to <a href="<?php echo WPDT_DONATE_URL; ?>" title="Amazon whishlist">send me a book</a>. Used ones are fine! :)</span></p>
+It's an online drive to sync your files across computers. 2GB account is free and my refferal earns you a free 250MB bonus! Or if you want to spend money, feel free to <a href="<?php echo ULFBEN_DONATE_URL; ?>" title="Amazon whishlist">send me a book</a>. Used ones are fine! :)</span></p>
 				</div> 
 				</td></tr>			
 					</fieldset>												
