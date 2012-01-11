@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a> widgets to replace the standard archives-, categories-, pages- and link lists.
-	Version: 4.3
+	Version: 4.3.1
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2
@@ -268,7 +268,9 @@
 				}
 			}
 			if($openTo){
-				$tree .= $opt['openscript'] . $openTo . $opt['closescript'];	
+				$openScript = ($opt['openscript']) ? $opt['openscript'] : "<script type='text/javascript'>"; //this happens for some reason?
+				$closeScript = ($opt['closescript']) ? $opt['closescript'] : '</script>' ; 
+				$tree .= $openScript . $openTo . $closeScript;	
 			}
 		}
 		unset($opt);

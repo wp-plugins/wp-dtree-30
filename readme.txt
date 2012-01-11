@@ -4,7 +4,7 @@ Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-320918
 Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
 Requires at least: 3.3
 Tested up to: 3.3
-Stable tag: 4.3
+Stable tag: 4.3.1
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
 
@@ -17,6 +17,9 @@ WP-dTree 4.x is a complete re-write, bringing the plugin up to speed with the mu
 If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), please help me out by [Flattr-ing them](http://flattr.com/thing/367557/Support-my-WordPress-plugins)! Or perhaps [send me a book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=11&y=10)? Used ones are fine! :)
 
 //*[Ulf Benjaminsson](http://profiles.wordpress.org/users/ulfben/)*
+
+= Changes in v4.3.1 (2012-01-11) =
+* Fixed: uninitialized settings will not cause [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
 
 = Changes in v4.3 (2012-01-01) =
 * Added: support and widget for custom taxonomies. (Thanks: Einat Dagan!)
@@ -31,36 +34,6 @@ If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), please h
 * Fixed: [link children are sorted correctly](http://wordpress.org/support/topic/plugin-wp-dtree-sorting-links-by-id-not-working?replies=1)
 * Fixed: Open to selection supports pagination
 * Fixed: [Open to selection supports categories again](http://wordpress.org/support/topic/plugin-wp-dtree-how-to-force-open-wdtree?replies=3#post-2523443)
-
-= Changes in v4.2 (2010-10-29) =
-* Fixed the uninstallation procedure.
-
-= Changes in v4.1 (2010-10-23) =
-* Improved installation to fix [database error for some users](http://tinyurl.com/37352en)
-* Added: ["limit posts" for categories and archives](http://wordpress.org/support/topic/plugin-wp-dtree-limit-posts-under-categories?replies=2)
-* Added: error catching - dtree can't blow up you other scripts
-* Building archives is MUCH faster (2 queries total, from 1 per month)
-
-= Changes in v4.0 (2010-10-17) =
-* Completely recoded from the ground up for a much needed code overhaul.
-*    **All previous settings will be lost!** Write them down before upgrading.
-* Added: support for multiple tree instances
-* Added: support for per-tree configurations 
-* Added: [template tags](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/) for theme developers
-* Added: (optional) noscript for JS-disabled visitors
-* Added: uses category descriptions for link titles
-* Added: translation support
-* Added: optional JS-escape (XHTML, HTML or none) to ease validation
-* Added: caching is optional (per instance, to boot)
-* Fixed: should properly encode quotes and HTML-entities
-* Replaced Scriptacolous with jQuery
-* Made truncation optional
-* Removed support for WP <2.3
-* Removed all CSS-options from admin area
-* [Removed all non-essential CSS-rules](http://wordpress.org/extend/plugins/wp-dtree-30/faq/)
-* Only load jQuery if animation is on
-* Minified JS and CSS (9KB vs. 16KB!)
-* Cache is created on site visit (faster admin, less server load)
 
 [Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/changelog/).
 
@@ -118,6 +91,9 @@ They all return associative arrays whith all arguments defaulted.
 
 == Upgrade Notice ==
 
+= Changes in v4.3.1 (2012-01-11) =
+* Fixed fallbacks for uninitialized settings: never print [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
+
 = 4.3 = 
 Lots and lots of fixes. Widget for custom taxonomies.
 
@@ -133,6 +109,9 @@ Complete rewrite! Read the docs before upgrading!
 == Changelog == 
 
 (Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
+
+= Changes in v4.3.1 (2012-01-11) =
+* Fixed fallbacks for uninitialized settings: never print [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
 
 = Changes in v4.3 (2012-01-01) =
 * Added: support and widget for custom taxonomies. (needs testing, for sure...)
