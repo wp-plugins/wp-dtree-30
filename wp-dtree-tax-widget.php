@@ -23,6 +23,7 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 		$settings['cpsortby'] 	= $new_settings['cpsortby']; //sort posts
 		$settings['cpsortorder']= $new_settings['cpsortorder']; //order of posts (asc/desc)
 		$settings['child_of'] 	= intval($new_settings['child_of']);
+		$settings['child_of_current'] = isset($new_settings['child_of_current']) ? 1 : 0;
 		$settings['parent'] 	= (is_numeric($new_settings['parent']) && intval($new_settings['parent']) >= 0) ? intval($new_settings['parent']) : 'none';
 		$settings['number'] 	= intval($new_settings['number']);
 		$settings['limit_posts'] = intval($new_settings['limit_posts']);
@@ -83,6 +84,9 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 				}
 			 ?>
 			</select>
+		</p><p>
+			<input class="checkbox" type="checkbox" <?php checked($settings['child_of_current'], true); ?> id="<?php echo $this->get_field_id('child_of_current'); ?>" name="<?php echo $this->get_field_name('child_of_current'); ?>" /> 
+			<label for="<?php echo $this->get_field_id('child_of_current'); ?>" title="Active taxonomy becomes the parent node of the tree."><?php _e('Set "Child of" to active taxonomy', 'wpdtree'); ?></label>
 		</p><p>			
 			<label for="<?php echo $this->get_field_id('parent'); ?>" title="<?php esc_attr_e('Display only taxonomies that are direct descendants (i.e. children only) of the Taxonomy. This does NOT work like the \'child_of\' parameter.','wpdt'); ?>"><?php _e('Only *direct* children of:', 'wpdtree'); ?></label> 			
 			<select id="<?php echo $this->get_field_id('parent'); ?>" name="<?php echo $this->get_field_name('parent'); ?>" class="widefat" style="width:100%;">				

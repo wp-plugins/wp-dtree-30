@@ -21,6 +21,7 @@ class WPDT_Pages_Widget extends WPDT_Widget{
 		$settings['number'] 		= $new_settings['number'];
 		$settings['offset'] 		= intval($new_settings['offset']);
 		$settings['child_of'] 		= intval($new_settings['child_of']); 
+		$settings['child_of_current'] = isset($new_settings['child_of_current']) ? 1 : 0;
 		$settings['parent'] 		= intval($new_settings['parent']);
 		$settings['treetype'] 		= 'pge';
 		$settings['title_li']		= '';//the widget already prints a title. (this is only for the the noscript output, which is from wp_list_pages()
@@ -61,6 +62,9 @@ class WPDT_Pages_Widget extends WPDT_Widget{
 				}
 			 ?>
 			</select>		
+		</p><p>
+			<input class="checkbox" type="checkbox" <?php checked($settings['child_of_current'], true); ?> id="<?php echo $this->get_field_id('child_of_current'); ?>" name="<?php echo $this->get_field_name('child_of_current'); ?>" /> 
+			<label for="<?php echo $this->get_field_id('child_of_current'); ?>" title="Active page becomes the parent node of the tree."><?php _e('Set "Child of" to active page', 'wpdtree'); ?></label>
 		</p><p>
 			<label for="<?php echo $this->get_field_id('parent'); ?>" title="Display only pages that are direct descendants (i.e. children only) of the page. This does NOT work like the 'child_of' parameter."><?php _e('Show only *direct* children of:', 'wpdtree'); ?></label> 			
 			<select id="<?php echo $this->get_field_id('parent'); ?>" name="<?php echo $this->get_field_name('parent'); ?>" class="widefat" style="width:100%;">				

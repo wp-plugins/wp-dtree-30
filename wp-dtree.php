@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a> widgets to replace the standard archives-, categories-, pages- and link lists.
-	Version: 4.3.1
+	Version: 4.3.2
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2
@@ -179,11 +179,29 @@
 	}		
 	function wpdt_print_tree($args){		
 		echo wpdt_get_tree($args);
-	}	
+	}
+	function wpdt_set_child_of_current(&$args){			
+		if($args['treetype'] == 'pge' && is_page()){			
+			$args['child_of'] = get_the_ID();
+		}else if($args['treetype'] == 'cat' && is_category()){
+			$catObj = get_the_category();
+			if($catObj && $catObj[0]){
+				$args['child_of'] = $catObj[0]->cat_ID;
+			}
+		}else if($args['treetype'] == 'tax'){
+			$terms = get_the_terms(get_the_ID(), $args['taxonomy']);
+			if($terms && !is_wp_error($terms) && $terms[0]){ 
+				$args['child_of'] = $terms[0]->term_id;				
+			}
+		}		
+	}
 	function wpdt_get_tree($args){ 				
 		require_once('wp-dtree-build.php');	
 		global $wpdt_tree_ids;
 		$args = wp_parse_args($args, wpdt_get_defaults($args['treetype']));
+		if($args['child_of_current'] == 1){
+			wpdt_set_child_of_current($args);
+		}
 		$wpdt_tree_ids[$args['treetype']] += 1; //uniquely identify all trees.
 		$opt = get_option('wpdt_options');	
 		$was_cached = ($args['cache'] == 1);
@@ -305,6 +323,7 @@
 				'cpsortorder' 	=> 'DESC',			
 				'hide_empty' 	=> 1,
 				'child_of' 		=> 0,
+				'child_of_current' => 0,
 				'parent' 		=> 'none', //there is no default for parents.
 				'allowdupes' 	=> 1,
 				'postexclude' 	=> '',
@@ -326,6 +345,7 @@
 				'cpsortorder' 	=> 'DESC',			
 				'hide_empty' 	=> 1,
 				'child_of' 		=> 0,
+				'child_of_current' => 0,
 				'parent' 		=> 'none', //there is no default for parents.
 				'allowdupes' 	=> 1,
 				'postexclude' 	=> '',
@@ -349,6 +369,7 @@
 				'meta_value' 	=> '',
 				'authors' 		=> '',
 				'child_of'		=> 0, 
+				'child_of_current' => 0,
 				'parent' 		=> -1,
 				'exclude_tree' 	=> -1,
 				'number' 		=> -1,

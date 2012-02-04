@@ -34,10 +34,11 @@ function wpdt_build_tree($nodelist, $args){ //internal
 {$t}.config.folderLinks={$folderlinks};
 {$t}.config.useSelection={$showselection};
 {$t}.a(0,'root','','','','','');\n";
+
 	foreach($nodelist as $nodedata){		
 		$nodedata['url'] = str_replace($blogpath, '', esc_url($nodedata['url'])); //make all path's relative, to save space.																
 		$target = (!empty($nodedata['target'])) ? esc_js(esc_attr($nodedata['target'])) : '';
-		$rsspath = ($showrss) ? esc_js(wpdt_get_rss($nodedata, $treetype)) : '';				
+		$rsspath = (isset($showrss) && ($showrss)) ? esc_js(wpdt_get_rss($nodedata, $treetype)) : '';				
 		if((!$nodedata['title']) || ($nodedata['name'] == $nodedata['title'])){
 			$nodedata['name'] = esc_js(esc_html($nodedata['name']));
 			$nodedata['title'] = ''; //save space, let the javascript default title to name.

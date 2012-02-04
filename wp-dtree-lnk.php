@@ -10,6 +10,7 @@ function wpdt_get_links_nodelist($args){
 		'order' => $order, 
 		'hierarchical' => 0
 	));	
+	$nodelist = array();	
 	foreach($cats as $cat){					
 		$nodelist[$idcount] = array( 
 			'id' => -$cat->term_id,

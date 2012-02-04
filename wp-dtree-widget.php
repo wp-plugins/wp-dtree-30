@@ -38,7 +38,7 @@ class WPDT_Widget extends WP_Widget{
 		$settings['closelevels'] = isset($new_settings['closelevels'])? 1 : 0;
 		$settings['folderlinks'] = isset($new_settings['folderlinks'])? 1 : 0;
 		$settings['showselection'] = isset($new_settings['showselection'])? 1 : 0;
-		$settings['opentoselection'] = isset($new_settings['opentoselection'])? 1 : 0; //not applicable for linktrees but what the hey.
+		$settings['opentoselection'] = isset($new_settings['opentoselection'])? 1 : 0; //not applicable for linktrees but what the hey.		
 		$settings['truncate'] = intval($new_settings['truncate']);				
 		$settings['cache'] = isset($new_settings['cache'])? 1 : 0;
 		return $settings;
