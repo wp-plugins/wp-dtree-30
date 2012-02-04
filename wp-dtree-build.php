@@ -75,14 +75,14 @@ function wpdt_get_rss($nodedata, $treetype){
 	return $rsslink;
 }
 
-function wpdt_force_open_to($opento, $tree_id, $treestring){ 
+function wpdt_force_open_to($opento, $tree_id, $treestring, $listposts = true){ 
 	$result = "\n/*WP-dTree: force open to: '{$opento}' */\n";
 	if(trim($opento) == 'all'){
 		$result .= $tree_id.".openAll();\n";
 	} else {
 		$requests = explode(',', $opento);		
 		foreach($requests as $request){
-			$result .= wpdt_open_tree_to($request, $tree_id, $treestring, true);
+			$result .= wpdt_open_tree_to($request, $tree_id, $treestring, true, $listposts);
 		}					
 	}	
 	return $result;				
@@ -90,8 +90,10 @@ function wpdt_force_open_to($opento, $tree_id, $treestring){
 
 /* 	This function is hairy. It helps if you take a look at the JS-source in the HTML first. Here's one typical line:
 		arc1.a(4695,2,'Post Title','','2010/10/post-title/','','');
-	We're trying to find the node-ID (4695 in this case) corresponding to the requested URL. */
-function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false){
+	We're trying to find the node-ID (4695 in this case) corresponding to the requested URL. 
+	$listposts is a Q&D fix to let category trees open to the right node even if not displaying posts
+	*/
+function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false, $listposts = true){
 	global $wp_query;	
 	$opt = get_option('wpdt_options');	
 	$prefix = is_category() ? '-' : ''; //category IDs are negated to avoid ID-trampling in the tree		
@@ -104,9 +106,15 @@ function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false){
 		}
 		if($wp_query){
 			$maybe_id = $wp_query->get_queried_object_id();//If the request is a category, author, permalink or page
-			if($maybe_id){
+			if($maybe_id){				
+				if($listposts == false && !$prefix && strpos($tree_id, 'cat') === 0){//we're a category tree without posts, and not in category view
+					$catObj = get_the_category($maybe_id); //let's grab a category from the requested post and open that
+					if($catObj && $catObj[0]){
+						return  "$tree_id.openTo('-{$catObj[0]->cat_ID}', true); /*get the category*/\n";
+					}				
+				}					
 				return "$tree_id.openTo('{$prefix}{$maybe_id}', true); /*wp_query object id*/\n";
-			}		
+			}					
 			$maybe_id = (isset($wp_query->post->ID) && $wp_query->found_posts == 1) ? $wp_query->post->ID : false;
 			if($maybe_id !== false){//if more than one post, ignore the id (will be top-post but we want the category/archive view)
 				return  "$tree_id.openTo('{$maybe_id}', true); /*wp_query post ID*/\n";

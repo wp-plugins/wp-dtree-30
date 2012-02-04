@@ -64,8 +64,11 @@ function wpdt_get_category_nodelist($args){
 	}	
 	$postresults = (array)$wpdb->get_results($query);		
 	foreach($postresults as $postresult){
+		if(!isset($catids[$postresult->catid])){
+			continue;
+		}
 		$text = strip_tags(apply_filters('the_title', $postresult->post_title));		
-		$url = esc_url(get_permalink($postresult->ID));
+		$url = esc_url(get_permalink($postresult->ID));		
 		$catids[$postresult->catid]['posts_returned'] += 1; //add 
 		$nodelist[$idcount] = array(
 			'id' => $postresult->ID, 

@@ -1,9 +1,9 @@
-﻿=== WP-dTree ===
+=== WP-dTree ===
 Contributors: ulfben
 Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
 Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
-Requires at least: 3.3.1
-Tested up to: 3.3.1
+Requires at least: 3.3
+Tested up to: 3.3
 Stable tag: 4.3.1
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
