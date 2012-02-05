@@ -1,0 +1,138 @@
+=== WP-dTree 3.2 ===
+Contributors: ulfben, Christopher Hwang
+Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
+Tags: archive, navigation, dynamic, dtree, tree, sidebar, 
+Requires at least: 2.0.2
+Tested up to: 2.3
+Stable tag: trunk
+
+Turns your sidebar into a very convenient, dynamic navigation tree. Supports scriptaculous effects.
+
+== Description ==
+
+This plugin can generate navigation trees for your posts, pages and categories. The archive tree can be displayed with monthly or yearly nodes. The category tree can be displayed with or without their posts, post count and RSS-links. WP-dTree uses Scriptaculous for awesome display effects. You can set effect type and duration through the admin interface (Presentation -> WP-dTree). 
+
+WP-dTree was originally created by [Christopher Hwang](http://www.silpstream.com/blog/). Since Mr. Hwang went MIA, Ulf Benjaminsson forked the plugin (as of version 3.x). The fork is primarly aimed at [improving the performance](http://wordpress.org/extend/plugins/wp-dtree-30/faq/) of WP-dTree, but packs a lot of new features and modernizations to boot; WP 2.3 compability, widgets, out-of-the-box Scriptaculous support, RSS for categories, post counts and more.
+
+If you enjoy WP-dTree and would like to suggest a specific feature, or just motivate further development - please consider buying me [a used book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x).
+
+**Changes in v3.2**
+
+1. Support for WP's bundled scriptacolous library! (turn effects on in the WP-dTree options page)
+1. New cache structure reduces cache size with ~33% compared to previous implementations.	 
+1. New option: Show RSS icon for categories
+1. New option: Show post count for categories
+1. New option: Effect duration
+
+*Regressions:* `open to selection` is broken again. It'll be back in the next version, but if it's vital for you, stay with 3.1
+
+**Changes in v3.1:**
+
+1. Updated to comply with WordPress 2.3's new taxonomy tables for categories.
+1. Widgetized! You no longer need to edit your sidebar manually.
+1. Fixed "Open To Selection"-option.
+
+**Changes in v3.0:**
+
+1. Added caching to reduce the database load. 
+
+== Installation ==
+
+Make sure to disable and remove any previous installation of WP-dTree first! As of v3.2, the code for showing the trees have changed. Make sure to update your sidebar accordingly if you are not using widgets to display your archive.
+
+1. Extract the files and transfer the 'wp-dtree-30' folder to the `/wp-content/plugins/` directory
+1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Go to the 'WP-dTree' option menu under 'Presentation' and set your preferences.
+1. Go to 'Presentation' -> 'Widgets' and drag-n-drop WP-dTree Archives / Categories / Pages to the relevant section of your sidebar. 
+1. If you think that widgets are lame: go to the template file that you want the archives to show on and copy paste the relevant code:
+
+Displaying archives
+---------
+	<li>
+	<h2>Archives</h2>
+	<ul>
+		<?php 	
+			if (function_exists('wp_dtree_get_archives'))		
+			{				
+		   	    wp_dtree_get_archives();
+			}
+			else
+			{
+				wp_get_archives('type=monthly'); 
+			} 
+		?>				
+	</ul>
+	</li>
+
+Displaying categories:
+---------
+	<li>
+	<h2>Categories</h2>
+		<ul>
+			<?php 
+				if (function_exists('wp_dtree_get_categories')) 
+				{
+					wp_dtree_get_categories();
+				}
+				else
+				{
+					wp_list_categories('show_count=1');
+				} 
+			?>				
+		</ul>
+	</li>
+
+Displaying pages:
+---------
+	<li>
+	<h2>Pages</h2>
+		<ul>
+			<?php 
+				if (function_exists('wp_dtree_get_pages')) 
+				{
+					wp_dtree_get_pages();
+				}
+				else
+				{
+					wp_list_pages();				
+				} 
+			?>				
+		</ul>
+	</li>
+
+
+== Frequently Asked Questions ==
+
+= How does the 3.x fork improve the performance of WP-dTree? =
+Instead of generating all the trees *on every visit*, 3.x employs caching - building the trees *only when you add or alter content on your blog*. The result is a tremendous load reduction from previous versions; the demo site (~360 posts, Kubrik theme) went from 411 to 18 queries (!) to display the main page.
+
+The added benefit of the cache is a *significant* reduction in how much processing is needed for each visit. As of 3.2, all WP-dTree does is to print a string.
+
+= Can I change the images used by WP-dTree? =
+
+The images are all stored in the 'wp-dtree/dtree-img/' directory. You can change them if you like. Just remember to keep the names the same, or you'll break the script.
+
+== Screenshots ==
+
+1. The archive navigation tree in action.
+2. The admin configuration screen.
+
+== Other Notes ==
+Copyright (C) 2007 Ulf Benjaminsson (email: ulf at ulfben dot com).
+Copyright (C) 2006 Christopher Hwang (email: chris at silpstream dot com).
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
