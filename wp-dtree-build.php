@@ -112,7 +112,10 @@ function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false, $li
 					if($catObj && $catObj[0]){
 						return  "$tree_id.openTo('-{$catObj[0]->cat_ID}', true); /*get the category*/\n";
 					}				
-				}					
+				}
+				if(strpos("({$prefix}{$maybe_id},", $treestring) === false){ //
+					return "/*wp_query object id = {$prefix}{$maybe_id}. invalid id.*/\n"; 
+				}
 				return "$tree_id.openTo('{$prefix}{$maybe_id}', true); /*wp_query object id*/\n";
 			}					
 			$maybe_id = (isset($wp_query->post->ID) && $wp_query->found_posts == 1) ? $wp_query->post->ID : false;
