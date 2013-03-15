@@ -309,19 +309,23 @@ wpdTree.prototype.oAll = function(status){
 
 // Opens the tree to a specific node
 wpdTree.prototype.openTo = function(nId, bSelect, bFirst){	
-	for (var n=0; n<this.adtNodes.length; n++){
-		if(this.adtNodes[n].id == nId){
-			nId=n;
-			var cn=this.adtNodes[nId];
-			if(cn.pid==this.root.id || !cn._p) return;
-			cn._io = true;
-			cn._is = bSelect;
-			if(this.completed && cn._hc) this.nodeStatus(true, cn._ai, cn._ls);
-			if(this.completed && bSelect) this.s(cn._ai);
-			else if(bSelect) this._sn=cn._ai;
-			this.openTo(cn._p._ai, false, true);
+	if(!bFirst){
+		for (var n=0; n<this.adtNodes.length; n++){
+			if(this.adtNodes[n].id == nId){
+				nId=n;
+				break;
+			}
 		}
 	}
+	var cn=this.adtNodes[nId];	
+	if (cn===undefined) return;
+	if(cn.pid==this.root.id || !cn._p) return;
+	cn._io = true;
+	cn._is = bSelect;
+	if(this.completed && cn._hc) this.nodeStatus(true, cn._ai, cn._ls);
+	if(this.completed && bSelect) this.s(cn._ai);
+	else if(bSelect) this._sn=cn._ai;
+	this.openTo(cn._p._ai, false, true);
 };
 
 // Closes all nodes on the same level as certain node
