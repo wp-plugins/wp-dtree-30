@@ -113,7 +113,7 @@ function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false, $li
 						return  "$tree_id.openTo('-{$catObj[0]->cat_ID}', true); /*get the category*/\n";
 					}				
 				}
-				if(strpos("({$prefix}{$maybe_id},", $treestring) === false){ //
+				if(strpos($treestring, "({$prefix}{$maybe_id},") === false){ //
 					return "/*wp_query object id = {$prefix}{$maybe_id}. invalid id.*/\n"; 
 				}
 				return "$tree_id.openTo('{$prefix}{$maybe_id}', true); /*wp_query object id*/\n";
