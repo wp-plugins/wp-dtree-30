@@ -98,10 +98,10 @@ function wpdt_get_taxonomy_nodelist($args){
 				$nodelist[$idcount++] = array(
 					'id' => "'{$idcount}'", //a string, to avoid ID-trampling.
 					'pid' => -$termid, 
-					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdt'), //add category count? 
+					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdtree'), //add category count? 
 					//E'url' => get_category_link($catid),
 					'url' => get_term_link($termid, $taxonomy), 
-					'title' => esc_attr__('Browse all posts in '.get_cat_name($termid), 'wpdt')
+					'title' => esc_attr__('Browse all posts in '.get_cat_name($termid), 'wpdtree')
 				);				
 			}
 		}	

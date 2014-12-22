@@ -1,22 +1,38 @@
 === WP-dTree ===
 Contributors: ulfben
-Donate link: http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=21&y=17
-Tags: archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
-Requires at least: 3.3
-Tested up to: 3.3
+Donate link: http://flattr.com/thing/367557/Support-my-WordPress-plugins
+Tags: menu, menus, archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
+Requires at least: 3.9
+Tested up to: 4.1
 Stable tag: 4.3.1
 
-<a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists.
+<a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists. Support custom Menus too.
 
 == Description ==
 
-This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the standard archives, categories, pages and link lists. They're widgets so you can setup [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) with drag & drop ease, but it also exposes several [new template tags](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/) for developers.
+This plugin provides [dynamic navigation trees](http://www.destroydrop.com/javascripts/tree/) to replace the standard archives, categories, pages and link lists. They're widgets so you can setup [the awesome tree navigation](http://game.hgo.se/cat/projects/3d-games/) with drag & drop ease, but it also exposes several [new template tags](https://wordpress.org/plugins/wp-dtree-30/installation/) for developers.
 
 WP-dTree 4.x is a complete re-write, bringing the plugin up to speed with the much matured WordPress 3 API. The overhaul has made WP-dTree significantly more sane and robust; it supports multiple widget instances, "foreign" characters, is more in tune with your themes, plays nice with translators and offers true fallbacks for those who surf without JavaScript.
 
-If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), please help me out by [Flattr-ing them](http://flattr.com/thing/367557/Support-my-WordPress-plugins)! Or perhaps [send me a book](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=11&y=10)? Used ones are fine! :)
+If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), there's several ways you can help me out; 
 
-//*[Ulf Benjaminsson](http://profiles.wordpress.org/users/ulfben/)*
+* Help me out by [Flattr-ing them](http://flattr.com/thing/367557/Support-my-WordPress-plugins)
+* or [sign up to Microsoft OneDrive using my referral link](https://onedrive.live.com?invref=b1f728851abada15&invsrc=90) - we both get 0.5GB extra for free!
+* or [sign up to RealPlayer Cloud using my referral link](https://cloud.real.com/r/UzKHSP) - we both get 1GB extra for free! 
+* get me anything from [my Amazon whislisth](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x=11&y=10) (used items are OK!)
+
+Any help is greatly appreciated. Thanks!
+
+//*[Ulf Benjaminsson](http://www.ulfben.com)*
+
+= Changes in v4.4.0 (2014-12-20) =
+* Added support for WordPress' Menus.
+* Added multisite support. (thanks, John Pariseau)
+* Added option to set navigation root to the current page or category. 
+* Fixed broken l10n.
+* Fixed a XSS vulnerability. (thanks, Patrick Riggs)
+* Replaced all deprecated functions.
+* Fixed tons of PHP warnings and notices.
 
 = Changes in v4.3.1 (2012-01-11) =
 * Fixed: uninitialized settings will not cause [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
@@ -47,15 +63,14 @@ If you value [my plugins](http://profiles.wordpress.org/users/ulfben/), please h
 1. Configure the active Widget to your liking
 1. [Styling is done through CSS](http://wordpress.org/extend/plugins/wp-dtree-30/faq/)
 
-[Developers and widget resistance goes here](http://wordpress.org/extend/plugins/wp-dtree-30/other_notes/).
-
-== For developers ==
+= For developers =
 
 WP-dTree exposes the following [template tag functions](http://codex.wordpress.org/Template_Tags):
 
 * `wpdt_list_archives();`			
 * `wpdt_list_categories();`
 * `wpdt_list_taxonomies(); //needs testing.`
+* `wpdt_list_menu(); //needs testing`
 * `wpdt_list_pages();`
 * `wpdt_list_links();`
 * `wpdt_list_bookmarks(); //alias for wpdt_list_links`
@@ -68,13 +83,13 @@ They function a lot like WordPress own wp_list_* functions:
 
 **Here's an example:**
 
-`	<div class="dtree">`
-`		<?php`
-`			if(function_exists('wpdt_list_archives')){`					
-`		   	    wpdt_list_archives('type=yearly&useicons=1');`
-`			}`
-`		?>`					
-`	</div>`
+`	<div class="dtree">
+		<?php
+			if(function_exists('wpdt_list_archives')){			
+		   	    wpdt_list_archives('type=yearly&useicons=1');
+			}
+		?>
+	</div>`
 
 I've tried to keep the same argument-lists as the WordPress "equivalents" but there are some discrepancies: style- and markup related arguments are not applicable to WP-dTree (but gets passed through for the noscript content).
 There is also some inconsistency within WordPress, like some methods takes `sortby` while others takes `sort_column`. I've tried for WP-dTree to accept both but I'm sure I've missed a bunch of these cases.
@@ -86,10 +101,14 @@ So, to find out what arguments are definetly available grab the default `$args`:
 * `wpdt_get_taxonomies_defaults()`
 * `wpdt_get_pages_defaults();`
 * `wpdt_get_links_defaults();`
+* `wpdt_get_menu_defaults();`
 
 They all return associative arrays whith all arguments defaulted.
 
 == Upgrade Notice ==
+
+= Changes in v4.4 (2014-12-22) =
+* Crucial security and bugfixes. Support for custom menus and multisites added.
 
 = Changes in v4.3.1 (2012-01-11) =
 * Fixed fallbacks for uninitialized settings: never print [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
@@ -109,6 +128,15 @@ Complete rewrite! Read the docs before upgrading!
 == Changelog == 
 
 (Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
+
+= Changes in v4.4.0 (2014-12-20) =
+* Added support for WordPress' Menus.
+* Added multisite support. (thanks, John Pariseau)
+* Added option to set navigation root to the current page or category 
+* Fixed broken l10n
+* Fixed a XSS vulnerability . (thanks, Patrick Riggs)
+* Replaced all deprecated functions
+* Fixed tons of PHP warnings and notices
 
 = Changes in v4.3.1 (2012-01-11) =
 * Fixed fallbacks for uninitialized settings: never print [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
@@ -244,16 +272,9 @@ Now disable the plugins default CSS (from the Settings-panel) and hack away at y
 Remember - do not edit `wp-dtree.css`, as this will be replaced on every update of the plugin.
 
 = Can I help you in any way? =
-Absolutely! If you [sign up with DropBox](http://www.dropbox.com/referrals/NTIzMDI3MDk) on my refferal, I get 1GB (much needed!) extra space. DropBox is a cross-plattform application to sync your files online and across computers, and a 2GB account is *free*. Also - my refferal earns you a 250MB bonus! 
+Absolutely! If value my plugins, please consider [sending me a book or two](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x). (used are fine!) 
 
-If you've had any commercial applications for my plugins, please consider [sending me a book or two](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x). (used are fine!) 
-
-= Thanks! =
-* Bruce Hampton, USA
-* Shu Mei Chen, Taiwan
-* Kai Kniepkamp, Germany
-
-...[for the books](http://www.amazon.com/gp/registry/wishlist/2QB6SQ5XX2U0N/105-3209188-5640446?reveal=unpurchased&filter=all&sort=priority&layout=standard&x)
+Or perhaps some [games on Steam](http://steamcommunity.com/id/ulfben/wishlist). :)
 
 = Why is there no "Show more"-link for Archives? =
 First: a simple workaround is to use 'Folders are links' and 'Show post count'. This way a visitor can easily see that a folder has more content than is on display, and clicking the folder name will bring her to it.

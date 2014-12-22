@@ -32,6 +32,9 @@ This file is unused and will be replaced every time the plugin updates.*/
 }
 
 .dtree a {}
+.dtree a {
+	display: inline; /*some themes messes us up with image-anchor's display: set to block.*/
+}
 .dtree a.node{}
 .dtree a.node:hover, .dtree a.nodeSel:hover {}
 .dtNode{}
@@ -42,6 +45,7 @@ This file is unused and will be replaced every time the plugin updates.*/
 	dtree_tax for taxonomies
   */
 }
+
 #dtree_arc1{ /*the _first_ archive tree*/	
  /*	dtree_arc2 for second archive tree
 	dtree_cat5 for the fifth cateogory tree

@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a> widgets to replace the standard archives-, categories-, pages- and link lists.
-	Version: 4.3.3
+	Version: 4.4
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2
@@ -19,10 +19,11 @@
 	Christopher Hwang wrapped the wordpress APIs around it so that we can use it as a plugin. He handled all development of WP-dTree up to version 2.2 (~2007).	
 	*/		
 	add_action('plugins_loaded', 'wpdt_init');
+	add_action( 'wpmu_new_blog', 'wpdt_new_blog', 10, 6);
 	register_activation_hook(__FILE__, 'wpdt_activate');	
 	register_deactivation_hook(__FILE__, 'wpdt_deactivate');				
 	global $wpdt_tree_ids;
-	$wpdt_tree_ids = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0, 'tax' => 0);//used to create unique instance names for the javascript trees.	
+	$wpdt_tree_ids = array('arc' => 0, 'cat' => 0, 'pge' => 0, 'lnk' => 0, 'tax' => 0, 'mnu' => 0);//used to create unique instance names for the javascript trees.	
 	require_once('wp-dtree-cache.php');	
 	function wpdt_init() {
 		if(!defined('ULFBEN_DONATE_URL')){
@@ -31,7 +32,7 @@
 		define('WPDT_BASENAME', plugin_basename( __FILE__ ));		
 		define('WPDT_SCRIPT', 'wp-dtree.min.js');	
 		define('WPDT_STYLE', 'wp-dtree.min.css');			
-		load_plugin_textdomain('wpdt', false, dirname(WPDT_BASENAME).'/lang/');				
+		load_plugin_textdomain('wpdtree', false, dirname(WPDT_BASENAME).'/lang/');				
 		add_filter('plugin_row_meta', 	'wpdt_set_plugin_meta', 2, 10);			
 		add_action('admin_menu', 		'wpdt_add_option_page');	
 		add_action('deleted_post', 		'wpdt_update_cache'); 
@@ -41,6 +42,7 @@
 		add_action('edited_category', 	'wpdt_update_cache'); 
 		add_action('delete_category', 	'wpdt_update_cache');
 		add_action('publish_page', 		'wpdt_update_cache');	
+		add_action('wp_update_nav_menu', 'wpdt_update_cache');
 		add_action('update_option_permalink_structure', 'wpdt_update_cache');
 		add_action('add_link', 			'wpdt_update_cache');
 		add_action('delete_link', 		'wpdt_update_cache');
@@ -64,17 +66,67 @@
 		}
 		return "".$plugin_data['Version'];
 	}	
-
-	function wpdt_activate(){
+	function wpdt_activate($networkwide) {
+		global $wpdb;	
+		if (function_exists('is_multisite') && is_multisite()) {
+			if ($networkwide) {
+	        	$original_blog_id = $wpdb->blogid;
+            	// Get all blog ids
+            	$blogids = $wpdb->get_col("SELECT blog_id FROM $wpdb->blogs");
+            	foreach ($blogids as $blog_id) {
+            	    switch_to_blog($blog_id);
+            	    _wpdt_activate();
+            	}
+            	switch_to_blog($original_blog_id);
+            	return;
+        	} else {
+				_wpdt_activate();      		
+			}
+    	}  else {
+			_wpdt_activate();      		
+		}
+	}	
+	
+	function _wpdt_activate() {
 		delete_option('wpdt_db_version');		
 		wpdt_install_cache();		
 		wpdt_install_options();
 		wpdt_print_errors();	
-	}	
-	function wpdt_deactivate(){
-		//options are only cleared on plugin uninstall (ie. delete from admin panel)		
-		wpdt_uninstall_cache();
 	}
+	
+	function wpdt_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+    	global $wpdb; 
+    	if (is_plugin_active_for_network('wp-dtree-30/wp-dtree.php')) {
+        	$old_blog = $wpdb->blogid;
+        	switch_to_blog($blog_id);
+        	_wpdt_activate();
+        	switch_to_blog($old_blog);
+    	}
+	}	
+	function wpdt_deactivate($networkwide){
+	   	global $wpdb;
+		if(function_exists('is_multisite') && is_multisite()) {// check if it is a network activation - if so, run the activation function for each blog id
+            if ($networkwide) {
+            	$old_blog = $wpdb->blogid;
+            	// Get all blog ids
+            	$blogids = $wpdb->get_col("SELECT blog_id FROM $wpdb->blogs");
+            	foreach ($blogids as $blog_id) {
+            	    switch_to_blog($blog_id);
+            	    _wpdt_deactivate();
+            	}
+            	switch_to_blog($old_blog);
+            	return;
+        	} else {
+				_wpdt_deactivate();
+			}
+    	} else {
+			_wpdt_deactivate();
+		}
+	}	
+	function _wpdt_deactivate() {			
+		wpdt_uninstall_cache(); //options are only cleared on plugin uninstall (ie. delete from admin panel)	
+	}
+		
 	function wpdt_set_plugin_meta($links, $file) {		
 		if($file == WPDT_BASENAME) {
 			return array_merge($links, array(sprintf( '<a href="options-general.php?page=%s">%s</a>', WPDT_BASENAME, __('Settings', 'wpdtree'))));
@@ -113,11 +165,13 @@
 		require_once('wp-dtree-tax-widget.php');
 		require_once('wp-dtree-pge-widget.php');
 		require_once('wp-dtree-lnk-widget.php');
+		require_once('wp-dtree-mnu-widget.php');
 		register_widget('WPDT_Archives_Widget');
 		register_widget('WPDT_Categories_Widget');
 		register_widget('WPDT_Taxonomies_Widget');
 		register_widget('WPDT_Pages_Widget');
 		register_widget('WPDT_Links_Widget');
+		register_widget('WPDT_Menu_Widget');
 	}
 	/*These are convenience-functions for theme developers. They work kind of like the WordPress-function they replace. 
 		They all accept template tag arguments (query string or assoc. array) - http://codex.wordpress.org/How_to_Pass_Tag_Parameters#Tags_with_query-string-style_parameters
@@ -150,6 +204,10 @@
 	function wpdt_list_bookmarks($args = array()){ 	//wrapper to emulate new WP function names
 		return wpdt_list_links($args); 
 	}
+	function wpdt_list_menu($args = array()){ 	
+		$args = wp_parse_args($args, wpdt_get_defaults('mnu'));
+		return wpdt_list_($args);
+	}
 	function wpdt_get_archives_defaults(){ //to simplify finding all parameters
 		return wpdt_get_defaults('arc');
 	}
@@ -165,10 +223,12 @@
 	function wpdt_get_links_defaults(){
 		return wpdt_get_defaults('lnk');
 	}
+	function wpdt_get_menu_defaults(){
+		return wpdt_get_defaults('mnu');
+	}
 	
 	/*End "public" functions*/	
-	
-	
+		
 	function wpdt_list_($args){//common stub for "wp_list_*"-wrappers.
 		$args['echo'] = !isset($args['echo']) ? 1 : $args['echo']; //default to print
 		if($args['echo']){
@@ -183,14 +243,14 @@
 	function wpdt_set_child_of_current(&$args){			
 		if($args['treetype'] == 'pge' && is_page()){			
 			$args['child_of'] = get_the_ID();
-		}else if($args['treetype'] == 'cat' && is_category()){
+		}else if($args['treetype'] == 'cat'){
 			$catObj = get_the_category();
-			if($catObj && $catObj[0]){
+			if($catObj && isset($catObj[0])){
 				$args['child_of'] = $catObj[0]->cat_ID;
 			}
 		}else if($args['treetype'] == 'tax'){
 			$terms = get_the_terms(get_the_ID(), $args['taxonomy']);
-			if($terms && !is_wp_error($terms) && $terms[0]){ 
+			if($terms && !is_wp_error($terms) && isset($terms[0])){ 
 				$args['child_of'] = $terms[0]->term_id;				
 			}
 		}		
@@ -199,7 +259,7 @@
 		require_once('wp-dtree-build.php');	
 		global $wpdt_tree_ids;
 		$args = wp_parse_args($args, wpdt_get_defaults($args['treetype']));
-		if($args['child_of_current'] == 1){
+		if(isset($args['child_of_current']) && $args['child_of_current'] == 1){
 			wpdt_set_child_of_current($args);
 		}
 		$wpdt_tree_ids[$args['treetype']] += 1; //uniquely identify all trees.
@@ -267,6 +327,11 @@
 					$args['echo'] = 0;		
 					$tree .= "\n<noscript>\n".wp_list_bookmarks($args)."\n</noscript>\n";								
 				}					
+			}else if($args['treetype'] == 'mnu'){ 
+				require_once('wp-dtree-mnu.php');				
+				$nodelist = wpdt_get_menu_nodelist($args);
+				$tree = wpdt_build_tree($nodelist, $args);
+					/*no no-script version supported for menus.*/
 			}else{//user error. no type given. 
 				return false;// '<!-- wpdt_get_tree: user error, no treetype given. -->';
 			}			
@@ -303,7 +368,20 @@
 			'opentoselection' => 1,'truncate' => 0, 'sort_order' => 'ASC', 'sortby' => 'ID', 'treetype' => $treetype,
 			'openlink' 	=> __('open all', 'wpdtree'), 'closelink' => __('close all', 'wpdtree'), 'oclink_sep' => ' | '
 		);		
-		if($treetype == 'arc'){			
+		if($treetype == 'mnu'){
+			return array_merge($common,array(
+				'title' => 				__('Menu', 'wpdtree'),
+				'order'                 => 'ASC',
+				'orderby'               => 'menu_order',
+				'post_type'             => 'nav_menu_item',
+				'post_status'           => 'publish',
+				'output'                => ARRAY_A,
+				'output_key'            => 'menu_order',
+				'nopaging'              => true,
+				'update_post_term_cache'=> false,
+				'menuslug'				=> ''
+			));
+		}else if($treetype == 'arc'){			
 			return array_merge($common, array(				
 				'title' => __('Archives', 'wpdtree'),
 				'sortby' 	=> 'post_date',
@@ -317,8 +395,7 @@
 				'number_of_posts'=> 0
 			));
 		}else if($treetype == 'cat'){
-			return array_merge($common, array(
-				//should implement: exclude_tree (string) (only applicable to wp_list_categories). Exclude category-tree from the results.
+			return array_merge($common, array(			
 				'title' => __('Categories', 'wpdtree'),								
 				'cpsortby' 		=> 'post_date',
 				'cpsortorder' 	=> 'DESC',			
@@ -333,7 +410,7 @@
 				'showcount' 	=> 0,	//show_count
 				'taxonomy' 		=> 'category',			
 				'pad_counts' 	=> 1,
-				'hierarchical' 	=> 0,
+				'hierarchical' 	=> 1,
 				'number' 		=> 0,
 				'limit_posts'	=> 0,
 				'more_link' 	=> "Show more (%excluded%)...", //if number of posts-limit is hit, show link to full category listing
@@ -373,8 +450,8 @@
 				'child_of_current' => 0,
 				'parent' 		=> -1,
 				'exclude_tree' 	=> -1,
-				'number' 		=> -1,
-				'offset' 		=> 0,
+				//'number' 		=> -1, //unused. don't know what it's for. :P
+				//'offset' 		=> 0, //same. No idea what I added this for. 
 				'hierarchical' 	=> 1				
 			));				
 		}else if($treetype == 'lnk'){
@@ -415,6 +492,9 @@
 		if(isset($old['genopt'])){ //old leftovers from previous version. Nukem.
 			update_option('wpdt_options', $default);
 		}else{
+			if(empty($old) || !is_array($old)){
+					$old = array();
+			}
 			$new = array_merge($default,$old);
 			$new['version'] = wpdt_get_version(); 
 			update_option('wpdt_options',$new);

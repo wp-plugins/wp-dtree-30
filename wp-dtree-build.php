@@ -88,6 +88,13 @@ function wpdt_force_open_to($opento, $tree_id, $treestring, $listposts = true){
 	return $result;				
 }
 
+function wpdt_escape_js($unsafe){
+	if(function_exists('json_encode')){ //php 4.
+		return json_encode($unsafe);
+	}	
+	return str_replace('/', '&#x2F;', htmlspecialchars($unsafe, ENT_QUOTES, 'UTF-8')); //escape &<>"' and /	
+}
+
 /* 	This function is hairy. It helps if you take a look at the JS-source in the HTML first. Here's one typical line:
 		arc1.a(4695,2,'Post Title','','2010/10/post-title/','','');
 	We're trying to find the node-ID (4695 in this case) corresponding to the requested URL. 
@@ -130,10 +137,11 @@ function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false, $li
 		}
 	}
 	//Okay, we were fed an URL. Let's clean it up to look like it would in the JS-source. 
-	$path = ltrim($request, '/'); 					//REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.								  	
+	$path = ltrim($request, '/'); 					//REQUEST_URI should be '/blog/category/post/' or somesuch. Remove leading slash.	
+		/*NOTE: $request is untrusted data submitted from user! Thanks to Patrick Riggs for reporting! */
 	$blogurl = get_bloginfo('url'); 				//yields: http://blog.server.com, http://server.com/~userdir - you get the picture. 							
 	if(empty($path) || $path == $blogurl || $path == '/'){ 			//we've probably requested "home", so let's do nothing
-		return "/*\nWP-dTree: $tree_id request seems to be home.\n*/";	
+		return "/*\nWP-dTree: {$tree_id} request seems to be home.\n*/";	
 	}else if(strpos($path, $blogurl) === 0){		//REQUEST_URI included http://server.com/ (happens on some hosts)			
 		$path = str_replace($blogurl, '', $path);	//all URLs are relative in the JS source (to save space), so let's get rid of the blog url.
 	} else { 										//some servers (with userdir) gives us: '~userdir/blog/category/post/'				
@@ -148,7 +156,7 @@ function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false, $li
 	//Now to isolate the ID. First we find the line where it appears
 	$parts = explode($path, $treestring); 	//split the script around the path, to immedietly narrow the search. (thus we know line is at the end of the first part)
 	if(count($parts) < 2){
-		return "/*WP-dTree: $tree_id request was {$path}. Couldn't find it.*/\n";
+		return "/*WP-dTree: {$tree_id} request was ". wpdt_escape_js($path) ." Couldn't find it.*/\n";
 	}	
 	$parts = $parts[0]; 					//we know line is at the end of the first part
 	$needle = $tree_id.'.a(';
@@ -164,9 +172,9 @@ function wpdt_open_tree_to($request, $tree_id, $treestring, $forced = false, $li
 	$number = substr($parts, $ls, $le-$ls); //et voila! we have isolated the ID-parameter in the javascript.
 	unset($parts);
 	if(is_numeric($number)){		
-		return "/*WP-dTree: $tree_id request was {$path}. I found: '".esc_js($number)."'*/\n\n{$tree_id}.openTo('{$number}', true);\n";
+		return "/*WP-dTree: {$tree_id} request was {".wpdt_escape_js($path)."} I found: '".esc_js($number)."'*/\n\n{$tree_id}.openTo('{$number}', true);\n";
 	}	 	
-	return "/*WP-dTree: {PHP_VERSION} $tree_id request was {$path}. I found: ".esc_js($number)."*/\n";	//if we get down here something was wrong. output some debug-info.
+	return "/*WP-dTree: {PHP_VERSION} $tree_id request was {".wpdt_escape_js($path)."}. I found: ".esc_js($number)."*/\n";	//if we get down here something was wrong. output some debug-info.
 }
 
 function wpdt_get_tree_id($treestring){

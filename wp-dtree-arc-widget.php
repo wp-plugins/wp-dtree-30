@@ -2,7 +2,7 @@
 class WPDT_Archives_Widget extends WPDT_Widget {
 		
 	function __construct() {				
-		$widget_ops = array('classname' => 'wpdt-archives', 'description' => __('Dynamic javascript archives', 'wpdtree') ); //widget settings. 
+		$widget_ops = array('classname' => 'wpdt-archives', 'description' => __('dTree navigation for your post archives.', 'wpdtree') ); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-archives-widget'); //Widget control settings.
 		parent::__construct('wpdt-archives-widget', __('WP-dTree Archives', 'wpdtree'), $widget_ops, $control_ops ); //Create the widget.       			
 	}
@@ -14,12 +14,12 @@ class WPDT_Archives_Widget extends WPDT_Widget {
 	function update($new_settings, $old_settings) {
 		$old_settings = parent::update($new_settings, $old_settings);
 		$settings = $old_settings;				
-		$settings['type'] 		= 	$new_settings['type'];		
+		$settings['type'] 		= isset($new_settings['type']) ? $new_settings['type'] : 'monthly';		
 		$settings['listposts'] 	= isset($new_settings['listposts']) ? 1 : 0;	
 		$settings['showcount'] 	= isset($new_settings['showcount']) ? 1 : 0;	
 		$settings['showrss'] 	= isset($new_settings['showrss']) ? 1 : 0;	
-		$settings['limit_posts'] = intval($new_settings['limit_posts']);
-		$settings['exclude_cats'] = wpdt_clean_exclusion_list($new_settings['exclude_cats']);
+		$settings['limit_posts'] = isset($new_settings['limit_posts']) ? intval($new_settings['limit_posts']) : 0;
+		$settings['exclude_cats'] = isset($new_settings['exclude_cats']) ? wpdt_clean_exclusion_list($new_settings['exclude_cats']) : '';
 		$settings['include'] 	= '';		
 		$settings['treetype']	= 'arc';
 		return $settings;

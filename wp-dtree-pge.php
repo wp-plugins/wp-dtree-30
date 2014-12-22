@@ -2,8 +2,8 @@
 function wpdt_get_pages_nodelist($args){	
 	extract($args, EXTR_SKIP);		
 	$idcount = 1;
-	
-	$pageresults = &get_pages(array(
+		
+	$pageresults = get_pages(array(
 		'child_of' => $child_of, 
 		'parent'	=> $parent,
 		'sort_order' => $sort_order,
@@ -16,12 +16,10 @@ function wpdt_get_pages_nodelist($args){
 		'meta_value' => $meta_value,
 		'authors' => $authors
 	));				
-	$has_root_connection = false;
 	$nodelist = array();	
 	if($pageresults){
 		foreach($pageresults as $pageresult){			
-			$nodelist[$idcount] = array( 'id' => $pageresult->ID, 'pid' => $pageresult->post_parent, 'url' => esc_url(get_permalink($pageresult->ID)), 'name' => strip_tags(apply_filters('the_title', $pageresult->post_title)), 'title' => '');
-			if($pageresult->post_parent == 0){$has_root_connection = true;}
+			$nodelist[$idcount] = array('id' => $pageresult->ID, 'pid' => $pageresult->post_parent, 'url' => esc_url(get_permalink($pageresult->ID)), 'name' => strip_tags(apply_filters('the_title', $pageresult->post_title)), 'title' => '');
 			$idcount++;
 		}
 		//pages can be arranged arbitrarily, and with some creative exlusion/inclusion, you'll easily create a tree without a single page connecting to root or a even parent.

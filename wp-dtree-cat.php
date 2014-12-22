@@ -16,9 +16,9 @@ function wpdt_get_category_nodelist($args){
 			'id' => -$cat->cat_ID, 
 			'pid' => -$cat->category_parent,					 
 			'url' => get_category_link($cat->term_id),
-			'name' => ($showcount) ? strip_tags($cat->name ."&nbsp;({$cat->count})") : strip_tags($cat->name),
+			'name' => ($showcount) ? strip_tags($cat->name ." ({$cat->count})") : strip_tags($cat->name),
 			'title' => strip_tags($cat->description)			
-		);
+		);// <span class='dtcount'>($postcount)</span>
 		$catids[$cat->cat_ID] = array('posts_returned' => 0, 'count' => $cat->count); //save the ID, post-counter and actual post count in case we're asked to limit the tree and needs to know how much we've kept back
 		$idcount++;		
 	}	
@@ -87,9 +87,9 @@ function wpdt_get_category_nodelist($args){
 				$nodelist[$idcount++] = array(
 					'id' => "'{$idcount}'", //a string, to avoid ID-trampling.
 					'pid' => -$catid, 
-					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdt'), //add category count? 
+					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdtree'), //add category count? 
 					'url' => get_category_link($catid), 
-					'title' => esc_attr__('Browse all posts in '.get_cat_name($catid), 'wpdt')
+					'title' => esc_attr__('Browse all posts in '.get_cat_name($catid), 'wpdtree')
 				);				
 			}
 		}	

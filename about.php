@@ -37,6 +37,8 @@ $author_profile = 'http://profiles.wordpress.org/users/ulfben/';
 	<a class='FlattrButton' style='display:none;' rev='flattr;button:compact;' href='{$author_profile}'></a>
 	<noscript><a href='{$flattr_profile}' target='_blank'>
 	<img src='http://api.flattr.com/button/flattr-badge-large.png' alt='Flattr this' title='Flattr this' border='0' /></a></noscript></span></p>
+	<p>Or <a href='https://onedrive.live.com?invref=b1f728851abada15&invsrc=90'>sign up to Microsoft OneDrive</a> using my referral link - we both get 0.5GB extra for free!
+
 	<p>Or perhaps <a href='{$wishlist}' title='Amazon whishlist'>send me a book</a>? Used ones are fine! :)</p>
 	<p>//<a href='{$author_site}'>Ulf Benjaminsson</a></p>								
 	<hr />

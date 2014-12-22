@@ -8,16 +8,8 @@ function wpdt_install_cache(){
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	global $wpdb;
 	$wpdt_cache = wpdt_get_table_name();
-	wpdt_uninstall_cache();		
-	$charset_collate = '';
-	if(version_compare(mysql_get_server_info(), '4.1.0', '>=')){
-		if(!empty($wpdb->charset)){
-			$charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
-		}
-		if(!empty($wpdb->collate)){
-			$charset_collate .= " COLLATE {$wpdb->collate}";
-		}
-	}			
+	wpdt_uninstall_cache();			
+	$charset_collate = $wpdb->get_charset_collate();
 	$sql = "CREATE TABLE {$wpdt_cache} (
 	hash BINARY(16) NOT NULL, 
 	content MEDIUMTEXT NOT NULL,				
@@ -29,7 +21,7 @@ function wpdt_install_cache(){
 function wpdt_uninstall_cache(){			
 	global $wpdb;
 	$wpdt_cache = wpdt_get_table_name();	
-	if($wpdb->get_var("SHOW TABLES LIKE '$wpdt_cache'") == $wpdt_cache) {
+	if($wpdb->get_var("SHOW TABLES LIKE '{$wpdt_cache}'") == $wpdt_cache) {
 		$wpdb->query("DROP TABLE " . $wpdt_cache); 	
 	}	
 }
@@ -42,9 +34,8 @@ function wpdt_update_cache(){
 	$wpdb->query("DELETE FROM {$wpdt_cache}");
 }
 
-function wpdt_get_seed($args){
-	global $wpdb;
-	return $wpdb->escape(serialize($args));
+function wpdt_get_seed($args){	
+	return esc_sql(serialize($args));
 }
 
 function wpdt_insert_tree_data($treedata, $seed){
@@ -53,7 +44,7 @@ function wpdt_insert_tree_data($treedata, $seed){
 	}	
 	global $wpdb;
 	$wpdt_cache = wpdt_get_table_name();			
-	$safeRow = $wpdb->escape($treedata); 
+	$safeRow = esc_sql($treedata); 
 	$sql = 	"INSERT INTO ".$wpdt_cache
   			." (hash, content)
   			VALUES (UNHEX(MD5('{$seed}')),'".$safeRow."')";		
@@ -62,6 +53,9 @@ function wpdt_insert_tree_data($treedata, $seed){
 
 function wpdt_get_cached_data($seed){
 	global $wpdb;
+	if(is_array($seed)){
+		$seed = wpdt_get_seed($seed);
+	}
 	$wpdt_cache = wpdt_get_table_name();	
 	$results = $wpdb->get_var("SELECT content FROM {$wpdt_cache} WHERE hash = UNHEX(MD5('{$seed}')) LIMIT 1");	
 	return ($results) ? $results : '';
@@ -69,8 +63,12 @@ function wpdt_get_cached_data($seed){
 
 function wpdt_clear_cache($seed){ /*args = settings array for a tree*/
 	global $wpdb;
-	$wpdt_cache = wpdt_get_table_name();	
+	if(is_array($seed)){
+		$seed = wpdt_get_seed($seed);
+	}	
+	$wpdt_cache = wpdt_get_table_name();		
 	$wpdb->query("DELETE FROM {$wpdt_cache} WHERE hash = UNHEX(MD5('{$seed}'))");
+	return;
 }
 
 function wpdt_clean_exclusion_list($excluded){	

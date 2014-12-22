@@ -45,7 +45,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 					'id' => -$idcount, 
 					'pid' => 0,						 
 					'url' => get_year_link($arcresult->year), 
-					'name' => ($showcount) ? $arcresult->year ."&nbsp;($postcount)" : $arcresult->year,
+					'name' => ($showcount) ? $arcresult->year ." ($postcount)" : $arcresult->year,
 					'title' => ''									
 				);					
 				$mpidcount = -$idcount;

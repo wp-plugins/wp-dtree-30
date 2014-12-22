@@ -1,7 +1,7 @@
 <?php
 class WPDT_Links_Widget extends WPDT_Widget{	
 	function WPDT_Links_Widget(){				
-		$widget_ops = array('classname' => 'wpdt-links', 'description' => __('Dynamic javascript links', 'wpdtree')); //widget settings. 
+		$widget_ops = array('classname' => 'wpdt-links', 'description' => __('List your links in a dTree.', 'wpdtree')); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-links-widget'); //Widget control settings.
 		$this->WP_Widget('wpdt-links-widget', __('WP-dTree Links', 'wpdtree'), $widget_ops, $control_ops); //Create the widget.		
 	}
@@ -20,9 +20,9 @@ class WPDT_Links_Widget extends WPDT_Widget{
 		$settings['hide_invisible']	= isset($new_settings['hide_invisible']) ? 1 : 0;
 		$settings['show_updated']  	= isset($new_settings['show_updated']) ? 1 : 0;
 		$settings['showcount']		= isset($new_settings['showcount']) ? 1 : 0;
-		$settings['search']        	= $new_settings['search']; //Searches link_url, link_name or link_description like the search string.
-		$settings['orderby']		= $new_settings['sortby']; //work around inconsistent API
-		$settings['order']			= $new_settings['sort_order'];
+		$settings['search']        	= isset($new_settings['search']) ? $new_settings['search'] : ''; //Searches link_url, link_name or link_description like the search string.
+		$settings['orderby']		= isset($new_settings['sortby']) ? $new_settings['sortby'] : ''; //work around inconsistent API
+		$settings['order']			= isset($new_settings['sort_order']) ? $new_settings['sort_order'] : '';
 		$settings['opentoselection']= 0;
 		$settings['useselection'] 	= 0;
 		$settings['folderlinks']	= 0;
@@ -35,7 +35,8 @@ class WPDT_Links_Widget extends WPDT_Widget{
 		$defaults = wpdt_get_defaults('lnk');			
 		$settings = wp_parse_args((array) $settings, $defaults); 
 		parent::form($settings);
-	?>			
+	?>
+		<p>The following settings expose parameters of <code>get_bookmarks()</code>. Please check <a href="http://codex.wordpress.org/Function_Reference/get_bookmarks">the WordPress Codex</a> for more information.</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('sortby'); ?>"><?php _e('Sort links by:', 'wpdtree'); ?></label> 	
 			<select id="<?php echo $this->get_field_id('sortby'); ?>" name="<?php echo $this->get_field_name('sortby'); ?>" class="widefat" style="width:80px;">	
