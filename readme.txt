@@ -4,7 +4,7 @@ Donate link: http://flattr.com/thing/367557/Support-my-WordPress-plugins
 Tags: menu, menus, archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 4.3.1
+Stable tag: 4.4
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists. Support custom Menus too.
 
