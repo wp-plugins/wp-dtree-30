@@ -1,4 +1,4 @@
-=== WP-dTree ===
+﻿=== WP-dTree ===
 Contributors: ulfben
 Donate link: http://flattr.com/thing/367557/Support-my-WordPress-plugins
 Tags: menu, menus, archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
@@ -25,7 +25,7 @@ Any help is greatly appreciated. Thanks!
 
 //*[Ulf Benjaminsson](http://www.ulfben.com)*
 
-= Changes in v4.4.0 (2014-12-20) =
+= Changes in v4.4 (2014-12-22) =
 * Added support for WordPress' Menus.
 * Added multisite support. (thanks, John Pariseau)
 * Added option to set navigation root to the current page or category. 
@@ -129,14 +129,14 @@ Complete rewrite! Read the docs before upgrading!
 
 (Older entries moved here to clear up [the front page](http://wordpress.org/extend/plugins/wp-dtree-30/))
 
-= Changes in v4.4.0 (2014-12-20) =
+= Changes in v4.4 (2014-12-22) =
 * Added support for WordPress' Menus.
 * Added multisite support. (thanks, John Pariseau)
-* Added option to set navigation root to the current page or category 
-* Fixed broken l10n
-* Fixed a XSS vulnerability . (thanks, Patrick Riggs)
-* Replaced all deprecated functions
-* Fixed tons of PHP warnings and notices
+* Added option to set navigation root to the current page or category. 
+* Fixed broken l10n.
+* Fixed a XSS vulnerability. (thanks, Patrick Riggs)
+* Replaced all deprecated functions.
+* Fixed tons of PHP warnings and notices.
 
 = Changes in v4.3.1 (2012-01-11) =
 * Fixed fallbacks for uninitialized settings: never print [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
