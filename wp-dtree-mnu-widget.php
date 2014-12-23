@@ -33,7 +33,7 @@ class WPDT_Menu_Widget extends WPDT_Widget{
 						foreach($menus as $menu){
 							$name = esc_html($menu->name);
 							$slug = $menu->slug;							
-							echo "<option value='{$slug}'" . selected($settings['sortby'], 'post_title') .">{$name}</option>";
+							echo "<option value='{$slug}'" . selected($settings['menuslug'], 'post_title') .">{$name}</option>";
 						}					
 					}
 				?>				
