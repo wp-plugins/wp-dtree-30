@@ -53,10 +53,14 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 			</select>
 		</p><p>
 			<label for="<?php echo $this->get_field_id('cpsortby'); ?>"><?php _e('Sort posts by:', 'wpdtree'); ?></label> 
-			<select id="<?php echo $this->get_field_id('cpsortby'); ?>" name="<?php echo $this->get_field_name('cpsortby'); ?>" class="widefat" style="width:90px;">
-				<option <?php selected('post_title',$settings['cpsortby']); ?>>post_title</option>
-				<option <?php selected('post_date',$settings['cpsortby']); ?>>post_date</option>
-				<option <?php selected('ID',$settings['cpsortby']); ?>>ID</option>
+			<select id="<?php echo $this->get_field_id('cpsortby'); ?>" name="<?php echo $this->get_field_name('cpsortby'); ?>" class="widefat" style="width:100px;">
+				<option value='post_title' <?php selected('post_title',$settings['cpsortby']); ?>>Title</option>
+				<option value='menu_order' <?php selected('menu_order',$settings['cpsortby']); ?>>Menu Order</option>
+				<option value='post_date' <?php selected('post_date',$settings['cpsortby']); ?>>Date</option>
+				<option value='ID' <?php selected('ID',$settings['cpsortby']); ?>>ID</option>
+				<option value='post_modified' <?php selected('post_modified',$settings['cpsortby']); ?>>Modified</option>
+				<option value='post_author' <?php selected('post_author',$settings['cpsortby']); ?>>Author</option>
+				<option value='post_name' <?php selected('post_name',$settings['cpsortby']); ?>>Slug</option>				
 			</select>
 		</p><p>
 			<label for="<?php echo $this->get_field_id('cpsortorder'); ?>"><?php _e('Post order:', 'wpdtree'); ?></label> 
@@ -73,14 +77,19 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 		</p><p>	
 			<label for="<?php echo $this->get_field_id('more_link'); ?>" title="<?php esc_attr_e('Show link to additional taxonomy content. %excluded% is replaced with the remaining count.','wpdtree'); ?>"><?php esc_html_e('Show more link:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('more_link'); ?>" name="<?php echo $this->get_field_name('more_link'); ?>" value="<?php echo $settings['more_link']; ?>" style="width:95%;"/>
-		</p><p>			
+		</p><p>
+	
+		<?php 
+			// Only show these options if taxonomy is hierarchical 
+			if (isset($settings['taxonomy']) && is_taxonomy_hierarchical($settings['taxonomy'])) { 
+		?>		
 			<label for="<?php echo $this->get_field_id('child_of'); ?>" title="<?php esc_attr_e('Display alltaxonomies that are descendants (i.e. children & grandchildren) of the Taxonomy.','wpdtree'); ?>"><?php _e('Show descendands of:', 'wpdtree'); ?></label> 
 			<select id="<?php echo $this->get_field_id('child_of'); ?>" name="<?php echo $this->get_field_name('child_of'); ?>" class="widefat" style="width:100%;">
 				<option value="0" <?php selected(0,$settings['child_of']); ?>><?php echo esc_attr(__('Select an ancestor')); ?></option> 
 			<?php 				
-				foreach (get_taxonomies(array('name'=>$settings['taxonomy']), 'object') as $taxonomy) {
-					$sel = ($taxonomy->term_id == $settings['child_of']) ? 'selected="selected"' : '';
-					echo "<option value='{$taxonomy->term_id}'{$sel}>{$taxonomy->name} (ID: {$taxonomy->term_id})</option>\n";								
+				foreach (get_terms($settings['taxonomy']) as $term) {
+					$sel = ($term->term_id == $settings['child_of']) ? 'selected="selected"' : '';
+					echo "<option value='{$term->term_id}'{$sel}>{$term->name} (ID: {$term->term_id})</option>\n";								
 				}
 			 ?>
 			</select>
@@ -93,13 +102,14 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 				<option value="none" <?php selected('',$settings['parent']); ?>><?php echo esc_attr(__('Don\'t filter on parents')); ?></option> 
 				<option value="0" <?php selected(0,$settings['parent']); ?>><?php echo esc_attr(__('Root (0)')); ?></option>
 			<?php 				 
-				foreach (get_taxonomies(array('name'=>$settings['taxonomy']), 'object') as $taxonomy) {
-					$sel = ($taxonomy->term_id == $settings['parent']) ? 'selected="selected"' : '';
-					echo "<option value='{$taxonomy->term_id}'{$sel}>{$taxonomy->name} (ID: {$taxonomy->term_id})</option>\n";								
+				foreach (get_terms($settings['taxonomy']) as $term) {
+					$sel = ($term->term_id == $settings['parent']) ? 'selected="selected"' : '';
+					echo "<option value='{$term->term_id}'{$sel}>{$term->name} (ID: {$term->term_id})</option>\n";								
 				}
 			?>
 			</select>		
 		</p><p>
+		<?php } //end hierarchical check ?>
 			<label for="<?php echo $this->get_field_id('postexclude'); ?>" title="<?php esc_attr_e('Comma separated list of post IDs. The "exclude"-filed above is for taxonomy IDs','wpdtree') ?>"><?php esc_html_e('Exclude posts:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('postexclude'); ?>" name="<?php echo $this->get_field_name('postexclude'); ?>" value="<?php echo $settings['postexclude']; ?>" style="width:100px;" />
 		</p><p>

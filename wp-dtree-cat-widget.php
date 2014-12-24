@@ -49,10 +49,14 @@ class WPDT_Categories_Widget extends WPDT_Widget{
 			</select>
 		</p><p>
 			<label for="<?php echo $this->get_field_id('cpsortby'); ?>"><?php _e('Sort posts by:', 'wpdtree'); ?></label> 
-			<select id="<?php echo $this->get_field_id('cpsortby'); ?>" name="<?php echo $this->get_field_name('cpsortby'); ?>" class="widefat" style="width:90px;">
-				<option <?php selected('post_title',$settings['cpsortby']); ?>>post_title</option>
-				<option <?php selected('post_date',$settings['cpsortby']); ?>>post_date</option>
-				<option <?php selected('ID',$settings['cpsortby']); ?>>ID</option>
+			<select id="<?php echo $this->get_field_id('cpsortby'); ?>" name="<?php echo $this->get_field_name('cpsortby'); ?>" class="widefat" style="width:100px;">
+					<option value='post_title' <?php selected('post_title',$settings['cpsortby']); ?>>Title</option>
+					<option value='menu_order' <?php selected('menu_order',$settings['cpsortby']); ?>>Menu Order</option>
+					<option value='post_date' <?php selected('post_date',$settings['cpsortby']); ?>>Date</option>
+					<option value='ID' <?php selected('ID',$settings['cpsortby']); ?>>ID</option>
+					<option value='post_modified' <?php selected('post_modified',$settings['cpsortby']); ?>>Modified</option>
+					<option value='post_author' <?php selected('post_author',$settings['cpsortby']); ?>>Author</option>
+					<option value='post_name' <?php selected('post_name',$settings['cpsortby']); ?>>Slug</option>
 			</select>
 		</p><p>
 			<label for="<?php echo $this->get_field_id('cpsortorder'); ?>"><?php _e('Post order:', 'wpdtree'); ?></label> 

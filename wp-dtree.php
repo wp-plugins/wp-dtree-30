@@ -50,6 +50,8 @@
 		add_action('wp_print_styles', 	'wpdt_css');	
 		add_action('wp_print_scripts', 	'wpdt_js');	
 		add_action('widgets_init', 		'wpdt_load_widgets');	
+		add_action('apto_order_update', 'wpdt_update_cache');	// Support for "Advanced Post Types Order" plugin, by sydcode (August 2013)
+		add_action('apto_order_update_hierarchical', 'wpdt_update_cache');	// Support for "Advanced Post Types Order" plugin, by sydcode (August 2013)
 		wpdt_print_errors();		
 	}			
 	function wpdt_print_errors(){	

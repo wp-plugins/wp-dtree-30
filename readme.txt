@@ -25,6 +25,11 @@ Any help is greatly appreciated. Thanks!
 
 //*[Ulf Benjaminsson](http://www.ulfben.com)*
 
+= Changes in v4.4.1 (2014-12-24) =
+* Better sorting options for posts
+* Support for [Post Types Order](https://wordpress.org/support/topic/wp-dtree-update?replies=1#post-4583198) (thank you, sydcode)
+* Minor bug fixes
+
 = Changes in v4.4 (2014-12-22) =
 * Added support for WordPress' Menus.
 * Added multisite support. (thanks, John Pariseau)

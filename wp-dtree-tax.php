@@ -11,7 +11,7 @@ function wpdt_get_taxonomy_nodelist($args){
 	//	'taxonomy' => $taxonomy,
 		'hide_empty' => $hide_empty, 
 		'include_last_update_time' => $include_last_update_time, 
-		'hierarchical' => 1, 
+		'hierarchical' => 1, //is_taxonomy_hierarchical($taxonomy) 
 		'exclude' => $exclude, 
 		'include' => $include, 
 		'number' => $number, 
@@ -20,10 +20,10 @@ function wpdt_get_taxonomy_nodelist($args){
 		//'parent' => $parent
 	);				
 	$taxonomyresults = get_terms($taxonomy, $termargs);//'orderby=count&hide_empty=0' );
-	//echo "count:".count($taxonomyresults);
 	if(is_wp_error($taxonomyresults)){
 		return array();
-	}			
+	}	
+	
 	foreach ($taxonomyresults as $term){					
 		$nodelist[$idcount] = array( 
 			'id' => -$term->term_id, 
@@ -46,7 +46,6 @@ function wpdt_get_taxonomy_nodelist($args){
 		}
 		if(!$hasparent){$nodelist[$key]['pid'] = 0;	} //connect orphans to root.
 	}		
-	//echo "listposts:".$listposts;	
 	if(!$listposts || !count($nodelist)){ //it's either empty or we don't need to list posts. Either way - skip the rest.		
 		return $nodelist;
 	}	
@@ -61,7 +60,7 @@ function wpdt_get_taxonomy_nodelist($args){
 				 AND {$wpdb->term_taxonomy}.taxonomy = '$taxonomy'
 				 AND {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id 
 				 AND {$wpdb->term_taxonomy}.term_id = {$wpdb->terms}.term_id 	 
-				 /*category-id*/
+				 /*tax-id*/
 				 AND {$wpdb->posts}.post_status = 'publish' 
 				 AND {$wpdb->posts}.post_type = 'post' 
 				{$catexclusions} 				
@@ -99,7 +98,6 @@ function wpdt_get_taxonomy_nodelist($args){
 					'id' => "'{$idcount}'", //a string, to avoid ID-trampling.
 					'pid' => -$termid, 
 					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdtree'), //add category count? 
-					//E'url' => get_category_link($catid),
 					'url' => get_term_link($termid, $taxonomy), 
 					'title' => esc_attr__('Browse all posts in '.get_cat_name($termid), 'wpdtree')
 				);				
