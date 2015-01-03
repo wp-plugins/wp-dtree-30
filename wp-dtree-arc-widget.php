@@ -20,6 +20,7 @@ class WPDT_Archives_Widget extends WPDT_Widget {
 		$settings['showrss'] 	= isset($new_settings['showrss']) ? 1 : 0;	
 		$settings['limit_posts'] = isset($new_settings['limit_posts']) ? intval($new_settings['limit_posts']) : 0;
 		$settings['exclude_cats'] = isset($new_settings['exclude_cats']) ? wpdt_clean_exclusion_list($new_settings['exclude_cats']) : '';
+		$settings['posttype']	= isset($new_settings['posttype']) ? sanitize_title($new_settings['posttype'], 'post', 'query') : 'post';
 		$settings['include'] 	= '';		
 		$settings['treetype']	= 'arc';
 		return $settings;

@@ -48,7 +48,12 @@ class WPDT_Widget extends WP_Widget{
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $settings['title']; ?>" style="width:95%;" />
-		</p><p>
+		</p>
+		<?php if($treetype == 'arc'): /*only applicable to archives*/?>			
+			<input id="<?php echo $this->get_field_id('posttype'); ?>" name="<?php echo $this->get_field_name('posttype'); ?>" value="<?php echo $settings['posttype']; ?>" size="10" />
+			<label for="<?php echo $this->get_field_id('posttype'); ?>" title="'post', 'attachment' or any custom post type"><?php _e('Specify <a href="http://codex.wordpress.org/Post_Types">Post type</a>', 'wpdtree'); ?></label><br />
+		<?php endif; /*only applicable to archives*/ ?>
+		<p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['cache'], true); ?> id="<?php echo $this->get_field_id('cache'); ?>" name="<?php echo $this->get_field_name('cache'); ?>" /> 
 			<label for="<?php echo $this->get_field_id('cache'); ?>" title="Do not disable this unless you're a developer or having problems with the trees not updating properly!"><?php _e('Cache (recommended!)', 'wpdtree'); ?></label>
 		</p><p>		

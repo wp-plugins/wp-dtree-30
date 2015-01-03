@@ -10,6 +10,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	$postexclusions = wpdt_build_exclude_statement($exclude, $wpdb->posts.'.ID');
 	$from = " FROM {$wpdb->posts} ";
 	$catexclusions = '';
+		
 	if($exclude_cats){
 		$catexclusions = " AND {$wpdb->term_relationships}.object_id = {$wpdb->posts}.ID
 		 AND {$wpdb->term_taxonomy}.taxonomy = 'category' 
@@ -19,7 +20,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	}	
 	$query = "SELECT YEAR({$wpdb->posts}.post_date) AS 'year', MONTH({$wpdb->posts}.post_date) AS 'month' {$count}
 		 $from  
-		 WHERE {$wpdb->posts}.post_type = 'post' AND {$wpdb->posts}.post_status = 'publish' 
+		 WHERE {$wpdb->posts}.post_type = '{$posttype}' AND {$wpdb->posts}.post_status = 'publish' 
 		 {$postexclusions}		 
 		 {$catexclusions} 
 		 GROUP BY year, month 
@@ -72,7 +73,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 		$endmonth = wpdt_add_month($startmonth, 1);		
 		$query[] = "(SELECT ID AS 'ID', post_date AS 'post_date', post_title AS 'post_title', {$pidcount} AS 'pID'  
 			 {$from}
-			 WHERE post_type = 'post' AND post_status = 'publish' 
+			 WHERE post_type = '{$posttype}' AND post_status = 'publish' 
 				AND post_date > '{$startmonth}'
 				AND post_date < '{$endmonth}'	
 			 {$postexclusions}	

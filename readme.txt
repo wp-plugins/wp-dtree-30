@@ -25,8 +25,9 @@ Any help is greatly appreciated. Thanks!
 
 //*[Ulf Benjaminsson](http://www.ulfben.com)*
 
-= Changes in v4.4.1 (2014-12-24) =
+= Changes in v4.4.2 (2015-01-03) =
 * Better sorting options for posts
+* Archives now support Custom Post Types
 * Support for [Post Types Order](https://wordpress.org/support/topic/wp-dtree-update?replies=1#post-4583198) (thank you, sydcode)
 * Minor bug fixes
 

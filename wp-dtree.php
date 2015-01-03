@@ -394,7 +394,8 @@
 				'type' 		=> 'monthly',
 				'showcount' => 1,		//show_post_count 
 				'limit_posts'=> 0,
-				'number_of_posts'=> 0
+				'number_of_posts'=> 0,
+				'posttype'	=> 'post'
 			));
 		}else if($treetype == 'cat'){
 			return array_merge($common, array(			
