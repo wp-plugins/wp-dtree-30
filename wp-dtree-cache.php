@@ -45,7 +45,7 @@ function wpdt_insert_tree_data($treedata, $seed){
 	global $wpdb;
 	$wpdt_cache = wpdt_get_table_name();			
 	$safeRow = esc_sql($treedata); 
-	$sql = 	"INSERT INTO ".$wpdt_cache
+	$sql = 	"REPLACE ".$wpdt_cache
   			." (hash, content)
   			VALUES (UNHEX(MD5('{$seed}')),'".$safeRow."')";		
 	$wpdb->query($sql);	
