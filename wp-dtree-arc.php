@@ -92,7 +92,7 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	unset($arcresults);	
 	if($listposts && count($query)){
 		$query = (count($query) > 1) ? implode(' UNION ALL ', $query)." ORDER BY {$sortby} {$sort_order}" : $query[0]." ORDER BY {$sortby} {$sort_order}";		
-		_log($query);
+		//_log($query);
 		if($postresults = $wpdb->get_results($query)){
 			foreach($postresults as $postresult){			
 				$text = strip_tags(apply_filters('the_title', $postresult->post_title));			
