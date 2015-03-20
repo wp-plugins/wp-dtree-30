@@ -24,7 +24,7 @@ class WPDT_Widget extends WP_Widget{
 		wpdt_clear_cache($seed);
 		$settings = $old_settings;	
 		$settings['title'] 			= strip_tags($new_settings['title']);
-		$settings['sort_order'] 	= isset($new_settings['sort_order']) ? $new_settings['sort_order'] : ''; //asc / desc
+		$settings['sort_order'] 	= isset($new_settings['sort_order']) ? $new_settings['sort_order'] : 'DESC'; //asc / desc
 		$settings['sortby'] 		= isset($new_settings['sortby']) ? $new_settings['sortby'] : ''; //sort_columns is native for pages. 	
 		$settings['openlink'] 		= isset($new_settings['openlink']) ? strip_tags($new_settings['openlink']) : '';
 		$settings['closelink'] 		= isset($new_settings['closelink']) ? strip_tags($new_settings['closelink']) : '';

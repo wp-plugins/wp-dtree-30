@@ -3,7 +3,7 @@
 	Plugin Name: WP-dTree
 	Plugin URI: http://wordpress.org/extend/plugins/wp-dtree-30/
 	Description: <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a> widgets to replace the standard archives-, categories-, pages- and link lists.
-	Version: 4.4
+	Version: 4.4.3
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2
@@ -388,7 +388,8 @@
 				'title' => __('Archives', 'wpdtree'),
 				'sortby' 	=> 'post_date',
 				'sort_order'=> 'DESC',
-				'exclude_cats' => '',				
+				'exclude_cats' => '',
+				'include_cats' => '',				
 				'listposts' => 1,				
 				'showrss' 	=> 0,
 				'type' 		=> 'monthly',
@@ -424,6 +425,7 @@
 				'title' => __('Taxonomy', 'wpdtree'),								
 				'cpsortby' 		=> 'post_date',
 				'cpsortorder' 	=> 'DESC',			
+				'usedescription' => 0, //use taxonomy description, instead of name, to render the tree
 				'hide_empty' 	=> 1,
 				'child_of' 		=> 0,
 				'child_of_current' => 0,

@@ -12,7 +12,8 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 	function update($new_settings, $old_settings){		
 		$old_settings = parent::update($new_settings, $old_settings);
 		$settings = $old_settings;		
-		$settings['taxonomy'] 		= isset($new_settings['taxonomy']) ? $new_settings['taxonomy'] : 'category';				
+		$settings['taxonomy'] 		= isset($new_settings['taxonomy']) ? $new_settings['taxonomy'] : 'category';
+		$settings['usedescription'] = isset($new_settings['usedescription']) ? 1 : 0;						
 		$settings['listposts'] 		= isset($new_settings['listposts']) ? 1 : 0;						
 		$settings['showrss'] 		= isset($new_settings['showrss']) ? 1 : 0;
 		$settings['hide_empty'] 	= isset($new_settings['hide_empty']) ? 1 : 0;
@@ -112,6 +113,9 @@ class WPDT_Taxonomies_Widget extends WPDT_Widget{
 		<?php } //end hierarchical check ?>
 			<label for="<?php echo $this->get_field_id('postexclude'); ?>" title="<?php esc_attr_e('Comma separated list of post IDs. The "exclude"-filed above is for taxonomy IDs','wpdtree') ?>"><?php esc_html_e('Exclude posts:', 'wpdtree'); ?></label>
 			<input id="<?php echo $this->get_field_id('postexclude'); ?>" name="<?php echo $this->get_field_name('postexclude'); ?>" value="<?php echo $settings['postexclude']; ?>" style="width:100px;" />
+		</p><p>
+			<input class="checkbox" type="checkbox" <?php checked($settings['usedescription'], true); ?> id="<?php echo $this->get_field_id('usedescription'); ?>" name="<?php echo $this->get_field_name('usedescription'); ?>" /> 
+			<label for="<?php echo $this->get_field_id('usedescription'); ?>" title="<?php esc_attr_e('Use the taxonomy description instead of name when rendering the tree.','wpdtree'); ?>"><?php _e('Use description', 'wpdtree'); ?></label>
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['allowdupes'], true); ?> id="<?php echo $this->get_field_id('allowdupes'); ?>" name="<?php echo $this->get_field_name('allowdupes'); ?>" /> 
 			<label for="<?php echo $this->get_field_id('allowdupes'); ?>" title="<?php esc_attr_e('Allow posts sorted under multiple Taxonomies? Otherwise the post will appear only in the first of its Taxonomies.','wpdtree'); ?>"><?php _e('Allow duplicate entries', 'wpdtree'); ?></label>

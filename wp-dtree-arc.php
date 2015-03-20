@@ -10,8 +10,14 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	$postexclusions = wpdt_build_exclude_statement($exclude, $wpdb->posts.'.ID');
 	$from = " FROM {$wpdb->posts} ";
 	$catexclusions = '';
-		
-	if($exclude_cats){
+	$catinclusions = '';
+	if($include_cats){
+		$catinclusions = " AND {$wpdb->term_relationships}.object_id = {$wpdb->posts}.ID
+		 AND {$wpdb->term_taxonomy}.taxonomy = 'category' 
+		 AND {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id 
+		 AND {$wpdb->term_taxonomy}.term_id IN ({$include_cats}) ";
+		 $from .= ", {$wpdb->term_relationships}, {$wpdb->term_taxonomy} ";
+	} else if($exclude_cats){
 		$catexclusions = " AND {$wpdb->term_relationships}.object_id = {$wpdb->posts}.ID
 		 AND {$wpdb->term_taxonomy}.taxonomy = 'category' 
 		 AND {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id 
@@ -22,7 +28,8 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 		 $from  
 		 WHERE {$wpdb->posts}.post_type = '{$posttype}' AND {$wpdb->posts}.post_status = 'publish' 
 		 {$postexclusions}		 
-		 {$catexclusions} 
+		 {$catexclusions}
+		 {$catinclusions}		 
 		 GROUP BY year, month 
 		 ORDER BY {$wpdb->posts}.post_date DESC";
 	$arcresults = $wpdb->get_results($query);		
@@ -33,11 +40,12 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 	
 	$nodelist = array();
 	$curyear = -1;
-	$query = array();	
-	//var_dump($arcresults);
+	$query = array();		
+	$select_sortby = ($sortby == 'ID' || $sortby == 'post_date' || $sortby == 'post_title') ? '' : ", {$wpdb->posts}.{$sortby} AS '{$sortby}'"; 
+	
 	foreach($arcresults as $arcresult){		
 		if($isyearly){			
-			if($arcresult->year != $curyear){ //prepare the year as a parent node, countings it's children etc.
+			if($arcresult->year != $curyear){ //prepare the year as a parent node, counting it's children etc.
 				$postcount = 0;					
 				if($showcount){ //avoid this loop if not needed!					
 					foreach($arcresults as $temp){ if($temp->year == $arcresult->year){$postcount +=  $temp->posts; } }
@@ -71,18 +79,20 @@ function wpdt_get_archive_nodelist($args){ //get archive nodelist
 		}
 		$startmonth = $arcresult->year."-".zeroise($arcresult->month, 2)."-01 00:00:00";
 		$endmonth = wpdt_add_month($startmonth, 1);		
-		$query[] = "(SELECT ID AS 'ID', post_date AS 'post_date', post_title AS 'post_title', {$pidcount} AS 'pID'  
+		$query[] = "(SELECT {$wpdb->posts}.ID AS 'ID', {$wpdb->posts}.post_date AS 'post_date', {$wpdb->posts}.post_title AS 'post_title', {$pidcount} AS 'pID' {$select_sortby}  
 			 {$from}
-			 WHERE post_type = '{$posttype}' AND post_status = 'publish' 
-				AND post_date > '{$startmonth}'
-				AND post_date < '{$endmonth}'	
+			 WHERE {$wpdb->posts}.post_type = '{$posttype}' AND {$wpdb->posts}.post_status = 'publish' 
+				AND {$wpdb->posts}.post_date > '{$startmonth}'
+				AND {$wpdb->posts}.post_date < '{$endmonth}'	
 			 {$postexclusions}	
-			 {$catexclusions} 						
+			 {$catexclusions}
+			 {$catinclusions}			 
 			 $limit)";				
 	}
 	unset($arcresults);	
 	if($listposts && count($query)){
-		$query = (count($query) > 1) ? implode(' UNION ALL ', $query)." ORDER BY '{$sortby}' {$sort_order}" : $query[0]." ORDER BY '{$sortby}' {$sort_order}";		
+		$query = (count($query) > 1) ? implode(' UNION ALL ', $query)." ORDER BY {$sortby} {$sort_order}" : $query[0]." ORDER BY {$sortby} {$sort_order}";		
+		_log($query);
 		if($postresults = $wpdb->get_results($query)){
 			foreach($postresults as $postresult){			
 				$text = strip_tags(apply_filters('the_title', $postresult->post_title));			

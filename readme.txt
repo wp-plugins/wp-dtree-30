@@ -3,8 +3,8 @@ Contributors: ulfben
 Donate link: http://flattr.com/thing/367557/Support-my-WordPress-plugins
 Tags: menu, menus, archive, navigation, category, pages, links, bookmarks, dynamic, dtree, tree, sidebar, 
 Requires at least: 3.9
-Tested up to: 4.1
-Stable tag: 4.4
+Tested up to: 4.1.1
+Stable tag: 4.4.3
 
 <a href="http://www.destroydrop.com/javascripts/tree/">Dynamic tree</a>-widgets to replace the standard archives, categories, pages and link lists. Support custom Menus too.
 
@@ -25,6 +25,12 @@ Any help is greatly appreciated. Thanks!
 
 //*[Ulf Benjaminsson](http://www.ulfben.com)*
 
+= Changes in v4.4.3 (2015-03-20) =
+* Added support for category-specific archives
+* Added support to use description instead of name for taxonomy trees.
+* Fixed the sort ordering of archives
+* Fixed potential "duplicate entry"-mysql error
+
 = Changes in v4.4.2 (2015-01-03) =
 * Better sorting options for posts
 * Archives now support Custom Post Types
@@ -42,20 +48,6 @@ Any help is greatly appreciated. Thanks!
 
 = Changes in v4.3.1 (2012-01-11) =
 * Fixed: uninitialized settings will not cause [wierd output](http://wordpress.org/support/topic/plugin-wp-dtree-works-but-has-bugs?replies=3).
-
-= Changes in v4.3 (2012-01-01) =
-* Added: support and widget for custom taxonomies. (Thanks: Einat Dagan!)
-* Added: configurable open/close links for each tree
-* Added: [configurable open/close separator for each tree](http://wordpress.org/support/topic/plugin-wp-dtree-pipe-character-between-open-all-and-close-all?replies=2)
-* Fixed: various PHP [errors](http://wordpress.org/support/topic/plugin-wp-dtree-stripos-function-error-followed-by-crash-of-site?replies=1#post-2393280) and warnings.
-* [Fixed: feed links being wrong](http://wordpress.org/support/topic/rss-problem-36?replies=2#post-2221275)
-* Fixed: initialization routines
-* Fixed: excluding categories from the archive tree
-* Fixed: excluding posts from category tree
-* Fixed: [open/close link separator behavior](http://wordpress.org/support/topic/plugin-wp-dtree-pipe-character-between-open-all-and-close-all?replies=2)
-* Fixed: [link children are sorted correctly](http://wordpress.org/support/topic/plugin-wp-dtree-sorting-links-by-id-not-working?replies=1)
-* Fixed: Open to selection supports pagination
-* Fixed: [Open to selection supports categories again](http://wordpress.org/support/topic/plugin-wp-dtree-how-to-force-open-wdtree?replies=3#post-2523443)
 
 [Older changelogs moved here](http://wordpress.org/extend/plugins/wp-dtree-30/changelog/).
 
@@ -112,6 +104,9 @@ So, to find out what arguments are definetly available grab the default `$args`:
 They all return associative arrays whith all arguments defaulted.
 
 == Upgrade Notice ==
+
+= Changes in v4.4 (2014-12-22) =
+* Bug fixes. Notably: sort order of Archive trees.
 
 = Changes in v4.4 (2014-12-22) =
 * Crucial security and bugfixes. Support for custom menus and multisites added.

@@ -23,18 +23,19 @@ function wpdt_get_taxonomy_nodelist($args){
 	if(is_wp_error($taxonomyresults)){
 		return array();
 	}	
-	
-	foreach ($taxonomyresults as $term){					
+	foreach ($taxonomyresults as $term){				
+		$name = ($usedescription == true) ? strip_tags($term->description) : strip_tags($term->name);
 		$nodelist[$idcount] = array( 
 			'id' => -$term->term_id, 
 			'pid' => -$term->parent,				
 			'url' => get_term_link($term, $taxonomy),
-			'name' => ($showcount) ? strip_tags($term->name ."&nbsp;({$term->count})") : strip_tags($term->name),
-			'title' => strip_tags($term->description)				
+			'name' => ($showcount) ? $name ."&nbsp;({$term->count})" : $name,			
+			'title' => strip_tags($term->name .': '. $term->description)			
 		);		
 		$termids[$term->term_id] = array('posts_returned' => 0, 'count' => $term->count); //save the ID, post-counter and actual post count in case we're asked to limit the tree and needs to know how much we've kept back
 		$idcount++;		
 	}
+	
 	//categories can be arranged arbitrarily, and with some creative exlusion/inclusion, you'll easily create a tree without a single page connecting to root or a even parent.		
 	foreach($nodelist as $key => $node){ //thus this step to fixup any orphans.
 		if($node['pid'] == 0){continue;} //connected to root.
