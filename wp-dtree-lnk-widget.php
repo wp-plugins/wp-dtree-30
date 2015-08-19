@@ -3,7 +3,7 @@ class WPDT_Links_Widget extends WPDT_Widget{
 	function WPDT_Links_Widget(){				
 		$widget_ops = array('classname' => 'wpdt-links', 'description' => __('List your links in a dTree.', 'wpdtree')); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-links-widget'); //Widget control settings.
-		$this->WP_Widget('wpdt-links-widget', __('WP-dTree Links', 'wpdtree'), $widget_ops, $control_ops); //Create the widget.		
+		parent::__construct('wpdt-links-widget', __('WP-dTree Links', 'wpdtree'), $widget_ops, $control_ops); //Create the widget.		
 	}
 	
 	function widget($args, $settings){
