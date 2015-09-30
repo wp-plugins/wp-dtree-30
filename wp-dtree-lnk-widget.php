@@ -1,9 +1,9 @@
 <?php
 class WPDT_Links_Widget extends WPDT_Widget{	
 	function WPDT_Links_Widget(){				
-		$widget_ops = array('classname' => 'wpdt-links', 'description' => __('List your links in a dTree.', 'wpdtree')); //widget settings. 
+		$widget_ops = array('classname' => 'wpdt-links', 'description' => __('List your links in a dTree.', 'wp-dtree-30')); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-links-widget'); //Widget control settings.
-		parent::__construct('wpdt-links-widget', __('WP-dTree Links', 'wpdtree'), $widget_ops, $control_ops); //Create the widget.		
+		parent::__construct('wpdt-links-widget', __('WP-dTree Links', 'wp-dtree-30'), $widget_ops, $control_ops); //Create the widget.		
 	}
 	
 	function widget($args, $settings){
@@ -38,7 +38,7 @@ class WPDT_Links_Widget extends WPDT_Widget{
 	?>
 		<p>The following settings expose parameters of <code>get_bookmarks()</code>. Please check <a href="http://codex.wordpress.org/Function_Reference/get_bookmarks">the WordPress Codex</a> for more information.</p>
 		<p>
-			<label for="<?php echo $this->get_field_id('sortby'); ?>"><?php _e('Sort links by:', 'wpdtree'); ?></label> 	
+			<label for="<?php echo $this->get_field_id('sortby'); ?>"><?php _e('Sort links by:', 'wp-dtree-30'); ?></label> 	
 			<select id="<?php echo $this->get_field_id('sortby'); ?>" name="<?php echo $this->get_field_name('sortby'); ?>" class="widefat" style="width:80px;">	
 				<option value="id"<?php selected($settings['sortby'], 'id');?>>id</option>
 				<option value="url"<?php selected($settings['sortby'], 'url');?>>url</option>
@@ -55,13 +55,13 @@ class WPDT_Links_Widget extends WPDT_Widget{
 				<option value="rand"<?php selected($settings['sortby'], 'rand');?>>random</option>					
 			</select>	
 		</p><p>
-			<label for="<?php echo $this->get_field_id('catssort_order'); ?>"><?php _e('Order categories by:', 'wpdtree'); ?></label> 
+			<label for="<?php echo $this->get_field_id('catssort_order'); ?>"><?php _e('Order categories by:', 'wp-dtree-30'); ?></label> 
 			<select id="<?php echo $this->get_field_id('catssort_order'); ?>" name="<?php echo $this->get_field_name('catssort_order'); ?>" class="widefat" style="width:65px;">
 				<option <?php if ('ASC' == $settings['catssort_order'] ) echo 'selected="selected"'; ?>>ASC</option>
 				<option <?php if ('DESC' == $settings['catssort_order'] ) echo 'selected="selected"'; ?>>DESC</option>
 			</select>
 		</p><p>
-			<label for="<?php echo $this->get_field_id('catsorderby'); ?>"><?php _e('Sort categories by:', 'wpdtree'); ?></label> 	
+			<label for="<?php echo $this->get_field_id('catsorderby'); ?>"><?php _e('Sort categories by:', 'wp-dtree-30'); ?></label> 	
 			<select id="<?php echo $this->get_field_id('catsorderby'); ?>" name="<?php echo $this->get_field_name('catsorderby'); ?>" class="widefat" style="width:75px;">	
 				<option value="id"<?php selected($settings['catsorderby'], 'id');?>>id</option>
 				<option value="slug"<?php selected($settings['catsorderby'], 'slug');?>>slug</option>
@@ -69,23 +69,23 @@ class WPDT_Links_Widget extends WPDT_Widget{
 				<option value="count"<?php selected($settings['catsorderby'], 'count');?>>count</option>
 			</select>	
 		</p><p>
-			<label for="<?php echo $this->get_field_id('category'); ?>" title="Comma separated list of bookmark category ID's."><?php _e('Only from categories (IDs):', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('category'); ?>" title="Comma separated list of bookmark category ID's."><?php _e('Only from categories (IDs):', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>" value="<?php echo $settings['category']; ?>" style="width:95%;" />
 		</p><p>
-			<label for="<?php echo $this->get_field_id('category_name'); ?>" title="Name of a category of bookmarks to retrieve. Overrides category ID's above."><?php _e('Only from category (name):', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('category_name'); ?>" title="Name of a category of bookmarks to retrieve. Overrides category ID's above."><?php _e('Only from category (name):', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('category_name'); ?>" name="<?php echo $this->get_field_name('category_name'); ?>" value="<?php echo $settings['category_name']; ?>" style="width:95%;" />
 		</p><!--<p>
-			<label for="<?php echo $this->get_field_id('search'); ?>" title="Searches link_url, link_name or link_description like the search string."><?php _e('Search: (unused)', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('search'); ?>" title="Searches link_url, link_name or link_description like the search string."><?php _e('Search: (unused)', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('search'); ?>" name="<?php echo $this->get_field_name('search'); ?>" value="<?php echo $settings['search']; ?>" style="width:95%;" />
 		</p>--><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['showcount'], true); ?> id="<?php echo $this->get_field_id('showcount'); ?>" name="<?php echo $this->get_field_name('showcount'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('showcount'); ?>"><?php _e('Show link count', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('showcount'); ?>"><?php _e('Show link count', 'wp-dtree-30'); ?></label>
 		</p><p>			
 			<input class="checkbox" type="checkbox" <?php checked($settings['hide_invisible'],1); ?> id="<?php echo $this->get_field_id('hide_invisible'); ?>" name="<?php echo $this->get_field_name('hide_invisible'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('hide_invisible'); ?>"><?php _e('Hide invisible', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('hide_invisible'); ?>"><?php _e('Hide invisible', 'wp-dtree-30'); ?></label>
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['show_updated'],1); ?> id="<?php echo $this->get_field_id('show_updated'); ?>" name="<?php echo $this->get_field_name('show_updated'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('show_updated'); ?>"><?php _e('Show updated', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('show_updated'); ?>"><?php _e('Show updated', 'wp-dtree-30'); ?></label>
 		</p>
 		
 	<?php

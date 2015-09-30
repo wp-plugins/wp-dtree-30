@@ -7,7 +7,7 @@ class WPDT_Widget extends WP_Widget{
 	
 	function widget($args, $settings){
 		extract($args);		
-		$title = apply_filters('widget_title', esc_html__($settings['title'], 'wpdtree'));
+		$title = apply_filters('widget_title', esc_html__($settings['title'], 'wp-dtree-30'));
 		echo $before_widget; //defined by theme		
 		if($title){
 			echo $before_title . $title . $after_title; //defined by theme
@@ -46,65 +46,65 @@ class WPDT_Widget extends WP_Widget{
 		$treetype = $settings['treetype'];
 	?>
 		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $settings['title']; ?>" style="width:95%;" />
 		</p>
 		<?php if($treetype == 'arc'): /*only applicable to archives*/?>			
 			<input id="<?php echo $this->get_field_id('posttype'); ?>" name="<?php echo $this->get_field_name('posttype'); ?>" value="<?php echo $settings['posttype']; ?>" size="10" />
-			<label for="<?php echo $this->get_field_id('posttype'); ?>" title="'post', 'attachment' or any custom post type"><?php _e('Specify <a href="http://codex.wordpress.org/Post_Types">Post type</a>', 'wpdtree'); ?></label><br />
+			<label for="<?php echo $this->get_field_id('posttype'); ?>" title="'post', 'attachment' or any custom post type"><?php _e('Specify <a href="http://codex.wordpress.org/Post_Types">Post type</a>', 'wp-dtree-30'); ?></label><br />
 		<?php endif; /*only applicable to archives*/ ?>
 		<p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['cache'], true); ?> id="<?php echo $this->get_field_id('cache'); ?>" name="<?php echo $this->get_field_name('cache'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('cache'); ?>" title="Do not disable this unless you're a developer or having problems with the trees not updating properly!"><?php _e('Cache (recommended!)', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('cache'); ?>" title="Do not disable this unless you're a developer or having problems with the trees not updating properly!"><?php _e('Cache (recommended!)', 'wp-dtree-30'); ?></label>
 		</p><p>		
 			<input type="text" value="<?php echo $settings['openlink']; ?>" name="<?php echo $this->get_field_name('openlink'); ?>" id="<?php echo $this->get_field_id('openlink'); ?>" size="10" />
-			<label for="<?php echo $this->get_field_id('openlink'); ?>"><?php esc_html_e('"open all"-link', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('openlink'); ?>"><?php esc_html_e('"open all"-link', 'wp-dtree-30'); ?></label>
 			<br />
 			<input type="text" value="<?php echo $settings['oclink_sep']; ?>" name="<?php echo $this->get_field_name('oclink_sep'); ?>" id="<?php echo $this->get_field_id('oclink_sep'); ?>" size="10" />
-			<label for="<?php echo $this->get_field_id('oclink_sep'); ?>"><?php esc_html_e('open/close all separator', 'wpdtree'); ?></label>	
+			<label for="<?php echo $this->get_field_id('oclink_sep'); ?>"><?php esc_html_e('open/close all separator', 'wp-dtree-30'); ?></label>	
 			<br />
 			<input type="text" value="<?php echo $settings['closelink']; ?>" name="<?php echo $this->get_field_name('closelink'); ?>" id="<?php echo $this->get_field_id('closelink'); ?>" size="10" />
-			<label for="<?php echo $this->get_field_id('closelink'); ?>"><?php esc_html_e('"close all"-link', 'wpdtree'); ?></label>					
+			<label for="<?php echo $this->get_field_id('closelink'); ?>"><?php esc_html_e('"close all"-link', 'wp-dtree-30'); ?></label>					
 		</p><p>	
 			<input class="checkbox" type="checkbox" <?php checked($settings['uselines'], true); ?> id="<?php echo $this->get_field_id('uselines'); ?>" name="<?php echo $this->get_field_name('uselines'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('uselines'); ?>" title="Draw the dotted lines"><?php _e('Use lines', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('uselines'); ?>" title="Draw the dotted lines"><?php _e('Use lines', 'wp-dtree-30'); ?></label>
 			<input class="checkbox" type="checkbox" <?php checked($settings['useicons'], true); ?> id="<?php echo $this->get_field_id('useicons'); ?>" name="<?php echo $this->get_field_name('useicons'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('useicons'); ?>" title="Show icons next to nodes"><?php _e('Use icons', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('useicons'); ?>" title="Show icons next to nodes"><?php _e('Use icons', 'wp-dtree-30'); ?></label>
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['closelevels'], true); ?> id="<?php echo $this->get_field_id('closelevels'); ?>" name="<?php echo $this->get_field_name('closelevels'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('closelevels'); ?>" title="Keep only one node open at a time."><?php _e('Close same level', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('closelevels'); ?>" title="Keep only one node open at a time."><?php _e('Close same level', 'wp-dtree-30'); ?></label>
 		</p><p>
-			<label for="<?php echo $this->get_field_id('truncate'); ?>" title="Limit node titles to this number of characters. (0 to disable)"><?php _e('Truncate titles:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('truncate'); ?>" title="Limit node titles to this number of characters. (0 to disable)"><?php _e('Truncate titles:', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('truncate'); ?>" name="<?php echo $this->get_field_name('truncate'); ?>" value="<?php echo $settings['truncate']; ?>" style="width:3em;" />
 		</p>
 		<?php if($treetype != 'lnk'): /*Not applicable to Links*/?>
 		<p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['folderlinks'], true); ?> id="<?php echo $this->get_field_id('folderlinks'); ?>" name="<?php echo $this->get_field_name('folderlinks'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('folderlinks'); ?>" title="If on folder-nodes (categories, archive year / months)can be browsed."><?php _e('Folders are links', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('folderlinks'); ?>" title="If on folder-nodes (categories, archive year / months)can be browsed."><?php _e('Folders are links', 'wp-dtree-30'); ?></label>
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['showselection'], true); ?> id="<?php echo $this->get_field_id('showselection'); ?>" name="<?php echo $this->get_field_name('showselection'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('showselection'); ?>" title="Highligt current node. It applies the class '.dtree a.nodeSel' for you to style as you'd like."><?php _e('Highlight selection', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('showselection'); ?>" title="Highligt current node. It applies the class '.dtree a.nodeSel' for you to style as you'd like."><?php _e('Highlight selection', 'wp-dtree-30'); ?></label>
 		</p><p>
 			<input class="checkbox" type="checkbox" <?php checked($settings['opentoselection'], true); ?> id="<?php echo $this->get_field_id('opentoselection'); ?>" name="<?php echo $this->get_field_name('opentoselection'); ?>" /> 
-			<label for="<?php echo $this->get_field_id('opentoselection'); ?>" title="Open tree to the current page/post/category."><?php _e('Open to selection', 'wpdtree'); ?></label>		
+			<label for="<?php echo $this->get_field_id('opentoselection'); ?>" title="Open tree to the current page/post/category."><?php _e('Open to selection', 'wp-dtree-30'); ?></label>		
 		</p>
 		<?php endif; //Not applicable to Links ?>
 		<?php if($treetype != 'mnu'): ?>
 		<p>
-			<label for="<?php echo $this->get_field_id('exclude'); ?>" title="A comma-separated list of post/category/page/link IDs to be excluded from the tree (example: 3,7,31). For Links, this applies to both link categories- and links!"><?php _e('Exclude:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('exclude'); ?>" title="A comma-separated list of post/category/page/link IDs to be excluded from the tree (example: 3,7,31). For Links, this applies to both link categories- and links!"><?php _e('Exclude:', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('exclude'); ?>" name="<?php echo $this->get_field_name('exclude'); ?>" value="<?php echo $settings['exclude']; ?>"/>
 		</p>
 		<?php if($treetype != 'arc'): /*Does not apply to Archives*/?>
 		<p>
-			<label for="<?php echo $this->get_field_id('include'); ?>" title="Only include certain categories/pages in the tree (example: 3,7,31). For Links, this only applies to categories"><?php _e('Include:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('include'); ?>" title="Only include certain categories/pages in the tree (example: 3,7,31). For Links, this only applies to categories"><?php _e('Include:', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('include'); ?>" name="<?php echo $this->get_field_name('include'); ?>" value="<?php echo $settings['include']; ?>"/>
 		</p>
 		<?php endif; //Does not apply to Archives ?>
 		<p>
-			<label for="<?php echo $this->get_field_id('opento'); ?>" title="Always open tree to a specified node (comma separated list of node IDs or request URLs. 'all' to open entire tree):"><?php _e('Force open to:', 'wpdtree'); ?></label>
+			<label for="<?php echo $this->get_field_id('opento'); ?>" title="Always open tree to a specified node (comma separated list of node IDs or request URLs. 'all' to open entire tree):"><?php _e('Force open to:', 'wp-dtree-30'); ?></label>
 			<input id="<?php echo $this->get_field_id('opento'); ?>" name="<?php echo $this->get_field_name('opento'); ?>" value="<?php echo $settings['opento']; ?>" style="width:50%"/>
 		</p><p>
-			<label for="<?php echo $this->get_field_id('sort_order'); ?>"><?php _e('Order:', 'wpdtree'); ?></label> 
+			<label for="<?php echo $this->get_field_id('sort_order'); ?>"><?php _e('Order:', 'wp-dtree-30'); ?></label> 
 			<select id="<?php echo $this->get_field_id('sort_order'); ?>" name="<?php echo $this->get_field_name('sort_order'); ?>" class="widefat" style="width:65px;">
 				<option <?php if ('ASC' == $settings['sort_order'])echo 'selected="selected"'; ?>>ASC</option>
 				<option <?php if ('DESC' == $settings['sort_order'])echo 'selected="selected"'; ?>>DESC</option>

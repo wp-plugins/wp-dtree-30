@@ -87,9 +87,9 @@ function wpdt_get_category_nodelist($args){
 				$nodelist[$idcount++] = array(
 					'id' => "'{$idcount}'", //a string, to avoid ID-trampling.
 					'pid' => -$catid, 
-					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wpdtree'), //add category count? 
+					'name' => esc_html__(str_replace('%excluded%', $excluded, $show_more), 'wp-dtree-30'), //add category count? 
 					'url' => get_category_link($catid), 
-					'title' => esc_attr__('Browse all posts in '.get_cat_name($catid), 'wpdtree')
+					'title' => esc_attr__('Browse all posts in '.get_cat_name($catid), 'wp-dtree-30')
 				);				
 			}
 		}	
