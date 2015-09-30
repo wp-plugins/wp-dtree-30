@@ -5,11 +5,11 @@ function wpdt_build_tree($nodelist, $args){ //internal
 	extract($args, EXTR_SKIP);
 	unset($args);
 	global $wpdt_tree_ids;  
-	$openlink_title = esc_attr__($openlink, 'wpdtree');
-	$closelink_title = esc_attr__($closelink, 'wpdtree');
-	$openlink = esc_html__($openlink, 'wpdtree');
-	$closelink = esc_html__($closelink, 'wpdtree');
-	$separator = esc_html__($oclink_sep, 'wpdtree');
+	$openlink_title = esc_attr__($openlink, 'wp-dtree-30');
+	$closelink_title = esc_attr__($closelink, 'wp-dtree-30');
+	$openlink = esc_html__($openlink, 'wp-dtree-30');
+	$closelink = esc_html__($closelink, 'wp-dtree-30');
+	$separator = esc_html__($oclink_sep, 'wp-dtree-30');
 	$blogpath = trailingslashit(get_bloginfo('url'));	 
 	$addhome = false; //seriously stupid idea. just add a filter to the widget-output instead.
 	if($addhome){		

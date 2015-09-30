@@ -1,9 +1,9 @@
 <?php
 class WPDT_Menu_Widget extends WPDT_Widget{	
 	function __construct() {			
-		$widget_ops = array('classname' => 'wpdt-menu', 'description' => __('Your custom menus, the dTree way.', 'wpdtree') ); //widget settings. 
+		$widget_ops = array('classname' => 'wpdt-menu', 'description' => __('Your custom menus, the dTree way.', 'wp-dtree-30') ); //widget settings. 
 		$control_ops = array('width' => 200, 'height' => 350, 'id_base' => 'wpdt-menu-widget'); //Widget control settings.
-		parent::__construct('wpdt-menu-widget', __('WP-dTree Menu', 'wpdtree'), $widget_ops, $control_ops, "poo" ); //Create the widget.		
+		parent::__construct('wpdt-menu-widget', __('WP-dTree Menu', 'wp-dtree-30'), $widget_ops, $control_ops, "poo" ); //Create the widget.		
 	}
 	
 	function widget($args, $settings){
@@ -26,7 +26,7 @@ class WPDT_Menu_Widget extends WPDT_Widget{
 	?>
 		<p>
 		
-			<label for="<?php echo $this->get_field_id('menuslug'); ?>"><?php _e('Select Menu:', 'wpdtree'); ?></label> 	
+			<label for="<?php echo $this->get_field_id('menuslug'); ?>"><?php _e('Select Menu:', 'wp-dtree-30'); ?></label> 	
 			<select id="<?php echo $this->get_field_id('menuslug'); ?>" name="<?php echo $this->get_field_name('menuslug'); ?>" class="widefat" style="width:100px;">	
 				<?php 
 					if(is_array($menus)){

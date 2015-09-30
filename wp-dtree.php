@@ -7,7 +7,7 @@
 	Author: Ulf Benjaminsson
 	Author URI: http://www.ulfben.com
 	License: GPL2
-	Text Domain: wpdtree
+	Text Domain: wp-dtree-30
 	Domain Path: /lang
 	
 	WP-dTree - Creates a JS navigation tree for your blog archives	
@@ -32,7 +32,7 @@
 		define('WPDT_BASENAME', plugin_basename( __FILE__ ));		
 		define('WPDT_SCRIPT', 'wp-dtree.min.js');	
 		define('WPDT_STYLE', 'wp-dtree.min.css');			
-		load_plugin_textdomain('wpdtree', false, dirname(WPDT_BASENAME).'/lang/');				
+		load_plugin_textdomain(' wp-dtree-30', false, dirname(WPDT_BASENAME).'/lang/');				
 		add_filter('plugin_row_meta', 	'wpdt_set_plugin_meta', 2, 10);			
 		add_action('admin_menu', 		'wpdt_add_option_page');	
 		add_action('deleted_post', 		'wpdt_update_cache'); 
@@ -131,7 +131,7 @@
 		
 	function wpdt_set_plugin_meta($links, $file) {		
 		if($file == WPDT_BASENAME) {
-			return array_merge($links, array(sprintf( '<a href="options-general.php?page=%s">%s</a>', WPDT_BASENAME, __('Settings', 'wpdtree'))));
+			return array_merge($links, array(sprintf( '<a href="options-general.php?page=%s">%s</a>', WPDT_BASENAME, __('Settings', ' wp-dtree-30'))));
 		}
 		return $links;
 	}	
@@ -368,11 +368,11 @@
 		$common = array('title' => '', 'cache'=> 1, 'opento' => '', 'uselines' => 1, 'useicons' => 0, 
 			'exclude' => '', 'closelevels' => 1, 'folderlinks' => 0, 'showselection' => 0, 'include' => '',
 			'opentoselection' => 1,'truncate' => 0, 'sort_order' => 'ASC', 'sortby' => 'ID', 'treetype' => $treetype,
-			'openlink' 	=> __('open all', 'wpdtree'), 'closelink' => __('close all', 'wpdtree'), 'oclink_sep' => ' | '
+			'openlink' 	=> __('open all', ' wp-dtree-30'), 'closelink' => __('close all', ' wp-dtree-30'), 'oclink_sep' => ' | '
 		);		
 		if($treetype == 'mnu'){
 			return array_merge($common,array(
-				'title' => 				__('Menu', 'wpdtree'),
+				'title' => 				__('Menu', ' wp-dtree-30'),
 				'order'                 => 'ASC',
 				'orderby'               => 'menu_order',
 				'post_type'             => 'nav_menu_item',
@@ -385,7 +385,7 @@
 			));
 		}else if($treetype == 'arc'){			
 			return array_merge($common, array(				
-				'title' => __('Archives', 'wpdtree'),
+				'title' => __('Archives', ' wp-dtree-30'),
 				'sortby' 	=> 'post_date',
 				'sort_order'=> 'DESC',
 				'exclude_cats' => '',
@@ -400,7 +400,7 @@
 			));
 		}else if($treetype == 'cat'){
 			return array_merge($common, array(			
-				'title' => __('Categories', 'wpdtree'),								
+				'title' => __('Categories', ' wp-dtree-30'),								
 				'cpsortby' 		=> 'post_date',
 				'cpsortorder' 	=> 'DESC',			
 				'hide_empty' 	=> 1,
@@ -422,7 +422,7 @@
 			));		
 		}else if($treetype == 'tax'){
 			return array_merge($common, array(				
-				'title' => __('Taxonomy', 'wpdtree'),								
+				'title' => __('Taxonomy', ' wp-dtree-30'),								
 				'cpsortby' 		=> 'post_date',
 				'cpsortorder' 	=> 'DESC',			
 				'usedescription' => 0, //use taxonomy description, instead of name, to render the tree
@@ -445,7 +445,7 @@
 			));		
 		}else if($treetype == 'pge'){
 			return array_merge($common, array(
-				'title' => __('Pages', 'wpdtree'),
+				'title' => __('Pages', ' wp-dtree-30'),
 				'folderlinks' 	=> 1,
 				//'sort_column' 	=> '', //handle inconsistent argument names in WordPress API. Other functions use 'sortby'.
 				'meta_key' 		=> '',
@@ -462,7 +462,7 @@
 		}else if($treetype == 'lnk'){
 			return array_merge($common, array(
 				//limit -1
-				'title' => __('Links', 'wpdtree'),
+				'title' => __('Links', ' wp-dtree-30'),
 				'opentoselection' => 0,
 				'useselection' 	=> 0,
 				'showcount'		=> 0,
@@ -540,7 +540,7 @@
 				$opt['closescript'] = $cplain;
 			}
 			update_option('wpdt_options', $opt);
-			echo '<div id="message" class="updated wpdtfade" style="background: #ffc;border: 1px solid #333;"><p><font color="black">'.__('WP-dTree settings updated...','wpdtree').'</font><br /></p></div>';						
+			echo '<div id="message" class="updated wpdtfade" style="background: #ffc;border: 1px solid #333;"><p><font color="black">'.__('WP-dTree settings updated...',' wp-dtree-30').'</font><br /></p></div>';						
 			echo $oxml.'jQuery("div.wpdtfade").delay(2000).fadeOut("slow");'.$cxml;
 			wpdt_update_cache();
 		}		
@@ -548,24 +548,24 @@
 	
 	<form method="post">
 	<div class="wrap">									
-		<h2><?php esc_html_e('WP-dTree General Settings','wpdtree'); ?></h2>				
+		<h2><?php esc_html_e('WP-dTree General Settings',' wp-dtree-30'); ?></h2>				
 		<table class="optiontable" width="80%">
 			<fieldset class="options">
 			<tr><td valign="top">
 			<p style="font-weight:bold;">Widget-settings are in <a href="<?php echo get_bloginfo('url'); ?>/wp-admin/widgets.php">the widget panels</a>.</p>			
 			<p>
-				<label for="animate" title="<?php esc_attr_e('Use jquery to animate the tree opening/closing.','wpdtree'); ?>"><?php esc_html_e('Animate:', 'wpdtree'); ?></label>
+				<label for="animate" title="<?php esc_attr_e('Use jquery to animate the tree opening/closing.',' wp-dtree-30'); ?>"><?php esc_html_e('Animate:', ' wp-dtree-30'); ?></label>
 				<input class="checkbox" type="checkbox" <?php checked($opt['animate'], true ); ?> id="animate" name="animate" /> 								
 				<input type="text" value="<?php echo $opt['duration']; ?>" name="duration" id="duration" size="10" />
-				<label><?php esc_html_e('Duration (milliseconds)', 'wpdtree'); ?></label>
+				<label><?php esc_html_e('Duration (milliseconds)', ' wp-dtree-30'); ?></label>
 			</p><p>
-				<label for="disable_css" title="<?php esc_attr_e('To style the trees, copy wp-dtree.css to your themes\'s stylesheet and edit that. Then disable this.','wpdtree'); ?>"><?php _e('Disable WP-dTree\'s default stylesheet:', 'wpdtree'); ?></label>
+				<label for="disable_css" title="<?php esc_attr_e('To style the trees, copy wp-dtree.css to your themes\'s stylesheet and edit that. Then disable this.',' wp-dtree-30'); ?>"><?php _e('Disable WP-dTree\'s default stylesheet:', ' wp-dtree-30'); ?></label>
 				<input class="checkbox" type="checkbox" <?php checked($opt['disable_css'], true ); ?> id="disable_css" name="disable_css" /> 			
 			</p><p>
-				<label for="addnoscript" title="<?php esc_attr_e('Outputs normal archives/pages/links/categories, to no-javascript users. Doubles the size of each tree!','wpdtree'); ?>"><?php _e('Include <a href="http://www.w3schools.com/tags/tag_noscript.asp">noscript</a> fallbacks:', 'wpdtree'); ?></label>
+				<label for="addnoscript" title="<?php esc_attr_e('Outputs normal archives/pages/links/categories, to no-javascript users. Doubles the size of each tree!',' wp-dtree-30'); ?>"><?php _e('Include <a href="http://www.w3schools.com/tags/tag_noscript.asp">noscript</a> fallbacks:', ' wp-dtree-30'); ?></label>
 				<input class="checkbox" type="checkbox" <?php checked($opt['addnoscript'], true ); ?> id="addnoscript" name="addnoscript" /> 			
 			</p><p>
-				<label for="openscript" title="<?php esc_attr_e('Might be useful for validation of your site','wpdtree'); ?>"><?php esc_html_e('Javascript escape method:', 'wpdtree'); ?></label> 
+				<label for="openscript" title="<?php esc_attr_e('Might be useful for validation of your site',' wp-dtree-30'); ?>"><?php esc_html_e('Javascript escape method:', ' wp-dtree-30'); ?></label> 
 				<select id="openscript" name="openscript">
 					<option value="html" <?php selected($ohtml, $opt['openscript']);?>><?php esc_html_e('<!--'); ?></option>
 					<option value="xml" <?php selected($oxml, $opt['openscript']);?>><?php esc_html_e('/* <![CDATA[ */'); ?></option>				
